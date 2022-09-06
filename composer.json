@@ -1,11 +1,14 @@
 {
     "name": "oxid-esales/tests-deprecated-ce",
     "description": "OXID eShop CE deprecated tests",
-    "keywords": ["oxid", "eShop"],
-    "homepage": "https://www.oxid-esales.com/en/home.html",
     "license": [
         "GPL-3.0-only"
     ],
+    "keywords": [
+        "oxid",
+        "eShop"
+    ],
+    "homepage": "https://www.oxid-esales.com/en/home.html",
     "require": {
         "oxid-esales/testing-library": "dev-b-7.0.x"
     },
