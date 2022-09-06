@@ -7,7 +7,7 @@
         "GPL-3.0-only"
     ],
     "require": {
-        "oxid-esales/testing-library": "dev-b-7.0.x-refactor-test"
+        "oxid-esales/testing-library": "dev-b-7.0.x"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
