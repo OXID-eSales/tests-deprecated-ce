@@ -71,7 +71,6 @@ class PriceAlarmMainTest extends \OxidTestCase
     public function testRender__()
     {
         oxTestModules::addFunction('oxpricealarm', 'load', '{ $this->oxpricealarm__oxuserid = new oxField( "oxdefaultadmin" ); return true; }');
-        oxTestModules::addFunction('oxUtilsView', 'getSmarty', '{ return new \\OxidEsales\\EshopCommunity\\Tests\\Unit\\Application\\Controller\\Admin\\PriceAlarmMainTest_smarty(); }');
         oxTestModules::addFunction('oxarticle', 'load', '{ $this->oxarticles__oxparentid = new oxField( "parentid" ); $this->oxarticles__oxtitle = new oxField(""); return true; }');
         $this->setRequestParameter("oxid", "testId");
 
@@ -212,43 +211,5 @@ class PriceAlarmMainTest extends \OxidTestCase
         $this->assertNull($oView->send());
         $this->assertEquals(1, $oView->getViewDataElement("mail_succ"));
         $this->assertNull($oView->getViewDataElement("mail_err"));
-    }
-
-    /**
-     * PriceAlarm_Main::Send() test case - parse through smarty
-     *
-     * @return null
-     */
-    public function testSend_parseThroughSmarty()
-    {
-        $oDb = oxDb::getDb(oxDB::FETCH_MODE_ASSOC);
-        $myConfig = $this->getConfig();
-
-        $sInsert = "insert into oxarticles (`OXID`,`OXSHOPID`,`OXTITLE`,`OXSTOCKFLAG`,`OXSTOCK`,`OXPRICE`)
-                    values ('_testArticleId1','" . $myConfig->getShopId() . "','testArticleTitle','2','20','11')";
-
-        $oDb->execute($sInsert);
-
-        $sInsert = "insert into oxpricealarm (`OXID`,`OXSHOPID`,`OXARTID`,`OXPRICE`)
-                    values ('_testAlarmId1','" . $myConfig->getShopId() . "','_testArticleId1','12')";
-
-        $oDb->execute($sInsert);
-
-        $oUtilsView = $this->getMock(\OxidEsales\Eshop\Core\UtilsView::class, array('parseThroughSmarty'));
-        $oUtilsView->expects($this->once())->method('parseThroughSmarty')->with($this->equalTo("test Mail Body"), $this->equalTo("_testAlarmId1"));
-
-        oxTestModules::addModuleObject("oxUtilsView", $oUtilsView);
-
-        $this->setRequestParameter("oxid", "_testAlarmId1");
-        $this->setRequestParameter("editval", array("oxpricealarm__oxlongdesc" => "test Mail Body"));
-
-        $oEmail = $this->getMock(\OxidEsales\Eshop\Core\Email::class, array("sendPricealarmToCustomer"));
-        $oEmail->expects($this->once())->method('sendPricealarmToCustomer')->will($this->returnValue(true));
-
-        oxTestModules::addModuleObject("oxEmail", $oEmail);
-
-        // testing..
-        $oView = oxNew('PriceAlarm_Main');
-        $this->assertNull($oView->send());
     }
 }

@@ -329,22 +329,27 @@ class UtilsViewTest extends \OxidTestCase
     /**
      * Testing smarty processor
      */
-    public function testParseThroughSmarty()
+    public function testGetRenderedContent()
     {
         $aData['shop'] = new stdClass();
         $aData['shop']->urlSeparator = '?';
 
-        $oActView = $this->getMock(\OxidEsales\Eshop\Core\Controller\BaseController::class, ['getViewData']);
-        $oActView->expects($this->once())->method('getViewData')->will($this->returnValue($aData));
+        $oUtilsView = oxNew(UtilsView::class);
+        $this->assertEquals('?', $oUtilsView->getRenderedContent('[{$shop->urlSeparator}]', $aData, time()));
+    }
 
-        $oUtilsView = oxNew('oxutilsview');
-        $this->assertEquals('?', $oUtilsView->parseThroughSmarty('[{$shop->urlSeparator}]', time(), $oActView));
+    /**
+     * Testing smarty processor
+     */
+    public function testGetRenderedContentForDemoShop()
+    {
+        $aData['shop'] = new stdClass();
+        $aData['shop']->urlSeparator = '?';
 
-        $oActView = $this->getMock(\OxidEsales\Eshop\Core\Controller\BaseController::class, ['getViewData']);
-        $oActView->expects($this->once())->method('getViewData')->will($this->returnValue($aData));
+        $this->getConfig()->setConfigParam('blDemoShop', 1);
 
-        $oUtilsView = oxNew('oxutilsview');
-        $this->assertEquals(['!' => '?'], $oUtilsView->parseThroughSmarty(['!' => ['%', '[{$shop->urlSeparator}]']], time(), $oActView));
+        $oUtilsView = oxNew(UtilsView::class);
+        $this->assertEquals('[{$shop->urlSeparator}]', $oUtilsView->getRenderedContent('[{$shop->urlSeparator}]', $aData, time()));
     }
 
     public function testFillCommonSmartyPropertiesAndSmartyCompileCheckDemoShopContains()
@@ -580,24 +585,6 @@ class UtilsViewTest extends \OxidTestCase
         Registry::set(Config::class, $mockedConfig);
         $utilsView->_smartyCompileCheck($smarty);
         $this->assertFalse($smarty->compile_check);
-    }
-
-    public function testParseThroughSmartyInDiffLang()
-    {
-        $smarty = \OxidEsales\Eshop\Core\Registry::getUtilsView()->getSmarty();
-        $smarty->compile_check = false;
-        $lang = oxRegistry::getLang()->getTplLanguage();
-
-        oxRegistry::getLang()->setTplLanguage(0);
-        $text1 = \OxidEsales\Eshop\Core\Registry::getUtilsView()->parseThroughSmarty('aaa', 'aaa');
-        oxRegistry::getLang()->setTplLanguage(1);
-        $text2 = \OxidEsales\Eshop\Core\Registry::getUtilsView()->parseThroughSmarty('bbb', 'aaa');
-
-        $smarty->compile_check = true;
-        oxRegistry::getLang()->setTplLanguage($lang);
-
-        $this->assertEquals('aaa', $text1);
-        $this->assertEquals('bbb', $text2);
     }
 
     /**
