@@ -11,6 +11,8 @@ use Exception;
 use modDB;
 use oxField;
 use OxidEsales\EshopCommunity\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxRegistry;
 use oxTestModules;
 use oxUtils;
@@ -18,6 +20,8 @@ use stdClass;
 
 class UtilsTest extends \OxidTestCase
 {
+    use ContainerTrait;
+
     protected $_sTestLogFileName = null;
 
     /**
@@ -720,12 +724,12 @@ class UtilsTest extends \OxidTestCase
         $config->setConfigParam('sTheme', 'azure');
 
         $utils = oxRegistry::getUtils();
-        $smarty = \OxidEsales\Eshop\Core\Registry::getUtilsView()->getSmarty(true);
+        $engine = $this->get(TemplateRendererBridgeInterface::class)->getTemplateRenderer();
         $tmpDir = $config->getConfigParam('sCompileDir') . "/smarty/";
 
         $templates = array('message/success.tpl', 'message/notice.tpl', 'message/errors.tpl',);
         foreach ($templates as $template) {
-            $smarty->fetch($template);
+            $engine->renderTemplate($template);
         }
 
         $removeTemplate = basename(reset($templates));

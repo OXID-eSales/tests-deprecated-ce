@@ -134,7 +134,6 @@ class PriceAlarmMainTest extends \OxidTestCase
     public function testRender_checkingMailBody()
     {
         oxTestModules::addFunction('oxpricealarm', 'load', '{ $this->oxpricealarm__oxuserid = new oxField( "oxdefaultadmin" ); return true; }');
-        oxTestModules::addFunction('oxUtilsView', 'getSmarty', '{ return new \\OxidEsales\\EshopCommunity\\Tests\\Unit\\Application\\Controller\\Admin\\PriceAlarmMainTest_smarty(); }');
         oxTestModules::addFunction('oxarticle', 'load', '{ $this->oxarticles__oxparentid = new oxField( "parentid" ); $this->oxarticles__oxtitle = new oxField(""); return true; }');
 
         $this->setRequestParameter("oxid", "testId");

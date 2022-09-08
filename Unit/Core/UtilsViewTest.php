@@ -10,7 +10,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Theme;
-use OxidEsales\EshopCommunity\Core\UtilsView;
+use OxidEsales\Eshop\Core\UtilsView;
 use \stdClass;
 use \oxRegistry;
 use \oxTestModules;
@@ -36,9 +36,7 @@ class UtilsViewTest extends \OxidTestCase
         $utilsView = oxNew(UtilsView::class);
         $utilsView->setAdminMode(false);
 
-        $result = $utilsView->getTemplateDirs();
-
-        $this->assertArraySubset($result, $expectedTemplateDirs);
+        $this->assertArraySubset($expectedTemplateDirs, $utilsView->getTemplateDirs());
     }
 
     public function testGetTemplateDirsOnlyAzure()
@@ -204,7 +202,6 @@ class UtilsViewTest extends \OxidTestCase
         $oView->addTplParam('articletitle', 'xxx');
 
         $oUtilsView = oxNew('oxutilsview');
-        $oUtilsView->getSmarty(true);
 
         $this->assertEquals('xxx', $oUtilsView->getTemplateOutput($sTpl, $oView));
     }
@@ -394,61 +391,6 @@ class UtilsViewTest extends \OxidTestCase
         $config = $this->getConfig();
         $shopPath = rtrim($config->getConfigParam('sShopDir'), '/') . '/';
         return $shopPath;
-    }
-
-    /**
-     * @param $compileDirectory
-     * @param $config
-     * @return array
-     */
-    private function getSmartyCheckArray($compileDirectory, $config)
-    {
-        $aCheck = [
-            'security' => true,
-            'php_handling' => SMARTY_PHP_REMOVE,
-            'left_delimiter' => '[{',
-            'right_delimiter' => '}]',
-            'caching' => false,
-            'compile_dir' => $compileDirectory . "/smarty/",
-            'cache_dir' => $compileDirectory . "/smarty/",
-            'compile_id' => md5($config->getTemplateDir(false) . '__' . $config->getShopId()),
-            'debugging' => true,
-            'compile_check' => true,
-            'security_settings' => [
-                'PHP_HANDLING' => false,
-                'IF_FUNCS' =>
-                    [
-                        0 => 'array',
-                        1 => 'list',
-                        2 => 'isset',
-                        3 => 'empty',
-                        4 => 'count',
-                        5 => 'sizeof',
-                        6 => 'in_array',
-                        7 => 'is_array',
-                        8 => 'true',
-                        9 => 'false',
-                        10 => 'null',
-                        11 => 'XML_ELEMENT_NODE',
-                        12 => 'is_int',
-                    ],
-                'INCLUDE_ANY' => false,
-                'PHP_TAGS' => false,
-                'MODIFIER_FUNCS' =>
-                    [
-                        0 => 'count',
-                        1 => 'round',
-                        2 => 'floor',
-                        3 => 'trim',
-                        4 => 'implode',
-                        5 => 'is_array',
-                        6 => 'getimagesize',
-                    ],
-                'ALLOW_CONSTANTS' => true,
-                'ALLOW_SUPER_GLOBALS' => true,
-            ]
-        ];
-        return $aCheck;
     }
 
     /**
