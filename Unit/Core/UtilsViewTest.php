@@ -193,19 +193,6 @@ class UtilsViewTest extends \OxidTestCase
     }
 
     /**
-     * Testing smarty getter + its caching
-     */
-    public function testGetSmartyCacheCheck()
-    {
-        $oUtilsView = $this->getMock(\OxidEsales\Eshop\Core\UtilsView::class, ['_smartyCompileCheck']);
-        $oUtilsView->expects($this->once())->method('_smartyCompileCheck');
-
-        // on second call defined methods should not be executed again
-        $oUtilsView->getSmarty(true);
-        $oUtilsView->getSmarty();
-    }
-
-    /**
      * Testing template processign code + skipped debug output code
      */
     public function testGetTemplateOutput()
