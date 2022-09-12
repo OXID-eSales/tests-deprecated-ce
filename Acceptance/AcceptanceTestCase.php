@@ -15,9 +15,6 @@ abstract class AcceptanceTestCase extends \OxidEsales\TestingLibrary\AcceptanceT
 {
     protected $preventModuleVersionNotify = true;
 
-    /**
-     * Sets up default environment for tests.
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,50 +31,21 @@ abstract class AcceptanceTestCase extends \OxidEsales\TestingLibrary\AcceptanceT
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function setUpTestsSuite($testSuitePath)
+    public function addTestData($testSuitePath)
     {
-        parent::setUpTestsSuite($testSuitePath);
-    }
-
-    /**
-     * Adds tests sql data to database.
-     *
-     * @param string $sTestSuitePath
-     */
-    public function addTestData($sTestSuitePath)
-    {
-        parent::addTestData($sTestSuitePath);
-
-        $editionSelector = new EditionSelector();
-
-        if ($editionSelector->isEnterprise()) {
-            $testSqlPathProvider = new TestSqlPathProvider(new EditionSelector(), $this->getTestConfig()->getShopPath());
-            $sTestSuitePath = realpath($testSqlPathProvider->getDataPathBySuitePath($sTestSuitePath));
-
-            $sFileName = $sTestSuitePath . '/demodata_' . SHOP_EDITION . '.sql';
-            if (file_exists($sFileName)) {
-                $this->importSql($sFileName);
-            }
-
-            if (isSUBSHOP && file_exists($sTestSuitePath . '/demodata_EE_mall.sql')) {
-                $this->importSql($sTestSuitePath . '/demodata_EE_mall.sql');
-            }
+        $testSuitePath = realpath(
+            (new TestSqlPathProvider(new EditionSelector(), $this->getTestConfig()->getShopPath()))
+                ->getDataPathBySuitePath($testSuitePath)
+        );
+        $shopEdition = $this->getTestConfig()->getShopEdition();
+        if ($shopEdition === 'EE' && !\file_exists("$testSuitePath/demodata_{$shopEdition}.sql")) {
+            $this->importSql("$testSuitePath/demodata_PE_CE.sql");
         }
-        $this->resetConfig();
-    }
 
-    /**
-     * Reset config to have newest information from database.
-     * SQL files might contain configuration changes.
-     * Base object has static cache for Config object.
-     * Config object has cache for database configuration.
-     *
-     */
-    private function resetConfig()
-    {
-        $config = Registry::getConfig();
-        $config->reinitialize();
+        parent::addTestData($testSuitePath);
+
+        Registry::getConfig()->reinitialize();
     }
 }
