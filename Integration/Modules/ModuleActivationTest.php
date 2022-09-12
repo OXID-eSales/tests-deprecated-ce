@@ -7,8 +7,6 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
-
 final class ModuleActivationTest extends BaseModuleTestCase
 {
     /**
