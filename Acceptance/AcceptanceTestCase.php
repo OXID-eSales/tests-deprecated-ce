@@ -35,17 +35,20 @@ abstract class AcceptanceTestCase extends \OxidEsales\TestingLibrary\AcceptanceT
      */
     public function addTestData($testSuitePath)
     {
-        $testSuitePath = realpath(
-            (new TestSqlPathProvider(new EditionSelector(), $this->getTestConfig()->getShopPath()))
-                ->getDataPathBySuitePath($testSuitePath)
-        );
-        $shopEdition = $this->getTestConfig()->getShopEdition();
-        if ($shopEdition === 'EE' && !\file_exists("$testSuitePath/demodata_{$shopEdition}.sql")) {
-            $this->importSql("$testSuitePath/demodata_PE_CE.sql");
-        }
-
         parent::addTestData($testSuitePath);
 
+        $shopEdition = $this->getTestConfig()->getShopEdition();
+        if ($shopEdition === 'EE') {
+            $pathToDemoDataInEnterpriseTestsRepository = (new TestSqlPathProvider(
+                new EditionSelector(),
+                $this->getTestConfig()->getShopPath()
+            ))
+                ->getDataPathBySuitePath($testSuitePath);
+            $this->importSql("$pathToDemoDataInEnterpriseTestsRepository/demodata_EE.sql");
+            if ($this->getTestConfig()->isSubShop()) {
+                $this->importSql("$pathToDemoDataInEnterpriseTestsRepository/demodata_EE_mall.sql");
+            }
+        }
         Registry::getConfig()->reinitialize();
     }
 }
