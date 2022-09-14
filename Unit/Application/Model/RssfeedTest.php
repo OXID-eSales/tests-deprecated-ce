@@ -248,16 +248,16 @@ class RssfeedTest extends \OxidTestCase
         $oRss = oxNew('oxRssFeed');
         Registry::set(Config::class, $oCfg);
 
-        $oArt1 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDesc"));
+        $oArt1 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDescription"));
         $oArt1->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
-        $oArt1->expects($this->any())->method('getLongDesc')->will($this->returnValue("artlogndesc"));
+        $oArt1->expects($this->any())->method('getLongDescription')->will($this->returnValue(new oxField("artlogndesc", oxField::T_RAW)));
         $oArt1->oxarticles__oxtitle = new oxField('title1');
         $oArt1->oxarticles__oxprice = new oxField(20);
         $oArt1->oxarticles__oxtimestamp = new oxField('2011-09-06 09:46:42');
 
-        $oArt2 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDesc"));
+        $oArt2 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDescription"));
         $oArt2->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
-        $oArt2->expects($this->any())->method('getLongDesc')->will($this->returnValue(" &nbsp;<div>"));
+        $oArt2->expects($this->any())->method('getLongDescription')->will($this->returnValue(new oxField(" &nbsp;<div>", oxField::T_RAW)));
         $oArt2->oxarticles__oxtitle = new oxField('title2');
         $oArt2->oxarticles__oxprice = new oxField(10);
         $oArt2->oxarticles__oxshortdesc = new oxField('shortdesc');

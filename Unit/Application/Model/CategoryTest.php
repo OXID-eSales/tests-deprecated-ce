@@ -227,35 +227,6 @@ class CategoryTest extends \OxidTestCase
         $this->assertEquals(4, $oObj3->oxcategories__oxright->value);
     }
 
-    public function testAssignParseLongDesc()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-        $this->_oCategory->oxcategories__oxlongdesc = new oxField('aa[{* smarty comment *}]zz', oxField::T_RAW);
-        $this->_oCategory->setId('test33');
-        $this->_oCategory->save();
-        $oObj3 = oxNew("oxCategory");
-        $oObj3->load($this->_oCategory->getId());
-        $this->assertEquals('aazz', $oObj3->getLongDesc());
-    }
-
-    /**
-     * getLongDesc() test case
-     * test returned long description with smarty tags when template regeneration is disabled
-     * and template is saved twice.
-     *
-     * @return null
-     */
-    public function testGetLongDescTagsWhenTemplateAlreadyGeneratedAndRegenerationDisabled()
-    {
-        $this->getConfig()->setConfigParam('blCheckTemplates', false);
-
-        $oCategory = oxNew('oxcategory');
-        $oCategory->oxcategories__oxlongdesc = new oxField("[{* *}]generated");
-        $oCategory->getLongDesc();
-        $oCategory->oxcategories__oxlongdesc = new oxField("[{* *}]regenerated");
-        $this->assertEquals('regenerated', $oCategory->getLongDesc());
-    }
-
     public function testAssignParseLongDescInList()
     {
         $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);

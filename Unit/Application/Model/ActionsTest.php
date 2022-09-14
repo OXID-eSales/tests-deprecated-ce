@@ -294,36 +294,6 @@ class ActionsTest extends \OxidTestCase
         $this->assertFalse($this->_oPromo->isRunning());
     }
 
-    /**
-     * oxActions::getLongDesc() test case
-     * test getted long description with smarty tags
-     *
-     * @return null
-     */
-    public function testGetLongDescTags()
-    {
-        $this->_oPromo->oxactions__oxlongdesc = new oxField("[{* *}]parsed");
-        $this->assertEquals('parsed', $this->_oPromo->getLongDesc());
-    }
-
-    /**
-     * getLongDesc() test case
-     * test returned long description with smarty tags when template regeneration is disabled
-     * and template is saved twice.
-     *
-     * @return null
-     */
-    public function testGetLongDescTagsWhenTemplateAlreadyGeneratedAndRegenerationDisabled()
-    {
-        $this->getConfig()->setConfigParam('blCheckTemplates', false);
-
-        $this->_oPromo->oxactions__oxlongdesc = new oxField("[{* *}]generated");
-        $this->_oPromo->getLongDesc();
-
-        $this->_oPromo->oxactions__oxlongdesc = new oxField("[{* *}]regenerated");
-        $this->assertEquals('regenerated', $this->_oPromo->getLongDesc());
-    }
-
     public function testGetBannerArticle_notAssigned()
     {
         $databaseResult = false;

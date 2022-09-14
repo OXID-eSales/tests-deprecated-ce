@@ -22,6 +22,7 @@ use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
+use OxidEsales\EshopCommunity\Application\Controller\FrontendController;
 use OxidEsales\EshopCommunity\Application\Model\RssFeed;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
 use oxLinks;
@@ -226,14 +227,10 @@ class UtfTest extends \OxidTestCase
         $sValue = '[{ $oViewConf->getImageUrl() }] Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
         $sResult = $this->getConfig()->getImageUrl(false) . ' Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
 
-        $oArticle = oxNew('oxArticle');
-        $oArticle->setId('_testArticle');
-        $oArticle->setArticleLongDesc($sValue);
-        $oArticle->save();
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->load('_testArticle');
-        $this->assertEquals($sResult, $oArticle->getLongDesc());
+        $activeView = oxNew(FrontendController::class);
+        $activeView->addGlobalParams();
+        $utilsView = Registry::getUtilsView();
+        $this->assertEquals($sResult, $utilsView->getRenderedContent($sValue, $activeView->getViewData(), '_testArticle'));
     }
 
     public function testOxArticleListLoadCategoryIds()
@@ -451,24 +448,6 @@ class UtfTest extends \OxidTestCase
         $this->assertEquals($sValue, $oCat->oxcategories__oxtitle->value);
         $this->assertEquals($sValue, $oCat->oxcategories__oxdesc->value);
         $this->assertEquals($sValue, $oCat->oxcategories__oxlongdesc->value);
-    }
-
-    public function testOxCategoryLongDescriptionSmartyProcess()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', 1);
-
-        $sValue = '[{ $oViewConf->getImageUrl() }] Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-        $sResult = $this->getConfig()->getImageUrl(false) . ' Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-
-        $oCat = new oxBase();
-        $oCat->init('oxcategories');
-        $oCat->setId('_testCat2');
-        $oCat->oxcategories__oxlongdesc = new oxField($sValue);
-        $oCat->save();
-
-        $oCat = new oxCategory();
-        $oCat->load('_testCat2');
-        $this->assertEquals($sResult, $oCat->getLongDesc());
     }
 
     public function testOxCategoryLoadCategoryIds()

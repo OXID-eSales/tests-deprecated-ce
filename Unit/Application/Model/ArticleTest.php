@@ -793,46 +793,6 @@ class ArticleTest extends \OxidTestCase
     }
 
     /**
-     * Test get article long desc smarty processing.
-     *
-     * Use case:
-     * Shop is productive
-     *
-     * Changes in Article-Longdescription aren't shown in Frontend due to caching
-     * if the Option "Process Description of Articles and Categories with Smarty" is enabled.
-     *
-     * @return null
-     */
-    public function testGetLongDescriptionSmartyProcessing()
-    {
-        $this->getConfig()->setConfigParam('blExport', 1);
-        $this->getConfig()->setConfigParam('blProductive', 1);
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', 1);
-
-        $myConfig = $this->getConfig();
-        $sLink = $myConfig->getImageUrl($myConfig->isAdmin());
-        $sRes1 = "test {$sLink} test";
-        $sRes2 = "best {$sLink} best";
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->setId('_testArt');
-        $oArticle->setArticleLongDesc('test [{ $oViewConf->getImageUrl() }] test');
-        $oArticle->save();
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->load('_testArt');
-        $this->assertEquals(trim($sRes1), trim($oArticle->getLongDesc()));
-        $oArticle->setArticleLongDesc('best [{ $oViewConf->getImageUrl() }] best');
-        $oArticle->save();
-
-        oxRegistry::getUtils()->oxResetFileCache();
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->load('_testArt');
-        $this->assertEquals(trim($sRes2), trim($oArticle->getLongDesc()));
-    }
-
-    /**
      * Test assign parent field value when field is not set in parent.
      *
      * @return null
@@ -4321,27 +4281,6 @@ class ArticleTest extends \OxidTestCase
         $oArticle->setLanguage(1);
         $oArticle->aaa = true;
         $this->assertEquals('lang 1 test &amp;', $oArticle->getLongDescription('_testArt')->value);
-    }
-
-    /**
-     * Test get article long description and parse it in smarty.
-     *
-     * buglist#335
-     *
-     * @return null
-     */
-    public function testGetLongDescriptionWithSmartyTags()
-    {
-        $this->createArticle('_testArt');
-
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-        $sDesc = 'aa[{* smarty comment *}]zz';
-
-        oxDb::getDb()->execute("insert into oxartextends (oxid, oxlongdesc) values ( '_testArt', '$sDesc')");
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->load('_testArt');
-        $this->assertEquals('aazz', $oArticle->getLongDesc());
     }
 
     /**

@@ -9,10 +9,7 @@ declare(strict_types=1);
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Core;
 
-use OxidEsales\Eshop\Application\Model\Actions;
-use OxidEsales\Eshop\Application\Model\Article;
-use OxidEsales\Eshop\Application\Model\Category;
-use OxidEsales\Eshop\Core\Field;
+use OxidEsales\Eshop\Core\UtilsView;
 use OxidEsales\EshopCommunity\Core\Registry;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
@@ -25,31 +22,11 @@ final class UtilsViewTest extends UnitTestCase
 
     public function testDisableSmartyForCmsContentWithProduct(): void
     {
-        $model = oxNew(Article::class);
-        $model->setArticleLongDesc($this->smartyUnparsedContent);
+        $utilsView = oxNew(UtilsView::class);
+        $utilsView->getRenderedContent($this->smartyUnparsedContent, []);
 
-        $this->assertSame($this->smartyParsedContent, $model->getLongDesc());
+        $this->assertSame($this->smartyParsedContent, $utilsView->getRenderedContent($this->smartyUnparsedContent, []));
         Registry::getConfig()->setConfigParam('deactivateSmartyForCmsContent', true);
-        $this->assertSame($this->smartyUnparsedContent, $model->getLongDesc());
-    }
-
-    public function testDisableSmartyForCmsContentWithCategory(): void
-    {
-        $model = oxNew(Category::class);
-        $model->oxcategories__oxlongdesc = new Field($this->smartyUnparsedContent);
-
-        $this->assertSame($this->smartyParsedContent, $model->getLongDesc());
-        Registry::getConfig()->setConfigParam('deactivateSmartyForCmsContent', true);
-        $this->assertSame($this->smartyUnparsedContent, $model->getLongDesc());
-    }
-
-    public function testDisableSmartyForCmsContentWithAction(): void
-    {
-        $model = oxNew(Actions::class);
-        $model->oxactions__oxlongdesc = new Field($this->smartyUnparsedContent);
-
-        $this->assertSame($this->smartyParsedContent, $model->getLongDesc());
-        Registry::getConfig()->setConfigParam('deactivateSmartyForCmsContent', true);
-        $this->assertSame($this->smartyUnparsedContent, $model->getLongDesc());
+        $this->assertSame($this->smartyUnparsedContent, $utilsView->getRenderedContent($this->smartyUnparsedContent, []));
     }
 }
