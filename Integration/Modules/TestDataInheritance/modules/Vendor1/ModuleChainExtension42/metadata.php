@@ -14,7 +14,7 @@ $sMetadataVersion = '2.0';
  * Module information
  */
 $aModule = array(
-    'id'          => 'Vendor1/ModuleChainExtension42',
+    'id'          => 'Vendor1_ModuleChainExtension42',
     'title'       => 'Test plain module class chain extension of namespaced module class 4.2',
     'description' => 'This module has the namespaced class in it.',
     'thumbnail'   => 'picture.png',
