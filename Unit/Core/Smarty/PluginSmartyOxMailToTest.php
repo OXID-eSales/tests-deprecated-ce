@@ -10,11 +10,11 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core\Smarty;
 use \Smarty;
 use \oxRegistry;
 
-$filePath = oxRegistry::getConfig()->getConfigParam('sShopDir') . 'Core/Smarty/Plugin/function.oxmailto.php';
+$filePath = oxRegistry::getConfig()->getConfigParam('sShopDir') . 'Internal/Framework/Smarty/Plugin/function.oxmailto.php';
 if (file_exists($filePath)) {
     require_once $filePath;
 } else {
-    require_once dirname(__FILE__) . '/../../../../source/Core/Smarty/Plugin/function.oxmailto.php';
+    require_once dirname(__FILE__) . '/../../../../source/Internal/Framework/Smarty/Plugin/function.oxmailto.php';
 }
 
 class PluginSmartyOxMailToTest extends \OxidTestCase

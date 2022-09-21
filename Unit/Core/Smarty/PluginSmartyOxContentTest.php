@@ -16,11 +16,11 @@ use oxTestModules;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smarty;
 
-$filePath = Registry::getConfig()->getConfigParam('sShopDir') . 'Core/Smarty/Plugin/function.oxcontent.php';
+$filePath = Registry::getConfig()->getConfigParam('sShopDir') . 'Internal/Framework/Smarty/Plugin/function.oxcontent.php';
 if (file_exists($filePath)) {
     require_once $filePath;
 } else {
-    require_once __DIR__ . '/../../../../source/Core/Smarty/Plugin/function.oxcontent.php';
+    require_once __DIR__ . '/../../../../source/Internal/Framework/Smarty/Plugin/function.oxcontent.php';
 }
 
 final class PluginSmartyOxContentTest extends OxidTestCase
