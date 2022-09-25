@@ -9,10 +9,8 @@ namespace OxidEsales\EshopCommunity\Tests\Acceptance\Admin;
 
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleConfigurationInstallerInterface;
 use OxidEsales\EshopCommunity\Tests\Acceptance\AdminTestCase;
 
-/** Ajax functionality */
 class AjaxFunctionalityAdminTest extends AdminTestCase
 {
     /**
@@ -1848,11 +1846,11 @@ class AjaxFunctionalityAdminTest extends AdminTestCase
      */
     public function testOxAjaxContainerClassResolution(): void
     {
-        $this->installModule('oxid/test11');
+        $this->installTestModule();
 
         $this->loginAdmin("Extensions", "Modules");
 
-        $this->activateModule("Test module #11");
+        $this->activateTestModule();
 
         $this->frame("list");
         $this->clickAndWait('link=test_11_tab');
@@ -1873,22 +1871,29 @@ class AjaxFunctionalityAdminTest extends AdminTestCase
         $this->close();
     }
 
-    private function activateModule($moduleName): void
+    private function activateTestModule(): void
     {
-        $this->clickAndWait("link={$moduleName}");
+        $activateButton = "//form[@id='myedit']//input[@value='Activate']";
+        $deactivateButton = "//form[@id='myedit']//input[@value='Deactivate']";
+
+        $this->clickAndWait("link=Test module #11");
         $this->frame("edit");
-        $this->clickAndWait("//form[@id='myedit']//input[@value='Activate']");
-        $this->assertElementPresent("//form[@id='myedit']//input[@value='Deactivate']");
+        $this->waitForPageToLoad();
+        /** when runner retries failed test, the module is already active and no "Activate" button is present */
+        if ($this->isElementPresent($activateButton)) {
+            $this->clickAndWait($activateButton);
+        }
+        $this->assertElementPresent($deactivateButton);
     }
 
-    private function installModule(string $path): void
+    private function installTestModule(): void
     {
         $moduleInstaller = ContainerFactory::getInstance()
             ->getContainer()
             ->get('oxid_esales.module.install.service.bootstrap_module_installer');
 
         $moduleInstaller->install(
-            new OxidEshopPackage(__DIR__ . '/testData/modules/' . $path)
+            new OxidEshopPackage(__DIR__ . '/testData/modules/oxid/test11')
         );
     }
 }

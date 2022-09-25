@@ -7,10 +7,6 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ProjectConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\ModuleSetupException;
-
 final class ModuleActivationTest extends BaseModuleTestCase
 {
     /**
@@ -44,29 +40,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
         $this->installAndActivateModule($sModule);
 
         $this->runAsserts($aResultToAsserts);
-    }
-
-    public function testModuleDeactivationInMainShopDidNotDeactivateItInSubShop(): void
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'EE') {
-            $this->markTestSkipped("This test case is only actual when SubShops are available.");
-        }
-
-        $this->prepareProjectConfigurationWitSubshops();
-
-        $moduleId = 'with_everything';
-        
-        $this->installAndActivateModule($moduleId);
-
-        $this->installAndActivateModule($moduleId, 2);
-
-        $this->deactivateModule(oxNew('oxModule'), $moduleId, 1);
-
-        $environment = new Environment();
-        $environment->setShopId(2);
-
-        $this->expectException(ModuleSetupException::class);
-        $this->installAndActivateModule($moduleId, 2);
     }
 
     private function caseReactivatedWithRemovedExtension(): array
@@ -382,15 +355,5 @@ final class ModuleActivationTest extends BaseModuleTestCase
                 ],
             ]
         ];
-    }
-
-    private function prepareProjectConfigurationWitSubshops()
-    {
-        $projectConfigurationDao = $this->getContainer()->get(ProjectConfigurationDaoInterface::class);
-        $projectConfiguration = $projectConfigurationDao->getConfiguration();
-
-        $projectConfiguration->addShopConfiguration(2, new ShopConfiguration());
-
-        $projectConfigurationDao->save($projectConfiguration);
     }
 }
