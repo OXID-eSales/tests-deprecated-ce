@@ -9,7 +9,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core\Smarty;
 
 use \oxRegistry;
 
-$filePath = oxRegistry::getConfig()->getConfigParam('sCoreDir') . 'Smarty/Plugin/modifier.oxfilesize.php';
+$filePath = oxRegistry::getConfig()->getConfigParam('sShopDir') . '/Internal/Framework/Smarty/Plugin/modifier.oxfilesize.php';
 if (file_exists($filePath)) {
     require_once $filePath;
 } else {

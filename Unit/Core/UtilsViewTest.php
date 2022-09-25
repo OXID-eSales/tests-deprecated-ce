@@ -310,32 +310,6 @@ class UtilsViewTest extends \OxidTestCase
     }
 
     /**
-     * Testing smarty processor
-     */
-    public function testGetRenderedContent()
-    {
-        $aData['shop'] = new stdClass();
-        $aData['shop']->urlSeparator = '?';
-
-        $oUtilsView = oxNew(UtilsView::class);
-        $this->assertEquals('?', $oUtilsView->getRenderedContent('[{$shop->urlSeparator}]', $aData, time()));
-    }
-
-    /**
-     * Testing smarty processor
-     */
-    public function testGetRenderedContentForDemoShop()
-    {
-        $aData['shop'] = new stdClass();
-        $aData['shop']->urlSeparator = '?';
-
-        $this->getConfig()->setConfigParam('blDemoShop', 1);
-
-        $oUtilsView = oxNew(UtilsView::class);
-        $this->assertEquals('[{$shop->urlSeparator}]', $oUtilsView->getRenderedContent('[{$shop->urlSeparator}]', $aData, time()));
-    }
-
-    /**
      * tests oxutilsView::getSmartyDir()
      */
     public function testGetSmartyDir()

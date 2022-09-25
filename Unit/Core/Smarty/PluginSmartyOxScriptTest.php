@@ -10,7 +10,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core\Smarty;
 use \Smarty;
 use \oxRegistry;
 
-$filePath = oxRegistry::getConfig()->getConfigParam('sShopDir') . 'Internal/Framework/Smarty/Plugin/function.oxscript.php';
+$filePath = oxRegistry::getConfig()->getConfigParam('sShopDir') . '/Internal/Framework/Smarty/Plugin/function.oxscript.php';
 if (file_exists($filePath)) {
     require_once $filePath;
 } else {

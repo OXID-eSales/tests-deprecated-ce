@@ -17,6 +17,8 @@ use oxDb;
 use oxEmail;
 use oxField;
 use oxGroups;
+use OxidEsales\Eshop\Application\Model\Article;
+use OxidEsales\Eshop\Application\Model\Category;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Config;
@@ -218,19 +220,6 @@ class UtfTest extends \OxidTestCase
             $this->assertTrue(strcmp($oArticle->{$sField}->value, $sValue) === 0, $oArticle->{$sField}->value . " != $sValue");
         }
         $this->assertEquals($sLongDesc, $oArticle->getLongDescription()->value);
-    }
-
-    public function testOxArticleLongDescriptionSmartyProcess()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', 1);
-
-        $sValue = '[{ $oViewConf->getImageUrl() }] Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-        $sResult = $this->getConfig()->getImageUrl(false) . ' Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-
-        $activeView = oxNew(FrontendController::class);
-        $activeView->addGlobalParams();
-        $utilsView = Registry::getUtilsView();
-        $this->assertEquals($sResult, $utilsView->getRenderedContent($sValue, $activeView->getViewData(), '_testArticle'));
     }
 
     public function testOxArticleListLoadCategoryIds()
@@ -1575,13 +1564,11 @@ class UtfTest extends \OxidTestCase
     public function testaListCollectMetaDescription()
     {
         $sValue = "agentūЛитовfür \n \r \t \xc2\x95 \xc2\xa0";
-        $oActCat = new oxCategory();
-        $oActCat->oxcategories__oxlongdesc = $this->getMock(\OxidEsales\Eshop\Core\Field::class, array('__get'));
-        $oActCat->oxcategories__oxlongdesc->expects($this->once())->method('__get')->will($this->returnValue(''));
+        $oActCat = new Category();
+        $oActCat->oxcategories__oxlongdesc = new Field('');
 
-        $oArticle = oxNew('oxArticle');
-        $oArticle->oxarticles__oxtitle = $this->getMock(\OxidEsales\Eshop\Core\Field::class, array('__get'));
-        $oArticle->oxarticles__oxtitle->expects($this->exactly(2))->method('__get')->will($this->returnValue($sValue));
+        $oArticle = oxNew(Article::class);
+        $oArticle->oxarticles__oxtitle = new Field($sValue);
 
         $oArtList = new oxlist();
         $oArtList->offsetSet(0, $oArticle);

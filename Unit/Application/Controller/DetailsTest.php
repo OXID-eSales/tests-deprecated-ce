@@ -692,7 +692,7 @@ class DetailsTest extends \OxidTestCase
         $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
 
         $oProduct = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array('getLongDescription'));
-        $oProduct->expects($this->once())->method('getLongDescription')->will($this->returnValue(new oxField('parsed description', oxField::T_RAW)));
+        $oProduct->expects($this->any())->method('getLongDescription')->will($this->returnValue(new oxField('parsed description', oxField::T_RAW)));
         $oProduct->oxarticles__oxshortdesc = new oxField('Short description', oxField::T_RAW);
         $oProduct->oxarticles__oxtitle = new oxField('Title', oxField::T_RAW);
 

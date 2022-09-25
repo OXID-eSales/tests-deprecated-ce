@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\EshopCommunity\Tests\Integration\Core\Smarty\Plugin;
 
 use OxidEsales\Eshop\Application\Model\Content;
+use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
@@ -52,7 +53,9 @@ final class BlockOxIfContentTest extends UnitTestCase
 
     public function testRenderWithDeactivatedCmsParsing(): void
     {
-        Registry::getConfig()->setConfigParam('deactivateSmartyForCmsContent', true);
+        ContainerFactory::resetContainer();
+        $config = Registry::getConfig();
+        $config->setConfigParam('deactivateSmartyForCmsContent', true);
 
         $renderTemplate = $this->renderer->renderTemplate($this->templatePath);
 

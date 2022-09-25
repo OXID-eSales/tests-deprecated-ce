@@ -11,8 +11,10 @@ namespace OxidEsales\EshopCommunity\Tests\Integration\Application\Controller;
 
 use OxidEsales\Eshop\Application\Controller\ContentController;
 use OxidEsales\Eshop\Application\Model\Content;
+use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\EshopCommunity\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
 final class ContentControllerTest extends UnitTestCase
@@ -30,6 +32,7 @@ final class ContentControllerTest extends UnitTestCase
 
     public function testGetParsedContent(): void
     {
+        ContainerFactory::resetContainer();
         $parsedContent = $this->controller->getParsedContent();
 
         $this->assertSame($this->smartyParsedContent, $parsedContent);
@@ -37,7 +40,9 @@ final class ContentControllerTest extends UnitTestCase
 
     public function testGetParsedContentWithConfigurationOff(): void
     {
-        Registry::getConfig()->setConfigParam('deactivateSmartyForCmsContent', true);
+        ContainerFactory::resetContainer();
+        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config->setConfigParam('deactivateSmartyForCmsContent', true);
 
         $parsedContent = $this->controller->getParsedContent();
 
