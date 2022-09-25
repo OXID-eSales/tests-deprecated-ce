@@ -11,9 +11,10 @@ use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Theme;
 use OxidEsales\Eshop\Core\UtilsView;
-use \stdClass;
-use \oxRegistry;
-use \oxTestModules;
+use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext;
+use oxRegistry;
+use stdClass;
+use Webmozart\PathUtil\Path;
 
 class UtilsViewTest extends \OxidTestCase
 {
@@ -290,8 +291,6 @@ class UtilsViewTest extends \OxidTestCase
         $oxUtilsView->addErrorToDisplay(null, false, false, "");
 
         $aErrors = Registry::getSession()->getVariable('Errors');
-        //$oEx = unserialize($aErrors['default'][0]);
-        //$this->assertEquals("", $oEx->getOxMessage());
         $this->assertFalse(isset($aErrors['default'][0]));
         $this->assertNull(Registry::getSession()->getVariable('ErrorController'));
     }
@@ -309,33 +308,18 @@ class UtilsViewTest extends \OxidTestCase
         $oxUtilsView->addErrorToDisplay(null, false, false, "");
     }
 
-    /**
-     * tests oxutilsView::getSmartyDir()
-     */
-    public function testGetSmartyDir()
-    {
-        $config = oxNew('oxConfig');
-
-        $oUV = oxNew('oxUtilsView');
-        Registry::set(Config::class, $config);
-
-        $compileDirectory = $this->getCompileDirectory();
-        $config->setConfigParam('sCompileDir', $compileDirectory);
-
-        $sExp = $compileDirectory . "/smarty/";
-
-        $this->assertSame($sExp, $oUV->getSmartyDir());
-    }
-
     private function assertArraySubset(array $subset, array $array): void
     {
-        if ($array !== \array_replace_recursive($array, $subset)) {
-            $this->fail(sprintf(
+        $replaced = \array_replace_recursive($array, $subset);
+        $this->assertSame(
+            $array,
+            $replaced,
+            sprintf(
                 "Failed asserting that %s has the subset %s",
                 \var_export($array, true),
                 \var_export($subset, true)
-            ));
-        }
+            )
+        );
     }
 
     /**
@@ -372,9 +356,6 @@ class UtilsViewTest extends \OxidTestCase
      */
     private function getCompileDirectory()
     {
-        $oVfsStreamWrapper = $this->getVfsStreamWrapper();
-        $oVfsStreamWrapper->createStructure(['tmp_directory' => []]);
-        $compileDirectory = $oVfsStreamWrapper->getRootPath() . 'tmp_directory';
-        return $compileDirectory;
+        return (new BasicContext())->getCacheDirectory();
     }
 }
