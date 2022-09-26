@@ -728,14 +728,6 @@ class UtfTest extends \OxidTestCase
         $this->assertEquals($sValue, $oDeliverySet->oxdiscount__oxtitle->value);
     }
 
-    public function testOxFieldConvertToPseudoHtml()
-    {
-        $oField = new oxField("a&g<e>n\"t'ūrų Литовские für\r\n");
-        $oField->convertToPseudoHtml();
-
-        $this->assertEquals("a&amp;g&lt;e&gt;n&quot;t&#039;ūrų Литовские für<br />\n", $oField->getRawValue());
-    }
-
     public function testOxGroupsSaveAndLoad()
     {
         $sValue = 'sėkme Литовские für';
