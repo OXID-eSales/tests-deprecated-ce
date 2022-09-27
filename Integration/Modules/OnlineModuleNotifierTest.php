@@ -76,9 +76,9 @@ class OnlineModuleNotifierTest extends BaseModuleTestCase
         $modules->module = array();
 
         $aModulesInfo = array();
-        $aModulesInfo[] = array('id' => 'with_everything', 'version' => '1.0', 'activeInShop' => array());
         $aModulesInfo[] = array('id' => 'extending_1_class', 'version' => '1.0', 'activeInShop' => array($sShopUrl));
         $aModulesInfo[] = array('id' => 'extending_1_class_3_extensions', 'version' => '1.0', 'activeInShop' => array($sShopUrl));
+        $aModulesInfo[] = array('id' => 'with_everything', 'version' => '1.0', 'activeInShop' => array());
 
         foreach ($aModulesInfo as $aModuleInfo) {
             $module = new \StdClass();
