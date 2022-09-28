@@ -12,6 +12,8 @@ use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\TemplateExtension\TemplateBlockExtensionServiceInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use OxidEsales\Facts\Facts;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use oxUtilsView;
@@ -23,6 +25,7 @@ use Webmozart\PathUtil\Path;
  */
 class ModuleTemplateBlocksTest extends UnitTestCase
 {
+    use ContainerTrait;
     private $shopTemplateName = 'filename.tpl';
     private $activeShopId = '1';
     private $activeModuleId = 'module1';
@@ -114,8 +117,8 @@ class ModuleTemplateBlocksTest extends UnitTestCase
         $this->prepareTestModuleConfiguration();
         $this->insertTemplateBlocks();
 
-        $blocksGetter = $this->getUtilsView($themeId, $customThemeId);
-        $actualBlocksWithContent = $blocksGetter->getTemplateBlocks($this->shopTemplateName);
+        $blocksGetter = $this->getTemplateBlockExtensionService($themeId, $customThemeId);
+        $actualBlocksWithContent = $blocksGetter->getTemplateBlockExtensions($this->shopTemplateName);
 
         $this->assertEquals($expectedBlocksWithContent, $actualBlocksWithContent);
     }
@@ -132,8 +135,8 @@ class ModuleTemplateBlocksTest extends UnitTestCase
     {
         $this->setAdminMode($isAdminMode);
 
-        $blocksGetter = $this->getUtilsView($themeId, $customThemeId);
-        $actualBlocksWithContent = $blocksGetter->getTemplateBlocks($this->shopTemplateName);
+        $blocksGetter = $this->getTemplateBlockExtensionService($themeId, $customThemeId);
+        $actualBlocksWithContent = $blocksGetter->getTemplateBlockExtensions($this->shopTemplateName);
 
         $this->assertEquals([], $actualBlocksWithContent);
     }
@@ -144,9 +147,9 @@ class ModuleTemplateBlocksTest extends UnitTestCase
      * @param string $themeId
      * @param string $customThemeId
      *
-     * @return oxUtilsView
+     * @return TemplateBlockExtensionServiceInterface
      */
-    private function getUtilsView($themeId, $customThemeId)
+    private function getTemplateBlockExtensionService($themeId, $customThemeId): TemplateBlockExtensionServiceInterface
     {
         $shopPath = implode(DIRECTORY_SEPARATOR, [__DIR__, 'TestData', 'shop']) . DIRECTORY_SEPARATOR;
 
@@ -155,7 +158,7 @@ class ModuleTemplateBlocksTest extends UnitTestCase
         $this->setConfigParam('sTheme', $themeId);
         $this->setConfigParam('sCustomTheme', $customThemeId);
 
-        return oxNew('oxUtilsView');
+        return $this->get(TemplateBlockExtensionServiceInterface::class);
     }
 
     /**
@@ -239,19 +242,13 @@ class ModuleTemplateBlocksTest extends UnitTestCase
             ->setId($this->activeModuleId)
             ->setModuleSource($relativeModulePath);
 
-        $this->getContainer()
-            ->get(ModuleConfigurationDaoBridgeInterface::class)
+        $this->get(ModuleConfigurationDaoBridgeInterface::class)
             ->save($moduleConfiguration);
 
-        $moduleActivator = $this->getContainer()->get(ModuleActivationBridgeInterface::class);
+        $moduleActivator = $this->get(ModuleActivationBridgeInterface::class);
         if (!$moduleActivator->isActive($this->activeModuleId, 1))
         {
             $moduleActivator->activate($this->activeModuleId, 1);
         }
-    }
-
-    private function getContainer(): \Psr\Container\ContainerInterface
-    {
-        return ContainerFactory::getInstance()->getContainer();
     }
 }

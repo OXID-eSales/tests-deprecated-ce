@@ -28,6 +28,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty2NoDebug()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = new stdClass();
         $oSmartyCompiler->_current_file = 'testfile.tpl';
 
@@ -65,6 +66,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty2NoDebugErrorHandling()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = $this->getMock('stdclass', array('_syntax_error'));
         $oSmartyCompiler->expects($this->once())->method('_syntax_error')
                 ->with(
@@ -109,6 +111,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty2Debug()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = new stdClass();
         $oSmartyCompiler->_current_file = 'testfile.tpl';
 
@@ -188,6 +191,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty3NoDebug()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = new stdClass();
         $oSmartyCompiler->_current_file = 'testfile.tpl';
         $oSmartyCompiler->_version = 'Smarty3z';
@@ -241,6 +245,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty3NoDebugErrorHandling()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = $this->getMock('stdclass', array('trigger_error'));
         $oSmartyCompiler->expects($this->once())->method('trigger_error')
                 ->with(
@@ -286,6 +291,7 @@ class PluginSmartyOxBlockTest extends \OxidTestCase
      */
     public function testSmarty3Debug()
     {
+        $this->markTestSkipped('Move to smarty component');
         $oSmartyCompiler = new stdClass();
         $oSmartyCompiler->_current_file = 'testfile.tpl';
         $oSmartyCompiler->_version = 'Smarty3z';
