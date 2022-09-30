@@ -14,7 +14,7 @@ $sMetadataVersion = '2.0';
  * Module information
  */
 $aModule = array(
-    'id'          => 'Vendor1/ModuleChainExtension36',
+    'id'          => 'Vendor1_ModuleChainExtension36',
     'title'       => 'Test OXID eShop class module chain extension 3.6',
     'description' => 'The module class and the chain extended OXID eShop class life in their namespaces. The OXID eShop class is from the unified namespace.',
     'thumbnail'   => 'picture.png',

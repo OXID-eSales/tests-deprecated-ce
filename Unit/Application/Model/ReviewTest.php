@@ -7,10 +7,9 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
-use \oxField;
-use \oxDb;
-use \oxRegistry;
-use \oxTestModules;
+use oxDb;
+use oxField;
+use oxRegistry;
 
 class ReviewTest extends \OxidTestCase
 {
@@ -113,23 +112,6 @@ class ReviewTest extends \OxidTestCase
         }
 
         $this->assertTrue($sCreate >= $oReview->oxreviews__oxcreate->value);
-    }
-
-    public function testLoadList()
-    {
-        oxTestModules::addFunction('oxField', 'convertToFormattedDbDate', '{$this->convertToFormattedDbDate=true;}');
-        oxTestModules::addFunction('oxField', 'convertToPseudoHtml', '{$this->convertToPseudoHtml=true;}');
-        oxTestModules::addFunction('oxlist', 'selectString($sql, array $parameters = array())', '{$this->selectArgs = $aA;$o=oxNew("oxreview");$o->oxreviews__oxcreate=oxNew("oxField");$o->oxreviews__oxtext=oxNew("oxField");$this->_aArray = array($o);}');
-        $oObj = oxNew('oxreview');
-        $oList = $oObj->loadList('checktype', array('aId', 'lalaId'));
-        $this->assertEquals("select oxreviews.* from oxreviews where oxreviews.oxtype = :oxtype and oxreviews.oxobjectid in ( 'aId', 'lalaId' ) and oxreviews.oxlang = :oxlang and oxreviews.oxtext != \"\"  order by oxreviews.oxcreate desc ", $oList->selectArgs[0]);
-        $this->assertTrue($oList[0]->oxreviews__oxcreate->convertToFormattedDbDate);
-        $this->assertTrue($oList[0]->oxreviews__oxtext->convertToPseudoHtml);
-
-        $oList = $oObj->loadList('checktype', array('aId', 'lalaId'), 1, 4);
-        $this->assertEquals("select oxreviews.* from oxreviews where oxreviews.oxtype = :oxtype and oxreviews.oxobjectid in ( 'aId', 'lalaId' ) and oxreviews.oxlang = :oxlang order by oxreviews.oxcreate desc ", $oList->selectArgs[0]);
-        $this->assertTrue($oList[0]->oxreviews__oxcreate->convertToFormattedDbDate);
-        $this->assertTrue($oList[0]->oxreviews__oxtext->convertToPseudoHtml);
     }
 
     public function testLoadListNoIdsPassed()

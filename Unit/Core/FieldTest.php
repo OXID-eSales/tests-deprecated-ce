@@ -44,32 +44,6 @@ class FieldTest extends \OxidTestCase
         $this->assertNull($oField->aaa);
     }
 
-    public function testConvertToFormattedDbDate()
-    {
-        $oField = new oxField();
-        $oField->setValue('2008/05/05 10:2:2');
-        $oField->convertToFormattedDbDate();
-
-        $sRawValue = '05.05.2008 10:02:02';
-        $sValue = '05.05.2008 10:02:02';
-        if (oxRegistry::getLang()->getBaseLanguage() == 1) {
-            $sRawValue = '2008-05-05 10:02:02';
-            $sValue = '2008-05-05 10:02:02';
-        }
-
-        $this->assertEquals($sRawValue, $oField->rawValue);
-        $this->assertEquals($sValue, $oField->value);
-    }
-
-    public function testConvertToPseudoHtml()
-    {
-        $oField = new oxField();
-        $oField->setValue("ssss<\n>");
-        $oField->convertToPseudoHtml();
-        $this->assertEquals("ssss&lt;<br />\n&gt;", $oField->rawValue);
-        $this->assertEquals("ssss&lt;<br />\n&gt;", $oField->value);
-    }
-
     public function testSetValue_resetPrev()
     {
         $oField = new oxField();

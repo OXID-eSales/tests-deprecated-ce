@@ -26,6 +26,7 @@ use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modu
 use OxidEsales\TestingLibrary\UnitTestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use function Symfony\Component\String\u;
 
 /**
  * Test, that the inheritance of modules and the shop works as expected.
@@ -245,8 +246,8 @@ class ModuleInheritanceTest extends UnitTestCase
     {
         $installService = $this->container->get(ModuleInstallerInterface::class);
 
-        foreach ($modulesToActivate as $moduleId) {
-            $package = new OxidEshopPackage(__DIR__ . '/TestDataInheritance/modules/' . $moduleId);
+        foreach ($modulesToActivate as $modulePath) {
+            $package = new OxidEshopPackage(__DIR__ . '/TestDataInheritance/modules/' . $modulePath);
             $installService->install($package);
         }
     }
@@ -256,6 +257,7 @@ class ModuleInheritanceTest extends UnitTestCase
         $activationService = $this->container->get(ModuleActivationBridgeInterface::class);
 
         foreach ($modulesToActivate as $moduleId) {
+            $moduleId = u($moduleId)->replace('/', '_');
             $activationService->activate($moduleId, 1);
         }
     }
