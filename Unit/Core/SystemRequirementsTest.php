@@ -11,6 +11,9 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
 use OxidEsales\Eshop\Core\SystemRequirements;
 use OxidEsales\EshopCommunity\Internal\Framework\DIContainer\ContainerBuilder;
+use OxidEsales\EshopCommunity\Internal\Framework\Smarty\Module\TemplateExtension\TemplateBlockExtension;
+use OxidEsales\EshopCommunity\Internal\Framework\Smarty\Module\TemplateExtension\TemplateBlockExtensionDao;
+use OxidEsales\EshopCommunity\Internal\Framework\Smarty\Module\TemplateExtension\TemplateBlockExtensionDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridge;
 use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridgeInterface;
 use OxidEsales\EshopCommunity\Tests\Unit\Internal\BasicContextStub;
@@ -298,128 +301,6 @@ final class SystemRequirementsTest extends UnitTestCase
                 'ssl'  => false,
             ),
             $systemRequirements->getShopHostInfoFromServerVars()
-        );
-    }
-
-    public function testCheckTemplateBlockIfTemplateDoNotExists()
-    {
-        $systemRequirements = new SystemRequirements();
-
-        $this->assertFalse($systemRequirements->checkTemplateBlock('test.tpl', 'nonimportanthere'));
-    }
-
-    /**
-     * base functionality test
-     *
-     * @dataProvider dataProviderCheckTemplateBlock
-     */
-    public function testCheckTemplateBlock($templateContent, $blockName, $result)
-    {
-        $templateLoader = $this->getMockBuilder(\OxidEsales\EshopCommunity\Internal\Framework\Templating\Loader\TemplateLoader::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['exists', 'getContext'])
-            ->getMock();
-        $templateLoader->expects($this->any())
-            ->method('exists')
-            ->will($this->returnValue(true));
-        $templateLoader->expects($this->any())
-            ->method('getContext')
-            ->will($this->returnValue($templateContent));
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->setMethods(['get', 'has'])
-            ->getMock();
-        $container->expects($this->any())
-            ->method('get')
-            ->with($this->equalTo('oxid_esales.templating.frontend.template.loader'))
-            ->will($this->returnValue($templateLoader));
-        $systemRequirements = $this->getMockBuilder(SystemRequirements::class)
-            ->setMethods(['getContainer'])
-            ->getMock();
-        $systemRequirements->expects($this->any())
-            ->method('getContainer')
-            ->will($this->returnValue($container));
-
-        $this->assertSame($result, $systemRequirements->checkTemplateBlock('tests.tpl', $blockName));
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderCheckTemplateBlock()
-    {
-        $templateContent = '[{block name="block1"}][{/block}][{block name="block2"}][{/block}]';
-
-        return [
-            [$templateContent, 'block1', true],
-            [$templateContent, 'block2', true],
-            [$templateContent, 'block3', false],
-        ];
-    }
-
-    /**
-     * base functionality test
-     */
-    public function testGetMissingTemplateBlocksIfNotFound()
-    {
-        $resultSetMock = $this->getMock('stdclass', array('fetchRow', 'count'));
-        $resultSetMock->expects($this->exactly(1))->method('fetchRow')
-            ->will($this->evalFunction('{$_this->EOF = true;}'));
-        $resultSetMock->expects($this->exactly(1))->method('count')
-            ->will($this->returnValue(1));
-        $resultSetMock->fields = array(
-            'OXTEMPLATE'  => '_OXTEMPLATE_',
-            'OXBLOCKNAME' => '_OXBLOCKNAME_',
-            'OXMODULE'    => '_OXMODULE_',
-        );
-
-        /** @var SystemRequirements|Mock $systemRequirementsMock */
-        $systemRequirementsMock = $this->getMock(SystemRequirements::class, array('checkTemplateBlock', 'fetchBlockRecords'));
-        $systemRequirementsMock->expects($this->exactly(1))->method('checkTemplateBlock')
-            ->with($this->equalTo("_OXTEMPLATE_"), $this->equalTo("_OXBLOCKNAME_"))
-            ->will($this->returnValue(false));
-        $systemRequirementsMock->expects($this->exactly(1))->method('fetchBlockRecords')
-            ->willReturn($resultSetMock);
-
-        $this->assertEquals(
-            array(
-                array(
-                    'module'   => '_OXMODULE_',
-                    'block'    => '_OXBLOCKNAME_',
-                    'template' => '_OXTEMPLATE_',
-                )
-            ),
-            $systemRequirementsMock->getMissingTemplateBlocks()
-        );
-    }
-
-    /**
-     * base functionality test
-     */
-    public function testGetMissingTemplateBlocksIfFound()
-    {
-        $resultSetMock = $this->getMock('stdclass', array('fetchRow', 'count'));
-        $resultSetMock->expects($this->exactly(1))->method('fetchRow')
-            ->will($this->evalFunction('{$_this->EOF = true;}'));
-        $resultSetMock->expects($this->exactly(1))->method('count')
-            ->will($this->returnValue(1));
-        $resultSetMock->fields = array(
-            'OXTEMPLATE'  => '_OXTEMPLATE_',
-            'OXBLOCKNAME' => '_OXBLOCKNAME_',
-            'OXMODULE'    => '_OXMODULE_',
-        );
-
-        /** @var SystemRequirements|Mock $systemRequirementsMock */
-        $systemRequirementsMock = $this->getMock(SystemRequirements::class, array('checkTemplateBlock', 'fetchBlockRecords'));
-        $systemRequirementsMock->expects($this->exactly(1))->method('checkTemplateBlock')
-            ->with($this->equalTo("_OXTEMPLATE_"), $this->equalTo("_OXBLOCKNAME_"))
-            ->will($this->returnValue(true));
-        $systemRequirementsMock->expects($this->exactly(1))->method('fetchBlockRecords')
-            ->willReturn($resultSetMock);
-
-        $this->assertEquals(
-            array(),
-            $systemRequirementsMock->getMissingTemplateBlocks()
         );
     }
 

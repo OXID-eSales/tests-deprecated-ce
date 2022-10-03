@@ -234,46 +234,6 @@ class ModuleTest extends \OxidTestCase
         ];
     }
 
-    public function testGetSmartyPluginDirectories()
-    {
-        $directories = [
-            'first'      => '\first',
-            'and second' => 'second',
-        ];
-        $module = oxNew(Module::class);
-        $module->setModuleData(['smartyPluginDirectories' => $directories]);
-
-        $this->assertSame(
-            $directories,
-            $module->getSmartyPluginDirectories()
-        );
-    }
-
-    /**
-     * @param string $invalidValue
-     *
-     * @dataProvider invalidSmartyPluginDirectoriesValueProvider
-     */
-    public function testGetSmartyPluginDirectoriesWithInvalidValue($invalidValue)
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $module = oxNew(Module::class);
-        $module->setModuleData(['smartyPluginDirectories' => $invalidValue]);
-
-        $module->getSmartyPluginDirectories();
-    }
-
-    public function invalidSmartyPluginDirectoriesValueProvider()
-    {
-        return [
-            [false],
-            ['string'],
-            [''],
-            [0],
-        ];
-    }
-
     /**
      * oxModule::hasMetadata() test case
      *
