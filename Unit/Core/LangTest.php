@@ -11,6 +11,8 @@ use oxDb;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Theme;
+use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxLang;
 use oxRegistry;
 use oxTestModules;
@@ -18,6 +20,8 @@ use stdClass;
 
 class LangTest extends \OxidTestCase
 {
+    use ContainerTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -151,13 +155,14 @@ class LangTest extends \OxidTestCase
             $this->markTestSkipped('This test is for Community and Professional editions only.');
         }
 
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $sPath = $this->getConfig()->getAppDir();
         $aPathArray = array(
-            $sPath . "views/admin/de/lang.php",
+            $sPath . "views/" . $adminTheme . "/de/lang.php",
             $sPath . "translations/de/translit_lang.php",
-            $sPath . "views/admin/de/help_lang.php",
+            $sPath . "views/" . $adminTheme . "/de/help_lang.php",
             $sPath . "views/azure/de/theme_options.php",
-            $sPath . "views/admin/de/cust_lang.php"
+            $sPath . "views/" . $adminTheme . "/de/cust_lang.php"
         );
 
         $language = oxNew(\OxidEsales\Eshop\Core\Language::class);

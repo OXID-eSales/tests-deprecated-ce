@@ -12,12 +12,16 @@ use \oxField;
 use \DOMXPath;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use \stdClass;
 use \DOMElement;
 use \oxTestModules;
 
 class NavigationTreeTest extends \OxidTestCase
 {
+    use ContainerTrait;
+
     /**
      * OxNavigationTree::getDomXml() test case
      *
@@ -645,7 +649,9 @@ class NavigationTreeTest extends \OxidTestCase
      */
     protected function getDomXml()
     {
-        $adminViewsDirectory = $this->getTestConfig()->getShopPath() . '/Application/views/admin';
+        $adminViewsDirectory = $this->getTestConfig()->getShopPath() .
+            '/Application/views/' .
+            $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
 
         $edition = strtolower($this->getTestConfig()->getShopEdition());
         $menuFile = "/menu_$edition.xml";

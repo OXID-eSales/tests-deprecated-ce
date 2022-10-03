@@ -7,6 +7,8 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core\Smarty;
 
+use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 
@@ -27,6 +29,7 @@ use \RecursiveDirectoryIterator;
  */
 class LangIntegrityTest extends \OxidTestCase
 {
+    use ContainerTrait;
     /**
      * Theme to test against
      *
@@ -37,9 +40,17 @@ class LangIntegrityTest extends \OxidTestCase
     /**
      * @return string theme name
      */
-    public function getThemeName()
+    private function getThemeName()
     {
         return $this->_sTheme;
+    }
+
+    /**
+     * @return string admin theme name
+     */
+    private function getAdminThemeName()
+    {
+        return $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
     }
 
     /**
@@ -65,7 +76,7 @@ class LangIntegrityTest extends \OxidTestCase
         return array(
             array(''),
             array($this->getThemeName()),
-            array('admin')
+            array($this->getAdminThemeName())
         );
     }
 
@@ -98,8 +109,8 @@ class LangIntegrityTest extends \OxidTestCase
             array('en', $this->getThemeName(), 'lang.php'),
             array('de', $this->getThemeName(), 'map.php'),
             array('en', $this->getThemeName(), 'map.php'),
-            array('de', 'admin', 'lang.php'),
-            array('en', 'admin', 'lang.php')
+            array('de', $this->getAdminThemeName(), 'lang.php'),
+            array('en', $this->getAdminThemeName(), 'lang.php')
         );
     }
 
@@ -123,8 +134,8 @@ class LangIntegrityTest extends \OxidTestCase
             array('en', '', $aDetectOrder),
             array('de', $sThemeName, $aDetectOrder),
             array('en', $sThemeName, $aDetectOrder),
-            array('de', 'admin', $aDetectOrder),
-            array('en', 'admin', $aDetectOrder)
+            array('de', $this->getAdminThemeName(), $aDetectOrder),
+            array('en', $this->getAdminThemeName(), $aDetectOrder)
         );
     }
 
@@ -567,7 +578,7 @@ class LangIntegrityTest extends \OxidTestCase
         // default exclude paths
         if ($aExcludePaths == array()) {
             $aExcludeDirPattern[] = '/source/Application/translations';
-            $aExcludeDirPattern[] = '/source/Application/views/admin';
+            $aExcludeDirPattern[] = '/source/Application/views/' . $this->getAdminThemeName();
             $aExcludeDirPattern[] = '/source/Application/views/' . $this->getThemeName() . '/en';
             $aExcludeDirPattern[] = '/source/Application/views/' . $this->getThemeName() . '/de';
         } else {
@@ -862,8 +873,8 @@ class LangIntegrityTest extends \OxidTestCase
             array('en', '', '*.php'),
             array('de', $this->getThemeName(), '*.php'),
             array('en', $this->getThemeName(), '*.php'),
-            array('de', 'admin', '*.php'),
-            array('en', 'admin', '*.php'),
+            array('de', $this->getAdminThemeName(), '*.php'),
+            array('en', $this->getAdminThemeName(), '*.php'),
             array('De', 'Setup', 'lang.php'),
             array('En', 'Setup', 'lang.php'),
         );
@@ -1037,9 +1048,9 @@ EOD;
             ['en', $themeName, 'lang.php'],
             ['en', $themeName, 'map.php'],
             ['en', $themeName, 'theme_options.php'],
-            ['en', 'admin', 'cust_lang.php.dist'],
-            ['en', 'admin', 'help_lang.php'],
-            ['en', 'admin', 'lang.php'],
+            ['en', $this->getAdminThemeName(), 'cust_lang.php.dist'],
+            ['en', $this->getAdminThemeName(), 'help_lang.php'],
+            ['en', $this->getAdminThemeName(), 'lang.php'],
             ['En', 'Setup', 'lang.php'],
 
             ['de', '', 'translit_lang.php'],
@@ -1048,9 +1059,9 @@ EOD;
             ['de', $themeName, 'lang.php'],
             ['de', $themeName, 'map.php'],
             ['de', $themeName, 'theme_options.php'],
-            ['de', 'admin', 'cust_lang.php.dist'],
-            ['de', 'admin', 'help_lang.php'],
-            ['de', 'admin', 'lang.php'],
+            ['de', $this->getAdminThemeName(), 'cust_lang.php.dist'],
+            ['de', $this->getAdminThemeName(), 'help_lang.php'],
+            ['de', $this->getAdminThemeName(), 'lang.php'],
             ['De', 'Setup', 'lang.php'],
         ];
     }

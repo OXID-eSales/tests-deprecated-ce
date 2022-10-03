@@ -7,17 +7,17 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
-use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Theme;
 use OxidEsales\Eshop\Core\UtilsView;
+use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxRegistry;
-use stdClass;
-use Webmozart\PathUtil\Path;
 
 class UtilsViewTest extends \OxidTestCase
 {
+    use ContainerTrait;
     public function setup(): void
     {
         parent::setUp();
@@ -99,10 +99,11 @@ class UtilsViewTest extends \OxidTestCase
             $this->markTestSkipped('This test is for Community edition only.');
         }
 
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $shopPath = $this->getShopPath();
 
         $dirs = [
-            $shopPath . 'Application/views/admin/tpl/',
+            $shopPath . 'Application/views/' . $adminTheme . '/tpl/',
         ];
 
         $utilsView = oxNew(UtilsView::class);
@@ -119,10 +120,11 @@ class UtilsViewTest extends \OxidTestCase
             $this->markTestSkipped('This test is for Community edition only.');
         }
 
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $shopPath = $this->getShopPath();
 
         $dirs = [
-            $shopPath . 'Application/views/admin/tpl/',
+            $shopPath . 'Application/views/' . $adminTheme . '/tpl/',
         ];
 
         $utilsView = oxNew(UtilsView::class);
