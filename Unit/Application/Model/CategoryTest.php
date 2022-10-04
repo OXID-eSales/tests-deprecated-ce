@@ -227,20 +227,6 @@ class CategoryTest extends \OxidTestCase
         $this->assertEquals(4, $oObj3->oxcategories__oxright->value);
     }
 
-    public function testAssignParseLongDescInList()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-
-        $this->_oCategory->oxcategories__oxlongdesc = new oxField('aa[{* smarty comment *}]zz', oxField::T_RAW);
-        $this->_oCategory->setId('test33');
-        $this->_oCategory->save();
-        $oObj3 = oxNew("oxCategory");
-        $oObj3->setInList();
-        $oObj3->load($this->_oCategory->getId());
-        //NOT parsed
-        $this->assertEquals('aa[{* smarty comment *}]zz', $oObj3->oxcategories__oxlongdesc->value);
-    }
-
     public function testAssignCountArt()
     {
         $oObj = oxNew('oxCategory');

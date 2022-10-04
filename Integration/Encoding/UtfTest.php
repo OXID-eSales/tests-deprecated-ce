@@ -1055,11 +1055,13 @@ class UtfTest extends \OxidTestCase
         }
     }
 
+    /**
+     * TODO: template engine needed
+     */
     public function testOxRssFeedGetArticleItems()
     {
         $config = $this->getConfig();
         $config->setConfigParam('aCurrencies', array('EUR@1.00@.@.@EUR@1'));
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', false);
 
         $rssFeed = oxNew('oxrssfeed');
         Registry::set(Config::class, $config);

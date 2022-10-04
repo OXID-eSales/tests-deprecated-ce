@@ -59,7 +59,7 @@ class RssTest extends \OxidTestCase
     public function testRender()
     {
         $renderer = $this->prophesize(TemplateRendererInterface::class);
-        $renderer->renderTemplate(Argument::type('string'), Argument::type('array'))->willReturn('smarty processed xml');
+        $renderer->renderTemplate(Argument::type('string'), Argument::type('array'))->willReturn('processed xml');
 
         $bridge = $this->prophesize(TemplateRendererBridgeInterface::class);
         $bridge->getTemplateRenderer()->willReturn($renderer->reveal());
@@ -69,7 +69,7 @@ class RssTest extends \OxidTestCase
 
         $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('setHeader', 'showMessageAndExit'));
         $oUtils->expects($this->once())->method('setHeader')->with($this->equalTo('Content-Type: text/xml; charset=XCHARSET'));
-        $oUtils->expects($this->once())->method('showMessageAndExit')->with($this->equalTo('smarty processed xml'));
+        $oUtils->expects($this->once())->method('showMessageAndExit')->with($this->equalTo('processed xml'));
 
         $oLang = $this->getMock(\OxidEsales\Eshop\Core\Language::class, array('translateString'));
         $oLang->expects($this->once())->method('translateString')->with($this->equalTo('charset'))->will($this->returnValue('XCHARSET'));

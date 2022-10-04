@@ -11,7 +11,6 @@ use Exception;
 use modDB;
 use oxField;
 use OxidEsales\EshopCommunity\Core\Registry;
-use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
 use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxRegistry;
 use oxTestModules;

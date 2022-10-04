@@ -97,7 +97,6 @@ final class ModuleRemoveTest extends BaseModuleTestCase
                 'extending_1_class',
                 'with_2_templates',
                 'with_2_settings',
-                'extending_3_blocks',
                 'with_everything',
                 'with_events'
             ],
@@ -113,11 +112,6 @@ final class ModuleRemoveTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class => 'oeTest/extending_1_class/myorder',
                 ],
@@ -156,7 +150,7 @@ final class ModuleRemoveTest extends BaseModuleTestCase
             // modules to be activated during test preparation
             [
                 'extending_1_class', 'with_2_templates', 'with_2_settings',
-                'extending_3_blocks', 'with_everything', 'with_events'
+                'with_everything', 'with_events'
             ],
 
             // extensions that will be removed
@@ -172,11 +166,6 @@ final class ModuleRemoveTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class => 'oeTest/extending_1_class/myorder',
                 ],
@@ -215,7 +204,7 @@ final class ModuleRemoveTest extends BaseModuleTestCase
             // modules to be activated during test preparation
             [
                 'extending_1_class', 'with_2_templates', 'with_2_settings',
-                'extending_3_blocks', 'with_metadata_v2', 'with_more_metadata_v2', 'with_events',
+                'with_metadata_v2', 'with_more_metadata_v2', 'with_events',
             ],
 
             // extensions that will be removed
@@ -228,11 +217,6 @@ final class ModuleRemoveTest extends BaseModuleTestCase
             ],
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class   => 'oeTest/extending_1_class/myorder',
                     \OxidEsales\Eshop\Application\Model\Article::class => 'with_metadata_v2/myarticle'

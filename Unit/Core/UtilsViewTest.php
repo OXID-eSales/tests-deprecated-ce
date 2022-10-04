@@ -195,11 +195,13 @@ class UtilsViewTest extends \OxidTestCase
 
     /**
      * Testing template processign code + skipped debug output code
+     *
+     * TODO: template engine needed
      */
     public function testGetTemplateOutput()
     {
         $this->getConfig()->setConfigParam('iDebug', 0);
-        $sTpl = __DIR__ . "/../testData//misc/testTempOut.tpl";
+        $sTpl = __DIR__ . "/../testData//misc/testTempOut";
 
         $oView = oxNew('oxview');
         $oView->addTplParam('articletitle', 'xxx');

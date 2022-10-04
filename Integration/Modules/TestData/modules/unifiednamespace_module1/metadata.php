@@ -39,7 +39,6 @@ $aModule = array(
     ),
     'controllers'       => array(),
     'templates'   => array(),
-    'blocks'      => array(),
     'settings'    => array(),
     'events'      => array(),
 );

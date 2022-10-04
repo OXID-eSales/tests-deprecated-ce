@@ -51,6 +51,8 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
 
     /**
      * Sets up test
+     *
+     * TODO: requires template engine
      */
     protected function setUp(): void
     {

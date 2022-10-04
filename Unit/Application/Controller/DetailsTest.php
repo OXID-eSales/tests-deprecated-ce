@@ -683,29 +683,6 @@ class DetailsTest extends \OxidTestCase
     }
 
     /**
-     * Test meta meta description generation when short desc is empty (should use long desc).
-     *
-     * @return null
-     */
-    public function testMetaDescriptionWithLongDescWithSmartyParsing()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-
-        $oProduct = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array('getLongDescription'));
-        $oProduct->expects($this->any())->method('getLongDescription')->will($this->returnValue(new oxField('parsed description', oxField::T_RAW)));
-        $oProduct->oxarticles__oxshortdesc = new oxField('Short description', oxField::T_RAW);
-        $oProduct->oxarticles__oxtitle = new oxField('Title', oxField::T_RAW);
-
-        $oDetails = $this->getMock(\OxidEsales\Eshop\Application\Controller\ArticleDetailsController::class, array('getProduct'));
-        $oDetails->expects($this->once())->method('getProduct')->will($this->returnValue($oProduct));
-
-        $sMeta = 'Title - parsed description';
-
-        $oView = oxNew('oxUBase');
-        $this->assertEquals($oView->prepareMetaDescription($sMeta, 200, false), $oDetails->prepareMetaDescription(null));
-    }
-
-    /**
      * Test search title setter/getter.
      *
      * @return null

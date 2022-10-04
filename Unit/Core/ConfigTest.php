@@ -1163,8 +1163,8 @@ class ConfigTest extends \OxidTestCase
     {
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $this->getViewsPath($oConfig, $this->get(AdminThemeBridgeInterface::class)->getActiveTheme()) . 'tpl/start.tpl';
-        $this->assertEquals($sDir, $oConfig->getTemplatePath('start.tpl', true));
+        $sDir = $this->getViewsPath($oConfig, $this->get(AdminThemeBridgeInterface::class)->getActiveTheme()) . 'tpl/start';
+        $this->assertEquals($sDir, $oConfig->getTemplatePath('start', true));
     }
 
     /**

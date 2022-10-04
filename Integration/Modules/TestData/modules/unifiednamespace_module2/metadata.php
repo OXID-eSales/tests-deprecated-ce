@@ -36,7 +36,6 @@ $aModule = array(
         'test2content' => \OxidEsales\EshopCommunity\Tests\Integration\Modules\TestData\modules\unifiednamespace_module2\Model\Test2Content::class,
     ),
     'templates'   => array(),
-    'blocks'      => array(),
     'settings'    => array(),
     'events'      => array(),
 );

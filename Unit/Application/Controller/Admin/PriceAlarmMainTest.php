@@ -13,25 +13,6 @@ use OxidEsales\EshopCommunity\Application\Model\PriceAlarm;
 use \oxTestModules;
 
 /**
- * ext Smarty class for testing
- */
-class PriceAlarmMainTest_smarty
-{
-
-    /**
-     * Logging call data
-     *
-     * @param string $sName   called method
-     * @param array  $aParams parameters
-     *
-     * @return null
-     */
-    public function __call($sName, $aParams)
-    {
-    }
-}
-
-/**
  * Tests for PriceAlarm_Main class
  */
 class PriceAlarmMainTest extends \OxidTestCase
