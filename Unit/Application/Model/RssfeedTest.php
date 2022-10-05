@@ -9,6 +9,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
 use oxField;
 use OxidEsales\Eshop\Core\Config;
+use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Facts\Facts;
 use oxRegistry;
@@ -258,8 +259,7 @@ class RssfeedTest extends \OxidTestCase
         $oRss = oxNew('oxRssFeed');
         Registry::set(Config::class, $oCfg);
 
-        $oLongDesc = new stdClass();
-        $oLongDesc->value = "artlogndesc";
+        $oLongDesc = new Field("artlogndesc", Field::T_RAW);
 
         $oArt1 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDescription"));
         $oArt1->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
@@ -268,8 +268,7 @@ class RssfeedTest extends \OxidTestCase
         $oArt1->oxarticles__oxprice = new oxField(20);
         $oArt1->oxarticles__oxtimestamp = new oxField('2011-09-06 09:46:42');
 
-        $oLongDesc2 = new stdClass();
-        $oLongDesc2->value = " <div>";
+        $oLongDesc2 = new Field(" <div>", Field::T_RAW);
 
         $oArt2 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDescription"));
         $oArt2->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));

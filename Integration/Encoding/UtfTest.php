@@ -1067,8 +1067,7 @@ class UtfTest extends \OxidTestCase
         Registry::set(Config::class, $config);
 
         $shortDescription = 'agentūrų Литовские für';
-        $longDescription = new stdClass();
-        $longDescription->value = "";
+        $longDescription = new Field('', Field::T_RAW);
 
         $articleMock = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", 'getLongDescription'));
         $articleMock->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
