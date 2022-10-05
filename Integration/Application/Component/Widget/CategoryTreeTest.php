@@ -5,38 +5,53 @@
  * See LICENSE file for license details.
  */
 
+declare(strict_types=1);
+
 namespace OxidEsales\EshopCommunity\Tests\Integration\Application\Component\Widget;
 
+use OxidEsales\Eshop\Application\Component\Widget\CategoryTree;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
 /**
- * Tests for OxidEsales\EshopCommunity\Application\Component\Widget\CategoryTree class
+ * @todo move to templating engine component tests
  */
-class CategoryTreeTest extends UnitTestCase
+final class CategoryTreeTest extends UnitTestCase
 {
-    /**
-     * Testing OxidEsales\EshopCommunity\Application\Component\Widget\CategoryTree::render()
-     *
-     * @return null
-     */
-    public function testRender()
+    private CategoryTree $categoryTree;
+    private string $fallbackWidgetTemplate = 'widget/sidebar/categorytree';
+
+    protected function setUp(): void
     {
-        $categoryTree = oxNew('OxidEsales\EshopCommunity\Application\Component\Widget\CategoryTree');
-        $this->assertEquals('widget/sidebar/categorytree', $categoryTree->render());
+        parent::setUp();
+        $this->categoryTree = oxNew(CategoryTree::class);
     }
 
-    /**
-     * Testing OxidEsales\EshopCommunity\Application\Component\Widget\CategoryTree::render()
-     *
-     * @return null
-     */
-    public function testRenderDifferentTemplate()
+    public function testRenderWithDefaultTemplate(): void
     {
-        $this->setConfigParam('sTheme', 'azure');
-        \OxidEsales\EshopCommunity\Internal\Container\ContainerFactory::getInstance()->resetContainer();
+        $renderedTemplate = $this->categoryTree->render();
 
-        $categoryTree = oxNew('OxidEsales\EshopCommunity\Application\Component\Widget\CategoryTree');
-        $categoryTree->setViewParameters(array("sWidgetType" => "header"));
-        $this->assertEquals('widget/header/categorylist', $categoryTree->render());
+        $this->assertEquals($this->fallbackWidgetTemplate, $renderedTemplate);
+    }
+
+    public function testRenderWithExistingTemplate(): void
+    {
+        $this->markTestSkipped('test relies on template files');
+        $this->categoryTree->setViewParameters(['sWidgetType' => 'header']);
+
+        $renderedTemplate = $this->categoryTree->render();
+
+        $this->assertEquals('widget/header/categorylist', $renderedTemplate);
+    }
+
+
+    public function testRenderWithNonExistingTemplate(): void
+    {
+        $nonExistingWidgetType = uniqid('widget-', true);
+        $this->categoryTree->setViewParameters(['sWidgetType' => $nonExistingWidgetType]);
+
+        $renderedTemplate = $this->categoryTree->render();
+
+        $this->assertEquals($this->fallbackWidgetTemplate, $renderedTemplate);
     }
 }

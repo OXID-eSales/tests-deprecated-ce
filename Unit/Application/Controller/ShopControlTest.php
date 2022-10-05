@@ -12,24 +12,24 @@ use modDB;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\Exception\ConnectionException;
-use OxidEsales\EshopCommunity\Core\Exception\ExceptionToDisplay;
 use OxidEsales\EshopCommunity\Core\Output;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Templating\Loader\TemplateLoaderInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface;
 use oxOutput;
 use oxRegistry;
-use oxSystemComponentException;
 use oxTestModules;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
-use Psr\Container\ContainerInterface;
 
 class ShopControlTest extends \OxidTestCase
 {
     use ProphecyTrait;
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        modDB::getInstance()->cleanup();
+    }
 
     /**
      * Testing oxShopControl::start()
@@ -122,7 +122,7 @@ class ShopControlTest extends \OxidTestCase
         Registry::set(\OxidEsales\Eshop\Core\Utils::class, $utils);
 
         $oControl = $this->getMock(\OxidEsales\Eshop\Core\ShopControl::class, ["runOnce", "handleSystemException"], [], '', false);
-        
+
         $oControl->start($controllerName, 'functionToLoad');
     }
 
@@ -262,54 +262,6 @@ class ShopControlTest extends \OxidTestCase
         } catch (Exception $oExcp) {
             // To handle exception _process is called one more time in debug mode, that's why it's needed to be caught.
         }
-    }
-
-    /**
-     * Testing oxShopControl::_render()
-     * An Exception is caught and reported to the exception log.
-     */
-    public function testRenderTemplateNotFound()
-    {
-        ContainerFactory::resetContainer();
-        $oView = $this->getMock(\OxidEsales\Eshop\Core\Controller\BaseController::class, array('render'));
-        $oView->expects($this->once())->method('render')->will($this->returnValue('wrongTpl'));
-
-        $oOut = $this->getMock(\OxidEsales\Eshop\Core\Output::class, array('process'));
-        $oOut->expects($this->once())->method('process');
-
-        $renderer = $this->getTemplateRendererMock('message/exception', [], 'string');
-        $loader = $this->getTemplateLoaderMock();
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->onlyMethods(['get','has'])
-            ->getMock();
-
-        // Create a map of arguments to return values.
-        $map = [
-            ['OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface', $renderer],
-            ['OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface', $renderer],
-            ['oxid_esales.templating.template.loader', $loader],
-            ['oxid_esales.templating.template.loader', $loader]
-        ];
-
-        // Configure the stub.
-        $container->method('get')->will($this->returnValueMap($map));
-
-        $oControl = $this->getMock(\OxidEsales\Eshop\Core\ShopControl::class, array("isAdmin", 'getOutputManager', 'isDebugMode', 'getContainer'), array(), '', false);
-        $oControl->expects($this->any())->method('isAdmin')->will($this->returnValue(false));
-        $oControl->expects($this->any())->method('getOutputManager')->will($this->returnValue($oOut));
-        $oControl->expects($this->any())->method('isDebugMode')->will($this->returnValue(true));
-        $oControl->expects($this->any())->method('getContainer')->will($this->returnValue($container));
-
-        $oControl->render($oView);
-        \OxidEsales\Eshop\Core\Registry::getUtilsView()->passAllErrorsToView($aViewData, $oControl->getErrors('oxubase'));
-        $this->assertTrue($aViewData["Errors"]["default"][0] instanceof ExceptionToDisplay);
-
-        /**
-         * Although no exception is thrown, the underlying error will be logged in oxideshop.log
-         */
-        $expectedExceptionClass = \OxidEsales\Eshop\Core\Exception\SystemComponentException::class;
-        $this->assertLoggedException($expectedExceptionClass);
     }
 
     /**
@@ -599,47 +551,5 @@ class ShopControlTest extends \OxidTestCase
         $control->expects($this->never())->method('handleRoutingException');
 
         $control->start();
-    }
-    
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        modDB::getInstance()->cleanup();
-    }
-
-    /**
-     * Get name of active template for controller.
-     * Run render() method as it might change the name.
-     *
-     * @param $controllerClassName
-     *
-     * @return string
-     */
-    private function getTemplateName($controllerClassName)
-    {
-        $control = oxNew($controllerClassName);
-        $control->render();
-
-        return $control->getTemplateName();
-    }
-
-    private function getTemplateRendererMock($templateName, $parameter, $returnValue)
-    {
-        $renderer = $this->prophesize(TemplateRendererInterface::class);
-        $renderer->renderTemplate($templateName, Argument::type('array'))->willReturn($returnValue);
-
-        $bridge = $this->prophesize(TemplateRendererBridgeInterface::class);
-        $bridge->getTemplateRenderer()->willReturn($renderer->reveal());
-
-        return $bridge->reveal();
-    }
-
-    private function getTemplateLoaderMock()
-    {
-        $loader = $this->prophesize(TemplateLoaderInterface::class);
-        $loader->exists(Argument::type('string'))->willReturn(false);
-
-        return $loader->reveal();
     }
 }
