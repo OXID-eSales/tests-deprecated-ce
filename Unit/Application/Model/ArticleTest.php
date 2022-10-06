@@ -2712,26 +2712,6 @@ class ArticleTest extends \OxidTestCase
     }
 
     /**
-     * Test if get category ads sql limit.
-     *
-     * @return null
-     */
-    public function testgetCategoryAddsSqlLimit()
-    {
-        oxTestModules::addFunction('oxcategory', 'assignRecord($sql)', '{throw new Exception($sql);}');
-        $oArticle = oxNew('oxArticle');
-        $oArticle->setId("123");
-        try {
-            $oArticle->getCategory();
-        } catch (Exception $e) {
-            $this->assertTrue((bool) preg_match('/limit 1$/s', rtrim($e->getMessage())), 'regexp /limit 1$/ failed for ' . $e->getMessage());
-
-            return;
-        }
-        $this->fail();
-    }
-
-    /**
      * Test get assigned article category.
      *
      * @return null

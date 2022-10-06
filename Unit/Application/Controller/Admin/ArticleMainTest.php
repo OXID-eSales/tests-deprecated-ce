@@ -472,7 +472,6 @@ class ArticleMainTest extends \OxidTestCase
     public function testSave()
     {
         oxTestModules::addFunction('oxarticle', 'save', '{ return true; }');
-        oxTestModules::addFunction('oxarticle', 'assignRecord', '{ return true; }');
         oxTestModules::addFunction('article_main', 'saveAdditionalArticleData', '{ throw new Exception( "saveAdditionalArticleData" ); }');
 
         $this->setRequestParameter("oxid", -1);
@@ -499,7 +498,6 @@ class ArticleMainTest extends \OxidTestCase
     public function testSaveNoParent()
     {
         oxTestModules::addFunction('oxarticle', 'save', '{ return true; }');
-        oxTestModules::addFunction('oxarticle', 'assignRecord', '{ return true; }');
         oxTestModules::addFunction('article_main', 'saveAdditionalArticleData', '{ throw new Exception( "saveAdditionalArticleData" ); }');
 
         $this->setRequestParameter("oxid", -1);

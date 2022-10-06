@@ -66,55 +66,6 @@ class BasketreservationTest extends \OxidTestCase
     }
 
     /**
-     * oxBasketReservation::_loadReservations() test case
-     * test the load of reservation oxuserbasket
-     *
-     * @return null
-     */
-    public function testLoadReservationsLoad()
-    {
-        $oUO = $this->getMock(\OxidEsales\Eshop\Application\Model\UserBasket::class, array('assignRecord', 'buildSelectString', 'setIsNewBasket'));
-        $oUO->expects($this->once())->method('buildSelectString')
-            ->with($this->equalTo(array('oxuserbaskets.oxuserid' => 'p:basketId', 'oxuserbaskets.oxtitle' => 'reservations')))
-            ->will($this->returnValue('selectString'));
-        $oUO->expects($this->once())->method('assignRecord')
-            ->with($this->equalTo('selectString'))
-            ->will($this->returnValue(true));
-        $oUO->expects($this->never())->method('setIsNewBasket');
-
-        oxTestModules::addModuleObject('oxuserbasket', $oUO);
-
-        $oR = oxNew('oxBasketReservation');
-        $this->assertSame($oUO, $oR->loadReservations('p:basketId'));
-    }
-
-    /**
-     * oxBasketReservation::_loadReservations() test case
-     * test if the new reservation will create as we expect
-     *
-     * @return null
-     */
-    public function testLoadReservationsCreate()
-    {
-        $oUO = $this->getMock(\OxidEsales\Eshop\Application\Model\UserBasket::class, array('assignRecord', 'buildSelectString', 'setIsNewBasket'));
-        $oUO->expects($this->once())->method('buildSelectString')
-            ->with($this->equalTo(array('oxuserbaskets.oxuserid' => 'p:basketId', 'oxuserbaskets.oxtitle' => 'reservations')))
-            ->will($this->returnValue('selectString'));
-        $oUO->expects($this->once())->method('assignRecord')
-            ->with($this->equalTo('selectString'))
-            ->will($this->returnValue(false));
-        $oUO->expects($this->once())->method('setIsNewBasket')->will($this->returnValue(null));
-
-        oxTestModules::addModuleObject('oxuserbasket', $oUO);
-
-        $oR = oxNew('oxBasketReservation');
-        $this->assertSame($oUO, $oR->loadReservations('p:basketId'));
-
-        $this->assertEquals('reservations', $oUO->oxuserbaskets__oxtitle->value);
-        $this->assertEquals('p:basketId', $oUO->oxuserbaskets__oxuserid->value);
-    }
-
-    /**
      * oxBasketReservation::getReservations() test case
      * test on the basis of an id with cache if the getter return what we expect
      *
