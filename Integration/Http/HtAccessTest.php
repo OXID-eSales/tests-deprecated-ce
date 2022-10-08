@@ -7,6 +7,8 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Http;
 
+use OxidEsales\Eshop\Core\Theme;
+
 /**
  * Testing that the .htaccess rules are as expected.
  *
@@ -78,6 +80,9 @@ class HtAccessTest extends \OxidEsales\TestingLibrary\UnitTestCase
      */
     public function testHtAccessRewrite301ForNotRedirectedFileExtensions($fileExtension, $message)
     {
+        $theme = oxNew(Theme::class);
+        $theme->load(ACTIVE_THEME);
+        $theme->activate();
         $response = $this->callCurl('/file.' . $fileExtension);
 
         $this->assertNoHttpCode301($message, $response);

@@ -189,6 +189,7 @@ class RssfeedTest extends \OxidTestCase
     public function testGetArticleItemsWithNoArticlePrice()
     {
         oxTestModules::addFunction('oxutilsurl', 'prepareUrlForNoSession', '{return $aA[0]."extra";}');
+        $this->setConfigParam('bl_perfParseLongDescinSmarty', true);
 
         $oActCur = new stdClass();
         $oActCur->decimal = 1;
@@ -210,7 +211,7 @@ class RssfeedTest extends \OxidTestCase
         $oArt1->oxarticles__oxprice = new oxField(20);
         $oArt1->oxarticles__oxtimestamp = new oxField('2011-09-06 09:46:42');
 
-        $oLongDesc2 = new oxField(" &nbsp;<div>");
+        $oLongDesc2 = new oxField(" &nbsp;<div>", Field::T_RAW);
 
         $oArt2 = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", "getLongDescription", "getPrice"));
         $oArt2->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));

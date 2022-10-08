@@ -196,14 +196,14 @@ class UtilsViewTest extends \OxidTestCase
     public function testGetTemplateOutput()
     {
         $this->getConfig()->setConfigParam('iDebug', 0);
-        $sTpl = __DIR__ . "/../testData//misc/testTempOut";
+        $sTpl = 'message/error';
 
         $oView = oxNew('oxview');
-        $oView->addTplParam('articletitle', 'xxx');
+        $oView->addTplParam('statusMessage', 'xxx');
 
         $oUtilsView = oxNew('oxutilsview');
 
-        $this->assertEquals('xxx', $oUtilsView->getTemplateOutput($sTpl, $oView));
+        $this->assertEquals('<p class="alert alert-danger">xxx</p>', $oUtilsView->getTemplateOutput($sTpl, $oView));
     }
 
     public function testPassAllErrorsToView()

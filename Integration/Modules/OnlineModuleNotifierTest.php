@@ -7,6 +7,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
+use OxidEsales\Eshop\Core\OnlineModuleVersionNotifier;
 use OxidEsales\Eshop\Core\ShopVersion;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
@@ -51,7 +52,7 @@ class OnlineModuleNotifierTest extends BaseModuleTestCase
         $oCaller = $this->getMock(\OxidEsales\Eshop\Core\OnlineModuleVersionNotifierCaller::class, array('doRequest'), array(), '', false);
         $oCaller->method('doRequest')->with($this->equalTo($this->getExpectedRequest()));
 
-        $oNotifier = new oxOnlineModuleVersionNotifier($oCaller, oxNew('oxModuleList'));
+        $oNotifier = new OnlineModuleVersionNotifier($oCaller);
         $oNotifier->versionNotify();
     }
 

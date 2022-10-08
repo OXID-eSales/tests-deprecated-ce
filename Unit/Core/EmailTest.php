@@ -394,7 +394,7 @@ final class EmailTest extends \OxidTestCase
         $sImageDir = $myConfig->getImageDir();
 
         $email = oxNew('oxEmail');
-        $email->setBody("<img src='{$sImageDir}/logo.png'> --- <img src='{$sImageDir}/stars.jpg'>");
+        $email->setBody("<img src='{$sImageDir}/logo_oxid.png'> --- <img src='{$sImageDir}/stars.jpg'>");
 
         $email->includeImages(
             $myConfig->getImageDir(),
@@ -405,7 +405,7 @@ final class EmailTest extends \OxidTestCase
         );
 
         $aAttachments = $email->getAttachments();
-        $this->assertEquals('logo.png', $aAttachments[0][1]);
+        $this->assertEquals('logo_oxid.png', $aAttachments[0][1]);
         $this->assertEquals('stars.jpg', $aAttachments[1][1]);
     }
 
