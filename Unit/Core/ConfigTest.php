@@ -72,7 +72,7 @@ class ConfigTest extends \OxidTestCase
         $this->_iCurr = $this->getSession()->getVariable('currency');
 
         $theme = oxNew(Theme::class);
-        $theme->load('azure');
+        $theme->load(ACTIVE_THEME);
         $theme->activate();
     }
 
@@ -559,7 +559,7 @@ class ConfigTest extends \OxidTestCase
         $oConfig->init();
         $sShopId = $oConfig->getBaseShopId();
 
-        $sQ = 'select oxvarname from oxconfig where (oxmodule="" or oxmodule="theme:azure") and oxvartype not in ( "bool", "arr", "aarr" )  and oxshopid="' . $sShopId . '"  and oxmodule="" order by rand()';
+        $sQ = 'select oxvarname from oxconfig where (oxmodule="" or oxmodule="theme:twig") and oxvartype not in ( "bool", "arr", "aarr" )  and oxshopid="' . $sShopId . '"  and oxmodule="" order by rand()';
         $sVar = oxDb::getDb()->getOne($sQ);
 
         $sQ = 'select oxvarvalue from oxconfig where oxshopid="' . $sShopId . '" and oxvarname="' . $sVar . '" and oxmodule=""';
@@ -629,7 +629,7 @@ class ConfigTest extends \OxidTestCase
         $oDb = oxDb::getDb(oxDB::FETCH_MODE_ASSOC);
 
         $aVars = array("theme:basic#iNewBasketItemMessage",
-                       "theme:azure#iNewBasketItemMessage",
+                       "theme:twig#iNewBasketItemMessage",
 
                        "theme:basic#iTopNaviCatCount",
                        "theme:azure#iTopNaviCatCount",
@@ -1059,7 +1059,7 @@ class ConfigTest extends \OxidTestCase
     public function testThemeNameExpectsDefault()
     {
         $oConfig = new modForTestGetBaseTplDirExpectsDefault();
-        $this->assertEquals('azure', $oConfig->getConfigParam('sTheme'));
+        $this->assertEquals(ACTIVE_THEME, $oConfig->getConfigParam('sTheme'));
     }
 
     public function testGetResourceUrlExpectsDefault()
@@ -1154,9 +1154,11 @@ class ConfigTest extends \OxidTestCase
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
 
-        $sDir = $this->getViewsPath($oConfig) . 'tpl/page/shop/start.tpl';
+        $templateExtension = $this->getParameter('oxid_esales.templating.engine_template_extension');
 
-        $this->assertEquals($sDir, $oConfig->getTemplatePath('page/shop/start.tpl', false));
+        $sDir = $this->getViewsPath($oConfig) . 'tpl/page/shop/start.' . $templateExtension;
+
+        $this->assertEquals($sDir, $oConfig->getTemplatePath('page/shop/start.' . $templateExtension, false));
     }
 
     public function testGetTemplatePathAdmin()
@@ -2090,12 +2092,12 @@ class ConfigTest extends \OxidTestCase
     {
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $oConfig->setConfigParam('sTheme', 'azure');
+        $oConfig->setConfigParam('sTheme', ACTIVE_THEME);
 
         $sMainURL = $oConfig->getConfigParam('sShopURL');
         $sMallURL = 'http://www.example.com/';
 
-        $sDir = 'out/azure/src/';
+        $sDir = 'out/' . ACTIVE_THEME . '/src/';
 
         $oConfig->setConfigParam('sMallShopURL', $sMallURL);
 

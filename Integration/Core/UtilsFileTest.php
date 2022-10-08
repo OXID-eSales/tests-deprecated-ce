@@ -23,7 +23,7 @@ class UtilsFileTest extends UnitTestCase
         $this->assertFalse($utilsFile->urlValidate("test/notvalid"));
         $this->assertFalse($utilsFile->urlValidate("http://www.oxid_non_existing_page.com"));
 
-        $this->activateTheme('azure');
+        $this->activateTheme(ACTIVE_THEME);
         $shopUrl = $this->getTestConfig()->getShopUrl();
         $this->assertTrue($utilsFile->urlValidate($shopUrl . "?param=value"));
     }

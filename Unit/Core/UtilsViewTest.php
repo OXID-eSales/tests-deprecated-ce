@@ -23,7 +23,7 @@ class UtilsViewTest extends \OxidTestCase
         parent::setUp();
 
         $theme = oxNew(Theme::class);
-        $theme->load('azure');
+        $theme->load(ACTIVE_THEME);
         $theme->activate();
     }
 
@@ -62,8 +62,8 @@ class UtilsViewTest extends \OxidTestCase
         $shopPath = $this->getShopPath();
 
         $dirs = [
-            $shopPath . 'Application/views/azure/tpl/',
-            $shopPath . 'out/azure/tpl/',
+            $shopPath . 'Application/views/' . ACTIVE_THEME . '/tpl/',
+            $shopPath . 'out/' . ACTIVE_THEME . '/tpl/',
         ];
 
         $utilsView = oxNew(UtilsView::class);
@@ -83,8 +83,8 @@ class UtilsViewTest extends \OxidTestCase
         $shopPath = $this->getShopPath();
 
         $dirs = [
-            $shopPath . 'Application/views/azure/tpl/',
-            $shopPath . 'out/azure/tpl/',
+            $shopPath . 'Application/views/' . ACTIVE_THEME . '/tpl/',
+            $shopPath . 'out/' . ACTIVE_THEME . '/tpl/',
         ];
 
         $utilsView = oxNew(UtilsView::class);
@@ -175,11 +175,6 @@ class UtilsViewTest extends \OxidTestCase
         $aDirs[] = "testDir2";
         $aDirs[] = $myConfig->getTemplateDir(false);
         $sDir = $myConfig->getOutDir(true) . $myConfig->getConfigParam('sTheme') . "/tpl/";
-        if (!in_array($sDir, $aDirs)) {
-            $aDirs[] = $sDir;
-        }
-
-        $sDir = $myConfig->getOutDir(true) . "azure/tpl/";
         if (!in_array($sDir, $aDirs)) {
             $aDirs[] = $sDir;
         }
@@ -338,10 +333,7 @@ class UtilsViewTest extends \OxidTestCase
         if (!in_array($dir, $dirs)) {
             $dirs[] = $dir;
         }
-        $dir = $config->getOutDir(true) . "azure/tpl/";
-        if (!in_array($dir, $dirs)) {
-            $dirs[] = $dir;
-        }
+
         return $dirs;
     }
 

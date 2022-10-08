@@ -37,7 +37,7 @@ final class EmailTest extends \OxidTestCase
     {
         parent::setUp();
 
-        $this->getConfig()->setConfigParam('sTheme', 'azure');
+        $this->getConfig()->setConfigParam('sTheme', ACTIVE_THEME);
 
         $this->email = oxNew("oxEmail");
 
