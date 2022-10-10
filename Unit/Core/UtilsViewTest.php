@@ -9,15 +9,13 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Theme;
-use OxidEsales\Eshop\Core\UtilsView;
-use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
-use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext;
 use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxRegistry;
 
 class UtilsViewTest extends \OxidTestCase
 {
     use ContainerTrait;
+
     public function setup(): void
     {
         parent::setUp();
@@ -25,167 +23,6 @@ class UtilsViewTest extends \OxidTestCase
         $theme = oxNew(Theme::class);
         $theme->load(ACTIVE_THEME);
         $theme->activate();
-    }
-
-    public function testGetTemplateDirsContainsAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $expectedTemplateDirs = $this->getTemplateDirsAzure();
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-
-        $this->assertArraySubset($expectedTemplateDirs, $utilsView->getTemplateDirs());
-    }
-
-    public function testGetTemplateDirsOnlyAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $expectedTemplateDirs = $this->getTemplateDirsAzure();
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-
-        $this->assertEquals($expectedTemplateDirs, $utilsView->getTemplateDirs());
-    }
-
-    public function testGetEditionTemplateDirsContainsAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $shopPath = $this->getShopPath();
-
-        $dirs = [
-            $shopPath . 'Application/views/' . ACTIVE_THEME . '/tpl/',
-            $shopPath . 'out/' . ACTIVE_THEME . '/tpl/',
-        ];
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-
-        $result = $utilsView->getTemplateDirs();
-
-        $this->assertArraySubset($result, $dirs);
-    }
-
-    public function testGetEditionTemplateDirsOnlyAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $shopPath = $this->getShopPath();
-
-        $dirs = [
-            $shopPath . 'Application/views/' . ACTIVE_THEME . '/tpl/',
-            $shopPath . 'out/' . ACTIVE_THEME . '/tpl/',
-        ];
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-
-        $this->assertEquals($dirs, $utilsView->getTemplateDirs());
-    }
-
-    public function testGetEditionTemplateDirsForAdminContainsAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
-        $shopPath = $this->getShopPath();
-
-        $dirs = [
-            $shopPath . 'Application/views/' . $adminTheme . '/tpl/',
-        ];
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(true);
-
-        $result = $utilsView->getTemplateDirs();
-
-        $this->assertArraySubset($result, $dirs);
-    }
-
-    public function testGetEditionTemplateDirsForAdminOnlyAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
-        $shopPath = $this->getShopPath();
-
-        $dirs = [
-            $shopPath . 'Application/views/' . $adminTheme . '/tpl/',
-        ];
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(true);
-
-        $this->assertEquals($dirs, $utilsView->getTemplateDirs());
-    }
-
-    public function testSetTemplateDirContainsAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $myConfig = $this->getConfig();
-        $aDirs[] = "testDir1";
-        $aDirs[] = "testDir2";
-        $aDirs[] = $myConfig->getTemplateDir(false);
-        $sDir = $myConfig->getOutDir(true) . $myConfig->getConfigParam('sTheme') . "/tpl/";
-        if (!in_array($sDir, $aDirs)) {
-            $aDirs[] = $sDir;
-        }
-
-        $sDir = $myConfig->getOutDir(true) . "azure/tpl/";
-        if (!in_array($sDir, $aDirs)) {
-            $aDirs[] = $sDir;
-        }
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-        $utilsView->setTemplateDir("testDir1");
-        $utilsView->setTemplateDir("testDir2");
-        $utilsView->setTemplateDir("testDir1");
-
-        $result = $utilsView->getTemplateDirs();
-
-        $this->assertArraySubset($result, $aDirs);
-    }
-
-    public function testSetTemplateDirOnlyAzure()
-    {
-        if ($this->getTestConfig()->getShopEdition() != 'CE') {
-            $this->markTestSkipped('This test is for Community edition only.');
-        }
-
-        $myConfig = $this->getConfig();
-        $aDirs[] = "testDir1";
-        $aDirs[] = "testDir2";
-        $aDirs[] = $myConfig->getTemplateDir(false);
-        $sDir = $myConfig->getOutDir(true) . $myConfig->getConfigParam('sTheme') . "/tpl/";
-        if (!in_array($sDir, $aDirs)) {
-            $aDirs[] = $sDir;
-        }
-
-        $utilsView = oxNew(UtilsView::class);
-        $utilsView->setAdminMode(false);
-        $utilsView->setTemplateDir("testDir1");
-        $utilsView->setTemplateDir("testDir2");
-        $utilsView->setTemplateDir("testDir1");
-
-        $this->assertEquals($aDirs, $utilsView->getTemplateDirs());
     }
 
     /**
@@ -305,53 +142,5 @@ class UtilsViewTest extends \OxidTestCase
 
         $oxUtilsView = oxNew(\OxidEsales\Eshop\Core\UtilsView::class);
         $oxUtilsView->addErrorToDisplay(null, false, false, "");
-    }
-
-    private function assertArraySubset(array $subset, array $array): void
-    {
-        $replaced = \array_replace_recursive($array, $subset);
-        $this->assertSame(
-            $array,
-            $replaced,
-            sprintf(
-                "Failed asserting that %s has the subset %s",
-                \var_export($array, true),
-                \var_export($subset, true)
-            )
-        );
-    }
-
-    /**
-     * @return array
-     */
-    private function getTemplateDirsAzure()
-    {
-        $config = $this->getConfig();
-        $dirs = [];
-        $dirs[] = $config->getTemplateDir(false);
-        $dir = $config->getOutDir(true) . $config->getConfigParam('sTheme') . "/tpl/";
-        if (!in_array($dir, $dirs)) {
-            $dirs[] = $dir;
-        }
-
-        return $dirs;
-    }
-
-    /**
-     * @return string
-     */
-    private function getShopPath()
-    {
-        $config = $this->getConfig();
-        $shopPath = rtrim($config->getConfigParam('sShopDir'), '/') . '/';
-        return $shopPath;
-    }
-
-    /**
-     * @return string
-     */
-    private function getCompileDirectory()
-    {
-        return (new BasicContext())->getCacheDirectory();
     }
 }
