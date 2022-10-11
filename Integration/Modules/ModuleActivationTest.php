@@ -51,7 +51,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
                 'extending_1_class',
                 'with_2_templates',
                 'with_everything',
-                'extending_3_blocks',
                 'with_events'
             ],
 
@@ -60,13 +59,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class   => 'oeTest/extending_1_class/myorder&with_everything/myorder1',
                     \OxidEsales\Eshop\Application\Model\Article::class => 'with_everything/myarticle',
@@ -100,7 +92,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
                 'versions'        => [
                     'extending_1_class'  => '1.0',
                     'with_2_templates'   => '1.0',
-                    'extending_3_blocks' => '1.0',
                     'with_events'        => '1.0',
                     'with_everything'    => '1.0',
                 ],
@@ -123,10 +114,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Article::class => 'with_everything/myarticle',
                     \OxidEsales\Eshop\Application\Model\User::class    => 'with_everything/myuser',
@@ -168,7 +155,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class   => '' .
                         'oeTest/extending_1_class/myorder&extending_3_classes_with_1_extension/mybaseclass&extending_3_classes/myorder&oeTest/extending_1_class_3_extensions/myorder1',
@@ -196,7 +182,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
                 'extending_1_class',
                 'with_2_templates',
                 'with_2_settings',
-                'extending_3_blocks',
                 'with_everything',
                 'with_events',
                 'no_extending'
@@ -207,13 +192,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                    ['template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'],
-                    ['template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'],
-                ],
                 'extend'          => [
                     \OxidEsales\Eshop\Application\Model\Order::class   => 'oeTest/extending_1_class/myorder&with_everything/myorder1',
                     \OxidEsales\Eshop\Application\Model\Article::class => 'with_everything/myarticle',
@@ -250,7 +228,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
                     'extending_1_class'  => '1.0',
                     'with_2_templates'   => '1.0',
                     'with_2_settings'    => '1.0',
-                    'extending_3_blocks' => '1.0',
                     'no_extending'       => '1.0',
                     'with_events'        => '1.0',
                     'with_everything'    => '1.0',
@@ -274,7 +251,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [],
                 'extend'          => [],
                 'settings'        => [],
                 'disabledModules' => [],
@@ -308,7 +284,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [],
                 'extend'          => [],
                 'settings'        => [
                     ['group' => 'my_checkconfirm', 'name' => 'blCheckConfirm', 'type' => 'bool', 'value' => 'true'],
@@ -339,7 +314,6 @@ final class ModuleActivationTest extends BaseModuleTestCase
 
             // environment asserts
             [
-                'blocks'          => [],
                 'extend'          => [],
                 'settings'        => [],
                 'disabledModules' => [],

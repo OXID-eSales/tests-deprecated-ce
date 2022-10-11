@@ -16,6 +16,7 @@ abstract class FlowThemeTestCase extends AcceptanceTestCase
 {
     protected function setUp(): void
     {
+        $this->markTestSkipped('FlowThemeTests should be removed?');
         parent::setUp();
         $this->activateTheme('flow');
     }

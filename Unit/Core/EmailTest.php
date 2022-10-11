@@ -14,13 +14,20 @@ use oxField;
 use OxidEsales\Eshop\Application\Model\BasketItem;
 use OxidEsales\Eshop\Application\Model\Shop;
 use OxidEsales\Eshop\Core\Price;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
 use oxPrice;
 use oxRegistry;
 use oxTestModules;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophet;
+use Psr\Container\ContainerInterface;
 
 final class EmailTest extends \OxidTestCase
 {
+    use ProphecyTrait;
+
     protected $email = null;
     protected $user = null;
     protected $shop = null;
@@ -30,7 +37,7 @@ final class EmailTest extends \OxidTestCase
     {
         parent::setUp();
 
-        $this->getConfig()->setConfigParam('sTheme', 'azure');
+        $this->getConfig()->setConfigParam('sTheme', ACTIVE_THEME);
 
         $this->email = oxNew("oxEmail");
 
@@ -387,7 +394,7 @@ final class EmailTest extends \OxidTestCase
         $sImageDir = $myConfig->getImageDir();
 
         $email = oxNew('oxEmail');
-        $email->setBody("<img src='{$sImageDir}/logo.png'> --- <img src='{$sImageDir}/stars.jpg'>");
+        $email->setBody("<img src='{$sImageDir}/logo_oxid.png'> --- <img src='{$sImageDir}/stars.jpg'>");
 
         $email->includeImages(
             $myConfig->getImageDir(),
@@ -398,7 +405,7 @@ final class EmailTest extends \OxidTestCase
         );
 
         $aAttachments = $email->getAttachments();
-        $this->assertEquals('logo.png', $aAttachments[0][1]);
+        $this->assertEquals('logo_oxid.png', $aAttachments[0][1]);
         $this->assertEquals('stars.jpg', $aAttachments[1][1]);
     }
 
@@ -795,12 +802,13 @@ final class EmailTest extends \OxidTestCase
 
     public function testSendOrderEmailToOwnerCorrectSenderReceiver()
     {
-        $oSmartyMock = $this->getMock("Smarty", array("fetch"));
-        $oSmartyMock->expects($this->any())->method("fetch")->will($this->returnValue(''));
+        $renderer = $this->prophesize(TemplateRendererInterface::class);
+        $renderer->renderTemplate(Argument::type('string'), Argument::type('array'))->willReturn('');
+        $renderer->exists(Argument::type('string'))->willReturn(false);
 
-        $email = $this->getMock(\OxidEsales\Eshop\Core\Email::class, array("sendMail", "_getSmarty"));
+        $email = $this->getMock(\OxidEsales\Eshop\Core\Email::class, array("sendMail", "getRenderer"));
         $email->expects($this->once())->method("sendMail")->will($this->returnValue(true));
-        $email->expects($this->any())->method("_getSmarty")->will($this->returnValue($oSmartyMock));
+        $email->expects($this->any())->method("getRenderer")->will($this->returnValue($renderer->reveal()));
 
         $user = oxNew('oxUser');
         $user->load("oxdefaultadmin");

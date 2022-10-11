@@ -51,13 +51,15 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
 
     /**
      * Sets up test
+     *
+     * TODO: requires template engine
      */
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->origTheme = $this->getConfig()->getConfigParam('sTheme');
-        $this->activateTheme('azure');
+        $this->activateTheme(ACTIVE_THEME);
 
         $this->getConfig()->saveShopConfVar('bool', 'blEnableSeoCache', false);
 

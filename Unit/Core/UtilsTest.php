@@ -11,6 +11,7 @@ use Exception;
 use modDB;
 use oxField;
 use OxidEsales\EshopCommunity\Core\Registry;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use oxRegistry;
 use oxTestModules;
 use oxUtils;
@@ -18,6 +19,8 @@ use stdClass;
 
 class UtilsTest extends \OxidTestCase
 {
+    use ContainerTrait;
+
     protected $_sTestLogFileName = null;
 
     /**
@@ -712,34 +715,6 @@ class UtilsTest extends \OxidTestCase
 
         @unlink($aPaths[0]); //deleting test cache file
         $this->assertEquals(1, count($aPaths));
-    }
-
-    public function testResetTemplateCache()
-    {
-        $config = $this->getConfig();
-        $config->setConfigParam('sTheme', 'azure');
-
-        $utils = oxRegistry::getUtils();
-        $smarty = \OxidEsales\Eshop\Core\Registry::getUtilsView()->getSmarty(true);
-        $tmpDir = $config->getConfigParam('sCompileDir') . "/smarty/";
-
-        $templates = array('message/success.tpl', 'message/notice.tpl', 'message/errors.tpl',);
-        foreach ($templates as $template) {
-            $smarty->fetch($template);
-        }
-
-        $removeTemplate = basename(reset($templates));
-        $leaveTemplate = basename(array_pop($templates));
-
-        //checking if test files were written to temp dir
-        $this->assertEquals(1, count(glob("{$tmpDir}/*{$removeTemplate}.php")), "File written " . $removeTemplate);
-        $this->assertEquals(1, count(glob("{$tmpDir}/*{$leaveTemplate}.php")), "File written " . $leaveTemplate);
-
-        //Remove templates
-        $this->assertNull($utils->resetTemplateCache($templates));
-
-        $this->assertEquals(0, count(glob("{$tmpDir}/*{$removeTemplate}.php")), "File removed " . $removeTemplate);
-        $this->assertEquals(1, count(glob("{$tmpDir}/*{$leaveTemplate}.php")), "File left " . $leaveTemplate);
     }
 
     public function testResetLanguageCache()

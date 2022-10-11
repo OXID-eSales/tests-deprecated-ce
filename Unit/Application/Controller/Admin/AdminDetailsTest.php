@@ -7,22 +7,14 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller\Admin;
 
+use oxDb;
+use oxField;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
 use OxidEsales\Facts\Facts;
-use \oxLinks;
-use \oxAdminView;
-use \stdClass;
-use \oxField;
-use \oxDb;
+use stdClass;
 
-/**
- * Testing oxAdminDetails class.
- */
 class AdminDetailsTest extends \OxidTestCase
 {
-    /**
-     * Tear down the fixture.
-     */
     protected function tearDown(): void
     {
         $this->cleanUpTable('oxlinks');
@@ -57,22 +49,6 @@ class AdminDetailsTest extends \OxidTestCase
         $this->assertEquals('', $oAdminDetails->getEditValue($oObject, 'notExistingField'));
         $this->assertEquals('field1value', $oAdminDetails->getEditValue($oObject, 'oField1'));
         $this->assertEquals('field2value', $oAdminDetails->getEditValue($oObject, 'oField2'));
-    }
-
-    /**
-     * Test get edit value - when smarty parser is off.
-     */
-    public function testGetEditValue_parseIsOff()
-    {
-        $oObject = new stdClass();
-        $oObject->oField = new oxField('test [{$oViewConf->getCurrentHomeDir()}]');
-
-        $myConfig = $this->getConfig();
-        $myConfig->setConfigParam("bl_perfParseLongDescinSmarty", false);
-        $sUrl = $this->getConfig()->getCurrentShopURL();
-
-        $oAdminDetails = oxNew('oxadmindetails');
-        $this->assertEquals("test $sUrl", $oAdminDetails->getEditValue($oObject, 'oField'));
     }
 
     /**
@@ -154,16 +130,15 @@ class AdminDetailsTest extends \OxidTestCase
     }
 
     /**
-     *  Test get category tree unsetting active category.
+     * @doesNotPerformAssertions
      */
-    public function testGetCategoryTreeUnsettingActiveCategory()
+    public function testGetCategoryTreeUnsettingActiveCategory(): void
     {
         $tableViewNameGenerator = oxNew(TableViewNameGenerator::class);
         $sCatTable = $tableViewNameGenerator->getViewName('oxcategories');
         $sCat = oxDb::getDb()->getOne("select oxid from $sCatTable where oxactive = 1");
 
         $oAdminDetails = oxNew('oxadmindetails');
-        $sActCatId = $oAdminDetails->getCategoryTree('xxx', null, $sCat);
         $oList = $oAdminDetails->getViewDataElement('xxx');
 
         foreach ($oList as $oCat) {
@@ -174,16 +149,16 @@ class AdminDetailsTest extends \OxidTestCase
     }
 
     /**
-     *  Test get category tree marking active category.
+     * @doesNotPerformAssertions
      */
-    public function testGetCategoryTreeMarkingActiveCategory()
+    public function testGetCategoryTreeMarkingActiveCategory(): void
     {
         $tableViewNameGenerator = oxNew(TableViewNameGenerator::class);
         $sCatTable = $tableViewNameGenerator->getViewName('oxcategories');
         $sCat = oxDb::getDb()->getOne("select oxid from $sCatTable where oxactive = 1");
 
         $oAdminDetails = oxNew('oxadmindetails');
-        $sActCatId = $oAdminDetails->getCategoryTree('xxx', $sCat);
+        $oAdminDetails->getCategoryTree('xxx', $sCat);
         $oList = $oAdminDetails->getViewDataElement('xxx');
 
         foreach ($oList as $oCat) {

@@ -17,11 +17,14 @@ use oxDb;
 use oxEmail;
 use oxField;
 use oxGroups;
+use OxidEsales\Eshop\Application\Model\Article;
+use OxidEsales\Eshop\Application\Model\Category;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
+use OxidEsales\EshopCommunity\Application\Controller\FrontendController;
 use OxidEsales\EshopCommunity\Application\Model\RssFeed;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
 use oxLinks;
@@ -217,23 +220,6 @@ class UtfTest extends \OxidTestCase
             $this->assertTrue(strcmp($oArticle->{$sField}->value, $sValue) === 0, $oArticle->{$sField}->value . " != $sValue");
         }
         $this->assertEquals($sLongDesc, $oArticle->getLongDescription()->value);
-    }
-
-    public function testOxArticleLongDescriptionSmartyProcess()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', 1);
-
-        $sValue = '[{ $oViewConf->getImageUrl() }] Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-        $sResult = $this->getConfig()->getImageUrl(false) . ' Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->setId('_testArticle');
-        $oArticle->setArticleLongDesc($sValue);
-        $oArticle->save();
-
-        $oArticle = oxNew('oxArticle');
-        $oArticle->load('_testArticle');
-        $this->assertEquals($sResult, $oArticle->getLongDesc());
     }
 
     public function testOxArticleListLoadCategoryIds()
@@ -451,24 +437,6 @@ class UtfTest extends \OxidTestCase
         $this->assertEquals($sValue, $oCat->oxcategories__oxtitle->value);
         $this->assertEquals($sValue, $oCat->oxcategories__oxdesc->value);
         $this->assertEquals($sValue, $oCat->oxcategories__oxlongdesc->value);
-    }
-
-    public function testOxCategoryLongDescriptionSmartyProcess()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', 1);
-
-        $sValue = '[{ $oViewConf->getImageUrl() }] Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-        $sResult = $this->getConfig()->getImageUrl(false) . ' Nekilnojamojo turto agentūrų verslo sėkme Литовские европарламентарии, срок полномочий которых в 2009 году подходит к концу Der Umstieg war für uns ein voller Erfolg. OXID eShop ist flexibel und benutzerfreundlich';
-
-        $oCat = new oxBase();
-        $oCat->init('oxcategories');
-        $oCat->setId('_testCat2');
-        $oCat->oxcategories__oxlongdesc = new oxField($sValue);
-        $oCat->save();
-
-        $oCat = new oxCategory();
-        $oCat->load('_testCat2');
-        $this->assertEquals($sResult, $oCat->getLongDesc());
     }
 
     public function testOxCategoryLoadCategoryIds()
@@ -1087,18 +1055,19 @@ class UtfTest extends \OxidTestCase
         }
     }
 
+    /**
+     * TODO: template engine needed
+     */
     public function testOxRssFeedGetArticleItems()
     {
         $config = $this->getConfig();
         $config->setConfigParam('aCurrencies', array('EUR@1.00@.@.@EUR@1'));
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', false);
 
         $rssFeed = oxNew('oxrssfeed');
         Registry::set(Config::class, $config);
 
         $shortDescription = 'agentūrų Литовские für';
-        $longDescription = new stdClass();
-        $longDescription->value = "";
+        $longDescription = new Field('', Field::T_RAW);
 
         $articleMock = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", 'getLongDescription'));
         $articleMock->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
@@ -1588,13 +1557,11 @@ class UtfTest extends \OxidTestCase
     public function testaListCollectMetaDescription()
     {
         $sValue = "agentūЛитовfür \n \r \t \xc2\x95 \xc2\xa0";
-        $oActCat = new oxCategory();
-        $oActCat->oxcategories__oxlongdesc = $this->getMock(\OxidEsales\Eshop\Core\Field::class, array('__get'));
-        $oActCat->oxcategories__oxlongdesc->expects($this->once())->method('__get')->will($this->returnValue(''));
+        $oActCat = new Category();
+        $oActCat->oxcategories__oxlongdesc = new Field('');
 
-        $oArticle = oxNew('oxArticle');
-        $oArticle->oxarticles__oxtitle = $this->getMock(\OxidEsales\Eshop\Core\Field::class, array('__get'));
-        $oArticle->oxarticles__oxtitle->expects($this->exactly(2))->method('__get')->will($this->returnValue($sValue));
+        $oArticle = oxNew(Article::class);
+        $oArticle->oxarticles__oxtitle = new Field($sValue);
 
         $oArtList = new oxlist();
         $oArtList->offsetSet(0, $oArticle);

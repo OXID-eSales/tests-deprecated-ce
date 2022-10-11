@@ -95,7 +95,7 @@ class ModuleDeactivationTest extends BaseModuleTestCase
             // modules to be activated during test preparation
             array(
                 'extending_1_class', 'with_2_templates', 'with_2_settings',
-                'extending_3_blocks', 'with_everything', 'with_events'
+                'with_everything', 'with_events'
             ),
 
             // module that will be deactivated
@@ -103,11 +103,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(
-                    array('template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'),
-                    array('template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'),
-                    array('template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'),
-                ),
                 'extend'          => array(
                     \OxidEsales\Eshop\Application\Model\Order::class   => 'oeTest/extending_1_class/myorder',
                 ),
@@ -154,7 +149,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(),
                 'extend'          => array(),
                 'files'           => array(),
                 'settings'        => array(),
@@ -189,7 +183,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(),
                 'extend'          => array(
                     \OxidEsales\Eshop\Application\Model\Order::class =>
                                    'oeTest/extending_1_class/myorder&' .
@@ -224,7 +217,7 @@ class ModuleDeactivationTest extends BaseModuleTestCase
             // modules to be activated during test preparation
             array(
                 'extending_1_class', 'with_2_templates', 'with_2_settings',
-                'extending_3_blocks', 'with_everything', 'with_events', 'no_extending'
+                'with_everything', 'with_events', 'no_extending'
             ),
 
             // module that will be deactivated
@@ -232,13 +225,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(
-                    array('template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'),
-                    array('template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_bottom', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'),
-                    array('template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'),
-                    array('template' => 'page/checkout/basket.tpl', 'block' => 'basket_btn_next_top', 'file' => '/views/blocks/page/checkout/myexpresscheckout.tpl'),
-                    array('template' => 'page/checkout/payment.tpl', 'block' => 'select_payment', 'file' => '/views/blocks/page/checkout/mypaymentselector.tpl'),
-                ),
                 'extend'          => array(
                     \OxidEsales\Eshop\Application\Model\Order::class   => 'oeTest/extending_1_class/myorder&with_everything/myorder1',
                     \OxidEsales\Eshop\Application\Model\Article::class => 'with_everything/myarticle',
@@ -294,7 +280,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(),
                 'extend'          => array(),
                 'files'           => array(),
                 'settings'        => array(),
@@ -329,7 +314,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(),
                 'extend'          => array(),
                 'files'           => array(),
                 'settings'        => array(),
@@ -363,7 +347,6 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
             // environment asserts
             array(
-                'blocks'          => array(),
                 'extend'          => array(),
                 'files'           => array(),
                 'settings'        => array(),

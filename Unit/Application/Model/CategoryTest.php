@@ -19,14 +19,6 @@ use \oxTestModules;
 
 require_once TEST_LIBRARY_HELPERS_PATH . 'oxCategoryHelper.php';
 
-class oxcategoryTest_oxUtilsView extends oxUtilsView
-{
-    public function parseThroughSmarty($sDesc, $sOxid = null, $oActView = null, $blRecompile = false)
-    {
-        return 'aazz';
-    }
-}
-
 class CategoryTest extends \OxidTestCase
 {
     protected $_oCategoryA = null;
@@ -233,50 +225,6 @@ class CategoryTest extends \OxidTestCase
         $oObj3->load($oObj->getId());
         $this->assertEquals(1, $oObj3->oxcategories__oxleft->value);
         $this->assertEquals(4, $oObj3->oxcategories__oxright->value);
-    }
-
-    public function testAssignParseLongDesc()
-    {
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-        $this->_oCategory->oxcategories__oxlongdesc = new oxField('aa[{* smarty comment *}]zz', oxField::T_RAW);
-        $this->_oCategory->setId('test33');
-        $this->_oCategory->save();
-        $oObj3 = oxNew("oxCategory");
-        $oObj3->load($this->_oCategory->getId());
-        $this->assertEquals('aazz', $oObj3->getLongDesc());
-    }
-
-    /**
-     * getLongDesc() test case
-     * test returned long description with smarty tags when template regeneration is disabled
-     * and template is saved twice.
-     *
-     * @return null
-     */
-    public function testGetLongDescTagsWhenTemplateAlreadyGeneratedAndRegenerationDisabled()
-    {
-        $this->getConfig()->setConfigParam('blCheckTemplates', false);
-
-        $oCategory = oxNew('oxcategory');
-        $oCategory->oxcategories__oxlongdesc = new oxField("[{* *}]generated");
-        $oCategory->getLongDesc();
-        $oCategory->oxcategories__oxlongdesc = new oxField("[{* *}]regenerated");
-        $this->assertEquals('regenerated', $oCategory->getLongDesc());
-    }
-
-    public function testAssignParseLongDescInList()
-    {
-        $this->addClassExtension('oxcategoryTest_oxUtilsView', 'oxUtilsView');
-        $this->getConfig()->setConfigParam('bl_perfParseLongDescinSmarty', true);
-
-        $this->_oCategory->oxcategories__oxlongdesc = new oxField('aa[{* smarty comment *}]zz', oxField::T_RAW);
-        $this->_oCategory->setId('test33');
-        $this->_oCategory->save();
-        $oObj3 = oxNew("oxCategory");
-        $oObj3->setInList();
-        $oObj3->load($this->_oCategory->getId());
-        //NOT parsed
-        $this->assertEquals('aa[{* smarty comment *}]zz', $oObj3->oxcategories__oxlongdesc->value);
     }
 
     public function testAssignCountArt()

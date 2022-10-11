@@ -10,10 +10,17 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller;
 use OxidEsales\Eshop\Application\Model\RssFeed;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface;
 use \oxTestModules;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Container\ContainerInterface;
 
 class RssTest extends \OxidTestCase
 {
+    use ProphecyTrait;
+
     public function testGetChannel()
     {
         oxTestModules::addFunction('oxrssfeed', 'setChannel', '{$this->_aChannel = $aA[0];}');
@@ -51,25 +58,27 @@ class RssTest extends \OxidTestCase
 
     public function testRender()
     {
-        ContainerFactory::resetContainer();
-        $oSmarty = $this->getMock('Smarty', array('assign', 'fetch'));
-        $oSmarty->expects($this->any())->method('assign');
-        $oSmarty->expects($this->once())->method('fetch')->with($this->equalTo('widget/rss.tpl'), $this->equalTo('viewid'))->will($this->returnValue('smarty processed xml'));
-        $oUtilsView = $this->getMock(\OxidEsales\Eshop\Core\UtilsView::class, array('getSmarty'));
-        $oUtilsView->expects($this->once())->method('getSmarty')->will($this->returnValue($oSmarty));
+        $renderer = $this->prophesize(TemplateRendererInterface::class);
+        $renderer->renderTemplate(Argument::type('string'), Argument::type('array'))->willReturn('processed xml');
+
+        $bridge = $this->prophesize(TemplateRendererBridgeInterface::class);
+        $bridge->getTemplateRenderer()->willReturn($renderer->reveal());
+
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->get('OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface')->willReturn($bridge->reveal());
 
         $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('setHeader', 'showMessageAndExit'));
         $oUtils->expects($this->once())->method('setHeader')->with($this->equalTo('Content-Type: text/xml; charset=XCHARSET'));
-        $oUtils->expects($this->once())->method('showMessageAndExit')->with($this->equalTo('smarty processed xml'));
+        $oUtils->expects($this->once())->method('showMessageAndExit')->with($this->equalTo('processed xml'));
 
         $oLang = $this->getMock(\OxidEsales\Eshop\Core\Language::class, array('translateString'));
         $oLang->expects($this->once())->method('translateString')->with($this->equalTo('charset'))->will($this->returnValue('XCHARSET'));
 
-        $oRss = $this->getMock(\OxidEsales\Eshop\Application\Controller\RssController::class, array('getViewId'));
+        $oRss = $this->getMock(\OxidEsales\Eshop\Application\Controller\RssController::class, array('getViewId', 'getContainer'));
         $oRss->expects($this->once())->method('getViewId')->will($this->returnValue('viewid'));
+        $oRss->expects($this->any())->method('getContainer')->will($this->returnValue($container->reveal()));
 
         oxTestModules::addModuleObject('oxUtils', $oUtils);
-        oxTestModules::addModuleObject('oxUtilsView', $oUtilsView);
         oxTestModules::addModuleObject('oxLang', $oLang);
 
         $this->assertSame(null, $oRss->render());

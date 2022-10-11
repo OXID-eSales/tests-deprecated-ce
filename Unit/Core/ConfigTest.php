@@ -18,6 +18,8 @@ use OxidEsales\EshopCommunity\Core\Registry;
 use OxidEsales\EshopCommunity\Core\ShopIdCalculator;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration\Controller;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ActiveModulesDataProviderBridgeInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use OxidEsales\Facts\Facts;
 use oxRegistry;
 use oxTestModules;
@@ -56,6 +58,7 @@ class modForTestInitLoadingPriority extends oxConfig
 
 class ConfigTest extends \OxidTestCase
 {
+    use ContainerTrait;
     protected $_iCurr = null;
     protected $_aShops = array();
     private $shopUrl = 'http://www.example.com/';
@@ -69,7 +72,7 @@ class ConfigTest extends \OxidTestCase
         $this->_iCurr = $this->getSession()->getVariable('currency');
 
         $theme = oxNew(Theme::class);
-        $theme->load('azure');
+        $theme->load(ACTIVE_THEME);
         $theme->activate();
     }
 
@@ -556,7 +559,7 @@ class ConfigTest extends \OxidTestCase
         $oConfig->init();
         $sShopId = $oConfig->getBaseShopId();
 
-        $sQ = 'select oxvarname from oxconfig where (oxmodule="" or oxmodule="theme:azure") and oxvartype not in ( "bool", "arr", "aarr" )  and oxshopid="' . $sShopId . '"  and oxmodule="" order by rand()';
+        $sQ = 'select oxvarname from oxconfig where (oxmodule="" or oxmodule="theme:twig") and oxvartype not in ( "bool", "arr", "aarr" )  and oxshopid="' . $sShopId . '"  and oxmodule="" order by rand()';
         $sVar = oxDb::getDb()->getOne($sQ);
 
         $sQ = 'select oxvarvalue from oxconfig where oxshopid="' . $sShopId . '" and oxvarname="' . $sVar . '" and oxmodule=""';
@@ -626,7 +629,7 @@ class ConfigTest extends \OxidTestCase
         $oDb = oxDb::getDb(oxDB::FETCH_MODE_ASSOC);
 
         $aVars = array("theme:basic#iNewBasketItemMessage",
-                       "theme:azure#iNewBasketItemMessage",
+                       "theme:twig#iNewBasketItemMessage",
 
                        "theme:basic#iTopNaviCatCount",
                        "theme:azure#iTopNaviCatCount",
@@ -1056,13 +1059,14 @@ class ConfigTest extends \OxidTestCase
     public function testThemeNameExpectsDefault()
     {
         $oConfig = new modForTestGetBaseTplDirExpectsDefault();
-        $this->assertEquals('azure', $oConfig->getConfigParam('sTheme'));
+        $this->assertEquals(ACTIVE_THEME, $oConfig->getConfigParam('sTheme'));
     }
 
     public function testGetResourceUrlExpectsDefault()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = new modForTestGetBaseTplDirExpectsDefault();
-        $sDir = $oConfig->getConfigParam('sShopURL') . $this->getOutPath($oConfig, 'admin', false) . "src/";
+        $sDir = $oConfig->getConfigParam('sShopURL') . $this->getOutPath($oConfig, $adminTheme, false) . "src/";
         $this->assertEquals($sDir, $oConfig->getResourceUrl('', true));
     }
 
@@ -1091,7 +1095,7 @@ class ConfigTest extends \OxidTestCase
     {
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $this->getViewsPath($oConfig, 'admin') . 'tpl/';
+        $sDir = $this->getViewsPath($oConfig, $this->get(AdminThemeBridgeInterface::class)->getActiveTheme()) . 'tpl/';
         $this->assertEquals($sDir, $oConfig->getTemplateDir(true));
     }
 
@@ -1111,9 +1115,10 @@ class ConfigTest extends \OxidTestCase
 
     public function testGetTemplateUrlExpectsDefault()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $oConfig->getConfigParam('sShopURL') . $this->getViewsPath($oConfig, 'admin', false) . 'tpl/';
+        $sDir = $oConfig->getConfigParam('sShopURL') . $this->getViewsPath($oConfig, $adminTheme, false) . 'tpl/';
         $this->assertEquals($sDir, $oConfig->getTemplateUrl(null, true));
     }
 
@@ -1134,9 +1139,10 @@ class ConfigTest extends \OxidTestCase
 
     public function testGetResourceUrlAdminSsl()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = $this->getConfigWithSslMocked();
         $oConfig->init();
-        $sDir = $oConfig->getConfigParam('sSSLShopURL') . 'out/admin/src/';
+        $sDir = $oConfig->getConfigParam('sSSLShopURL') . 'out/' . $adminTheme . '/src/';
         $this->assertEquals($sDir, $oConfig->getResourceUrl(null, true));
     }
 
@@ -1148,17 +1154,23 @@ class ConfigTest extends \OxidTestCase
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
 
-        $sDir = $this->getViewsPath($oConfig) . 'tpl/page/shop/start.tpl';
+        $templateExtension = $this->getParameter('oxid_esales.templating.engine_template_extension');
 
-        $this->assertEquals($sDir, $oConfig->getTemplatePath('page/shop/start.tpl', false));
+        $sDir = $this->getViewsPath($oConfig) . 'tpl/page/shop/start.' . $templateExtension;
+
+        $this->assertEquals($sDir, $oConfig->getTemplatePath('page/shop/start.' . $templateExtension, false));
     }
 
     public function testGetTemplatePathAdmin()
     {
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $this->getViewsPath($oConfig, 'admin') . 'tpl/start.tpl';
-        $this->assertEquals($sDir, $oConfig->getTemplatePath('start.tpl', true));
+        $templateName = 'start.' . $this->getParameter('oxid_esales.templating.engine_template_extension');
+        $sDir =
+            $this->getViewsPath($oConfig, $this->get(AdminThemeBridgeInterface::class)->getActiveTheme()) .
+            'tpl/' . $templateName
+            ;
+        $this->assertEquals($sDir, $oConfig->getTemplatePath($templateName, true));
     }
 
     /**
@@ -1254,17 +1266,19 @@ class ConfigTest extends \OxidTestCase
      */
     public function testGetAbsAdminGetImageDirDefault()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $oConfig->getConfigParam('sShopDir') . 'out/admin/img/';
+        $sDir = $oConfig->getConfigParam('sShopDir') . 'out/' . $adminTheme . '/img/';
         $this->assertEquals($sDir, $oConfig->getImageDir(1));
     }
 
     public function testGetAbsAdminGetImageDirForActLang()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $oConfig->getConfigParam('sShopDir') . 'out/admin/img/';
+        $sDir = $oConfig->getConfigParam('sShopDir') . 'out/' . $adminTheme . '/img/';
         $this->assertEquals($sDir, $oConfig->getImageDir(1));
     }
 
@@ -1376,11 +1390,12 @@ class ConfigTest extends \OxidTestCase
      */
     public function testGetImagePath()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
 
         $sUrl = $oConfig->getOutDir();
-        $this->assertEquals($sUrl . "admin/img/start.gif", $oConfig->getImagePath("start.gif", true));
+        $this->assertEquals($sUrl . $adminTheme . "/img/start.gif", $oConfig->getImagePath("start.gif", true));
     }
 
     /**
@@ -1388,9 +1403,10 @@ class ConfigTest extends \OxidTestCase
      */
     public function testGetNoSslgetImageUrlAdminModeSecondLanguage()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $sDir = $oConfig->getConfigParam('sShopURL') . 'out/admin/img/';
+        $sDir = $oConfig->getConfigParam('sShopURL') . 'out/' . $adminTheme . '/img/';
         $this->assertEquals($sDir, $oConfig->getImageUrl(true));
     }
 
@@ -2050,35 +2066,38 @@ class ConfigTest extends \OxidTestCase
 
     public function testGetTemplateBase()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $this->assertEquals("Application/views/admin/", $oConfig->getTemplateBase(true));
+        $this->assertEquals("Application/views/" . $adminTheme . "/", $oConfig->getTemplateBase(true));
     }
 
     public function testGetResourcePath()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $this->assertEquals($oConfig->getConfigParam('sShopDir') . "out/admin/src/main.css", $oConfig->getResourcePath("main.css", true));
+        $this->assertEquals($oConfig->getConfigParam('sShopDir') . "out/" . $adminTheme . "/src/main.css", $oConfig->getResourcePath("main.css", true));
     }
 
     public function testGetResourceDir()
     {
+        $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $this->assertEquals($oConfig->getConfigParam('sShopDir') . "out/admin/src/", $oConfig->getResourceDir(true));
+        $this->assertEquals($oConfig->getConfigParam('sShopDir') . "out/" . $adminTheme . "/src/", $oConfig->getResourceDir(true));
     }
 
     public function testGetResourceUrl()
     {
         $oConfig = oxNew('oxConfig');
         $oConfig->init();
-        $oConfig->setConfigParam('sTheme', 'azure');
+        $oConfig->setConfigParam('sTheme', ACTIVE_THEME);
 
         $sMainURL = $oConfig->getConfigParam('sShopURL');
         $sMallURL = 'http://www.example.com/';
 
-        $sDir = 'out/azure/src/';
+        $sDir = 'out/' . ACTIVE_THEME . '/src/';
 
         $oConfig->setConfigParam('sMallShopURL', $sMallURL);
 

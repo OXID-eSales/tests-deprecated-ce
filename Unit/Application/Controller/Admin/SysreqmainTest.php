@@ -7,7 +7,6 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller\Admin;
 
-use \oxTestModules;
 
 /**
  * Tests for sysreq_main class
@@ -40,17 +39,5 @@ class SysreqmainTest extends \OxidTestCase
         $this->assertEquals('pmin', $oView->getModuleClass(1));
         $this->assertEquals('null', $oView->getModuleClass(-1));
         $this->assertEquals('fail', $oView->getModuleClass(0));
-    }
-
-    /**
-     * base test
-     *
-     * @return null
-     */
-    public function testGetMissingTemplateBlocks()
-    {
-        $oSubj = oxNew('sysreq_main');
-        oxTestModules::addFunction('oxSysRequirements', 'getMissingTemplateBlocks', '{return "lalalax";}');
-        $this->assertEquals('lalalax', $oSubj->getMissingTemplateBlocks());
     }
 }
