@@ -146,47 +146,6 @@ class ArticleBoxTest extends \OxidTestCase
     }
 
     /**
-     * Test case for getting RSS links
-     */
-    public function testGetRSSLinks()
-    {
-        $oArticleBox = oxNew('oxwArticleBox');
-
-        $aRSS = array(
-            'title' => 'OXID eShop 5/Bargain',
-            'link'  => 'http://trunk:8080/en/rss/OXID-eShop-5/Bargain/',
-        );
-        $aViewParams = array(
-            "rsslinks" => $aRSS,
-        );
-        $oArticleBox->setViewParameters($aViewParams);
-
-        $this->assertEquals($aRSS, $oArticleBox->getRSSLinks(), "Should get RSS links' array");
-    }
-
-    /**
-     * Test case for getting RSS links in correct type
-     */
-    public function testGetRSSLinksReturnsCorrectType()
-    {
-        $oArticleBox = oxNew('oxwArticleBox');
-
-        $aViewParams = array(
-            "rsslinks" => array(),
-        );
-        $oArticleBox->setViewParameters($aViewParams);
-
-        $this->assertEquals(array(), $oArticleBox->getRSSLinks(), "Should get array");
-
-        $aViewParams = array(
-            "rsslinks" => "rsslink",
-        );
-        $oArticleBox->setViewParameters($aViewParams);
-
-        $this->assertEquals(null, $oArticleBox->getRSSLinks(), "Should get null");
-    }
-
-    /**
      * View parameters test case data provider
      *
      * @return array

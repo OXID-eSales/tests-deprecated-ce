@@ -25,7 +25,6 @@ class RestrictedAddressTest extends \OxidTestCase
         return array(
             array('/log/EXCEPTION_LOG.txt'),
             array('/log/anything'),
-            array('/Application/views/azure/tpl/widget/rss.tpl'),
             array('/pkg.info'),
             array('/op.ini'),
             array('/.htaccess'),
@@ -49,7 +48,6 @@ class RestrictedAddressTest extends \OxidTestCase
     {
         return array(
             array('/op.ini.php'),
-            array('/Application/views/azure/tpl/widget/rss.tpl.whatever'),
         );
     }
 

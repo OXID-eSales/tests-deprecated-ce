@@ -21,12 +21,9 @@ use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\Eshop\Application\Model\Category;
 use OxidEsales\Eshop\Application\Model\Order;
 use OxidEsales\Eshop\Application\Model\SelectList;
-use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Field;
-use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
 use OxidEsales\EshopCommunity\Application\Model\Attribute;
-use OxidEsales\EshopCommunity\Application\Model\RssFeed;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
 use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use oxLinks;
@@ -34,10 +31,8 @@ use oxList;
 use oxObject2Category;
 use oxOrderArticle;
 use oxRegistry;
-use oxRssFeed;
 use oxSearch;
 use oxSeoEncoder;
-use oxTestModules;
 use oxUBase;
 use oxUser;
 use oxUserBasketItem;
@@ -1055,89 +1050,6 @@ class UtfTest extends \OxidTestCase
         foreach ($aFields as $sFieldName) {
             $this->assertTrue(strcmp($oReview->{$sFieldName}->value, $sValue) === 0, "$sFieldName (" . $oReview->{$sFieldName}->value . ")");
         }
-    }
-
-    /**
-     * TODO: template engine needed
-     */
-    public function testOxRssFeedGetArticleItems()
-    {
-        $config = $this->getConfig();
-        $config->setConfigParam('aCurrencies', array('EUR@1.00@.@.@EUR@1'));
-
-        $rssFeed = oxNew('oxrssfeed');
-        Registry::set(Config::class, $config);
-
-        $shortDescription = 'agentūrų Литовские für';
-        $longDescription = new Field('', Field::T_RAW);
-
-        $articleMock = $this->getMock(\OxidEsales\Eshop\Application\Model\Article::class, array("getLink", 'getLongDescription'));
-        $articleMock->expects($this->any())->method('getLink')->will($this->returnValue("artlink"));
-        $articleMock->expects($this->any())->method('getLongDescription')->will($this->returnValue($longDescription));
-        $articleMock->oxarticles__oxtitle = new oxField('title2');
-        $articleMock->oxarticles__oxprice = new oxField(10);
-        $articleMock->oxarticles__oxshortdesc = new oxField($shortDescription);
-        $articleMock->oxarticles__oxtimestamp = new oxField('2011-09-06 09:46:42');
-
-        $articleList = new oxarticlelist();
-        $articleList->assign(array($articleMock));
-
-        $expectedArticle = new stdClass();
-        $expectedArticle->title = 'title2 10.0 EUR';
-        $expectedArticle->link = 'artlink';
-        $expectedArticle->guid = 'artlink';
-        $expectedArticle->isGuidPermalink = true;
-        $expectedArticle->description = "&lt;img src=&#039;" . $articleMock->getThumbnailUrl() . "&#039; border=0 align=&#039;left&#039; hspace=5&gt;" . $shortDescription;
-        $expectedArticle->date = "Tue, 06 Sep 2011 09:46:42 +0200";
-
-        $this->assertEquals(array($expectedArticle), $rssFeed->getArticleItems($articleList));
-    }
-
-    public function testOxRssFeedPrepareFeedName()
-    {
-        $sValue = 'agentūrų Литовские für';
-        $oRss = oxNew('oxrssfeed');
-
-        $oCfg = $this->getMock(\OxidEsales\Eshop\Core\Config::class, array('getActiveShop'));
-        $oShop = oxNew('oxShop');
-        $oShop->oxshops__oxname = new oxField($sValue);
-        $oCfg->expects($this->any())->method('getActiveShop')->will($this->returnValue($oShop));
-
-        Registry::set(Config::class, $oCfg);
-        $this->assertEquals($sValue . '/Test', $oRss->prepareFeedName('Test'));
-    }
-
-    public function testOxRssFeedLoadSearchArticles()
-    {
-        oxTestModules::addFunction('oxrssfeed', 'getSearchParamsTranslation', '{return $aA[0].$aA[1].$aA[2].$aA[3].$aA[4];}');
-        $sValue = 'agentūЛитовfür';
-        $oRss = new oxrssfeed();
-        $sResult = $this->getConfig()->getShopUrl() . 'rss/Suche/?searchparam=agent%C5%AB%D0%9B%D0%B8%D1%82%D0%BE%D0%B2f%C3%BCr&amp;searchcnid=BB&amp;searchvendor=CC&amp;searchmanufacturer=DD';
-        $this->assertEquals($sResult, $oRss->getSearchArticlesUrl($sValue, "BB", "CC", "DD"));
-    }
-
-    public function testOxRssFeedGetSearchArticlesTitle()
-    {
-        $value = 'agentūЛитовfür';
-
-        $shop = oxNew('oxShop');
-        $shop->oxshops__oxname = new oxField('Test Shop');
-
-        $config = $this->getMock(\OxidEsales\Eshop\Core\Config::class, array('getActiveShop'));
-        $config->expects($this->any())->method('getActiveShop')->will($this->returnValue($shop));
-
-        $rssFeedMock = $this->getMock(RssFeed::class, ['getSearchParamsTranslation']);
-        $rssFeedMock->method('getSearchParamsTranslation')->will(
-            $this->returnCallback(
-                function ($sSearch, $sId, $sCatId, $sVendorId, $sManufacturerId) {
-                    return $sSearch . $sId . $sCatId . $sVendorId . $sManufacturerId;
-                }
-            )
-        );
-        Registry::set(Config::class, $config);
-
-        $expectedSearchArticleTitle = 'Test Shop/SEARCH_FOR_PRODUCTS_CATEGORY_VENDOR_MANUFACTURERtssscat' . $value . 'man';
-        $this->assertEquals($expectedSearchArticleTitle, $rssFeedMock->getSearchArticlesTitle('tsss', 'cat', $value, 'man'));
     }
 
     public function testOxSearchGetWhereWithSearchIngLongDescSecondLanguage()

@@ -204,7 +204,6 @@ class NavigationFrontendTest extends FrontendTestCase
     {
         $this->openShop();
         //Just arrived!
-        $this->assertElementPresent("//section[@id='content']/h2/a[@id='rssNewestProducts']");
         $this->assertElementPresent("//ul[@id='newItems']/li[1]//img");
         $this->assertEquals("Test product 0 [EN] šÄßüл", $this->clearString($this->getText("newItems_1")));
         $this->assertEquals("50,00 € *", $this->clearString($this->getText("//ul[@id='newItems']/li[1]//span[@class='price']")));
@@ -246,7 +245,6 @@ class NavigationFrontendTest extends FrontendTestCase
         $this->openShop();
         $this->assertElementPresent("topBox");
         $this->assertEquals("%TOP_OF_THE_SHOP%", $this->getHeadingText("//div[@id='topBox']/h3"));
-        $this->assertElementPresent("//div[@id='topBox']/h3/a[@id='rssTopProducts']");
         $this->assertElementPresent("//div[@id='topBox']/ul/li[1]//img[@alt='Test product 0 [EN] šÄßüл ']");
         $this->assertEquals("Test product 0 [EN] šÄßüл 50,00 € *", $this->clearString($this->getText("//div[@id='topBox']//li[2]")));
         $this->clickAndWait("//div[@id='topBox']//li[2]/a");
@@ -374,7 +372,6 @@ class NavigationFrontendTest extends FrontendTestCase
         $this->assertEquals("Test attribute 2 [EN] šÄßüл: %PLEASE_CHOOSE% attr value 12 [EN] šÄßüл attr value 2 [EN] šÄßüл", $this->clearString($this->getText("attributeFilter[testattribute2]")));
         $this->assertEquals("Test attribute 3 [EN] šÄßüл: %PLEASE_CHOOSE% attr value 3 [EN] šÄßüл", $this->clearString($this->getText("attributeFilter[testattribute3]")));
 
-        $this->assertElementPresent("//a[@id='rssActiveCategory']");
         $this->assertEquals("Test category 0 desc [EN] šÄßüл", $this->getText("catDesc"));
         $this->assertEquals("Category 0 long desc [EN] šÄßüл", $this->getText("catLongDesc"));
         $this->assertElementPresent("//a[@id='moreSubCat_1']/@title", "attribute title is gone from link. in 450 it was for categories names, that were shortened");

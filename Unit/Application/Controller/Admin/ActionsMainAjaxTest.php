@@ -223,23 +223,6 @@ class ActionsMainAjaxTest extends \OxidTestCase
     }
 
     /**
-     * Check, that the method 'removeArtFromAct' expires the file cache.
-     */
-    public function testRemoveArtFromActExpiresFileCache()
-    {
-        $oRssFeed = $this->getMock(\OxidEsales\Eshop\Application\Model\RssFeed::class, array('removeCacheFile'));
-        $oRssFeed->expects($this->once())->method('removeCacheFile');
-
-        $oActionsMainAjax = $this->getMock(\OxidEsales\Eshop\Application\Controller\Admin\ActionsMainAjax::class, array('getOxRssFeed'));
-
-        $oActionsMainAjax->expects($this->once())
-            ->method('getOxRssFeed')
-            ->will($this->returnValue($oRssFeed));
-
-        $oActionsMainAjax->removeArtFromAct();
-    }
-
-    /**
      * ActionsMainAjax::addArtToAct() test case
      *
      * @return null

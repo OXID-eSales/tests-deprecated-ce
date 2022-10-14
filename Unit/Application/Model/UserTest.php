@@ -2916,7 +2916,6 @@ final class UserTest extends \OxidTestCase
 
         $order = oxNew(Order::class);
         $order->setId('_testOrder');
-        $order->oxorderss__oxuserid = new Field($userId);
         $order->save();
 
         $database = $this->getDb();

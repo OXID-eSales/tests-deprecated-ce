@@ -170,7 +170,6 @@ class SearchTest extends \OxidTestCase
 
     public function testRender()
     {
-        $this->getConfig()->setConfigParam('bl_rssSearch', false);
         $n = $this->getMock(
             'search',
             array(
@@ -178,44 +177,6 @@ class SearchTest extends \OxidTestCase
                       )
         );
         $n->expects($this->once())->method('processListArticles');
-
-        $this->assertEquals('page/search/search', $n->render());
-    }
-
-    public function testRenderRss()
-    {
-        $oRss = $this->getMock(\OxidEsales\Eshop\Application\Model\RssFeed::class, array('getSearchArticlesTitle', 'getSearchArticlesUrl'));
-        $oRss->expects($this->once())->method('getSearchArticlesTitle')
-            ->with(
-                $this->equalTo('ysearchparam'),
-                $this->equalTo('ysearchcnid'),
-                $this->equalTo('ysearchvendor'),
-                $this->equalTo('ysearchmanufacturer')
-            )->will($this->returnValue('rss1title'));
-        $oRss->expects($this->once())->method('getSearchArticlesUrl')
-            ->with(
-                $this->equalTo('ysearchparam'),
-                $this->equalTo('ysearchcnid'),
-                $this->equalTo('ysearchvendor'),
-                $this->equalTo('ysearchmanufacturer')
-            )->will($this->returnValue('rss1url'));
-        oxTestModules::addModuleObject('oxrssfeed', $oRss);
-
-        $this->getConfig()->setConfigParam('bl_rssSearch', 1);
-        $this->setRequestParameter('searchparam', 'ysearchparam');
-        $this->setRequestParameter('searchcnid', 'ysearchcnid');
-        $this->setRequestParameter('searchvendor', 'ysearchvendor');
-        $this->setRequestParameter('searchmanufacturer', 'ysearchmanufacturer');
-
-        $n = $this->getMock(
-            'search',
-            array(
-                           'processListArticles',
-                           'addRssFeed'
-                      )
-        );
-        $n->expects($this->once())->method('processListArticles');
-        $n->expects($this->once())->method('addRssFeed')->with($this->equalTo('rss1title'), $this->equalTo('rss1url'), $this->equalTo('searchArticles'));
 
         $this->assertEquals('page/search/search', $n->render());
     }

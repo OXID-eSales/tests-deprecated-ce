@@ -977,30 +977,6 @@ class UBaseTest extends \OxidTestCase
         $this->assertEquals('yyy', $oView->getListType());
     }
 
-
-    public function testAddRssFeed()
-    {
-        $oView = oxNew('oxubase');
-        $oView->addRssFeed('test', 'http://example.com/?force_sid=abc123');
-        $a = $oView->getRssLinks();
-
-        $this->assertEquals(
-            array(
-                0 => array('title' => 'test', 'link' => 'http://example.com/')),
-            $a
-        );
-
-        $oView->addRssFeed('testd', 'http://example.com/?test=1', 'iknowthiskey');
-
-        $a = $oView->getRssLinks();
-        $this->assertEquals(
-            array(
-                0              => array('title' => 'test', 'link' => 'http://example.com/'),
-                'iknowthiskey' => array('title' => 'testd', 'link' => 'http://example.com/?test=1')),
-            $a
-        );
-    }
-
     public function testGetDynUrlParams()
     {
         $oV = oxNew('oxubase');
@@ -1165,14 +1141,6 @@ class UBaseTest extends \OxidTestCase
         $this->setConfigParam('bl_perfLoadLanguages', true);
 
         $this->assertTrue($oView->isLanguageLoaded());
-    }
-
-    public function testGetRssLinks()
-    {
-        $oView = oxNew('oxUBase');
-        $oView->addRssFeed('testTitle', 'testUrl', 'test');
-        $aRssLinks['test'] = array('title' => 'testTitle', 'link' => 'testUrl');
-        $this->assertEquals($aRssLinks, $oView->getRssLinks());
     }
 
     public function testGetSetMenueList()
