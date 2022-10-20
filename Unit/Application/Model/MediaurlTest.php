@@ -9,10 +9,11 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
 use \oxField;
 use \oxDb;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 
 class MediaurlTest extends \OxidTestCase
 {
-
+    use FieldTestingTrait;
     /**
      * Initialize the fixture.
      *
@@ -307,7 +308,8 @@ class MediaurlTest extends \OxidTestCase
     {
         $oMediaUrl = $this->getProxyClass('oxMediaUrl');
         $oMediaUrl->load('_test5');
-        $sExpt = 'test5<br><iframe width="425" height="344" src="http://www.youtube.com/embed/GQ3AcPEPbH0?loop=1&amp;rel=0" frameborder="0" allowfullscreen></iframe>';
+        $url = $this->encode("http://www.youtube.com/embed/GQ3AcPEPbH0?loop=1&rel=0");
+        $sExpt = "test5<br><iframe width=\"425\" height=\"344\" src=\"$url\" frameborder=\"0\" allowfullscreen></iframe>";
         $this->assertEquals($sExpt, $oMediaUrl->getYoutubeHtml());
     }
 

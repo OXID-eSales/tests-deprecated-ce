@@ -9,4 +9,3 @@ $serviceCaller->callService('ShopPreparation', 1);
 
 define('oxADMIN_LOGIN', oxDb::getDb()->getOne("select OXUSERNAME from oxuser where oxid='oxdefaultadmin'"));
 define('oxADMIN_PASSWD', getenv('oxADMIN_PASSWD') ? getenv('oxADMIN_PASSWD') : 'admin');
-define('ACTIVE_THEME', getenv('ACTIVE_THEME') ? getenv('ACTIVE_THEME') : 'twig');

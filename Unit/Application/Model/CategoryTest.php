@@ -9,18 +9,20 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
 use oxCategory;
 use oxCategoryHelper;
+use oxDb;
+use oxField;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\ShopIdCalculator;
-use \oxUtilsView;
-use \oxField;
-use \oxDb;
-use \oxRegistry;
-use \oxTestModules;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
+use oxRegistry;
+use oxTestModules;
 
 require_once TEST_LIBRARY_HELPERS_PATH . 'oxCategoryHelper.php';
 
 class CategoryTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     protected $_oCategoryA = null;
     protected $_oCategoryB = null;
 
@@ -376,30 +378,33 @@ class CategoryTest extends \OxidTestCase
     {
         $oObj = $this->getProxyClass('oxcategory');
         $oObj->disableLazyLoading();
-        $oObj->setFieldData("oxid", "asd< as");
-        $oObj->setFieldData("oxlongdesC", "asd< as");
-        $this->assertEquals('asd&lt; as', $oObj->oxcategories__oxid->value);
-        $this->assertEquals('asd< as', $oObj->oxcategories__oxlongdesc->value);
+        $string = "asd< as";
+        $oObj->setFieldData("oxid", $string);
+        $oObj->setFieldData("oxlongdesC", $string);
+        $this->assertEquals($this->encode($string), $oObj->oxcategories__oxid->value);
+        $this->assertEquals($string, $oObj->oxcategories__oxlongdesc->value);
     }
 
     public function testSetFieldDataUpperCase()
     {
         $oObj = $this->getProxyClass('oxcategory');
         $oObj->disableLazyLoading();
-        $oObj->setFieldData("oxid", "asd< as");
-        $oObj->setFieldData("OXLONGDESC", "asd< as");
-        $this->assertEquals('asd&lt; as', $oObj->oxcategories__oxid->value);
-        $this->assertEquals('asd< as', $oObj->oxcategories__oxlongdesc->value);
+        $string = "asd< as";
+        $oObj->setFieldData("oxid", $string);
+        $oObj->setFieldData("OXLONGDESC", $string);
+        $this->assertEquals($this->encode($string), $oObj->oxcategories__oxid->value);
+        $this->assertEquals($string, $oObj->oxcategories__oxlongdesc->value);
     }
 
     public function testSetFieldDataLongField()
     {
         $oObj = $this->getProxyClass('oxcategory');
         $oObj->disableLazyLoading();
-        $oObj->setFieldData("oxid", "asd< as");
-        $oObj->setFieldData("oxcategories__oxlongdesc", "asd< as");
-        $this->assertEquals('asd&lt; as', $oObj->oxcategories__oxid->value);
-        $this->assertEquals('asd< as', $oObj->oxcategories__oxlongdesc->value);
+        $string = "asd< as";
+        $oObj->setFieldData("oxid", $string);
+        $oObj->setFieldData("oxcategories__oxlongdesc", $string);
+        $this->assertEquals($this->encode($string), $oObj->oxcategories__oxid->value);
+        $this->assertEquals($string, $oObj->oxcategories__oxlongdesc->value);
     }
 
     /**

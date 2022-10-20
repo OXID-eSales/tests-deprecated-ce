@@ -7,21 +7,15 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
-use \stdclass;
-use \oxSelection;
-use \oxField;
-use \oxDb;
+use oxDb;
+use oxField;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
+use stdclass;
 
-/**
- * Testing oxselectlist class
- */
 class SelectlistTest extends \OxidTestCase
 {
-    /**
-     * Initialize the fixture add some users.
-     *
-     * @return null
-     */
+    use FieldTestingTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,11 +33,6 @@ class SelectlistTest extends \OxidTestCase
         $myDB->Execute($sQ);
     }
 
-    /**
-     * Tear down the fixture.
-     *
-     * @return null
-     */
     protected function tearDown(): void
     {
         $myDB = oxDb::getDB();
@@ -82,7 +71,7 @@ class SelectlistTest extends \OxidTestCase
     public function testGetFieldList()
     {
         $aSelList[0] = new stdclass();
-        $aSelList[0]->name = '&amp;amp;&amp;test1, 10';
+        $aSelList[0]->name = $this->encode('&amp;&test1, 10');
         $aSelList[0]->value = null;
 
         $aSelList[1] = new stdclass();
@@ -136,7 +125,7 @@ class SelectlistTest extends \OxidTestCase
         $aSelList = $oSelList->getFieldList();
 
         // checking loaded data
-        $this->assertEquals("&amp;amp;&amp;test1, 10 +14,33 CHF", $aSelList[0]->name);
+        $this->assertEquals("{$this->encode('&amp;&test1, 10')} +14,33 CHF", $aSelList[0]->name);
         $this->assertEquals("test2, 10 +14,33 CHF", $aSelList[1]->name);
         $this->assertEquals("test3, 10 +14,33 CHF", $aSelList[2]->name);
     }

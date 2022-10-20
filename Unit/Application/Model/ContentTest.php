@@ -9,11 +9,14 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
 use \oxField;
 use \oxDb;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use \oxRegistry;
 use \oxTestModules;
 
 class ContentTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     protected $_oContent = null;
     protected $_sShopId = null;
 
@@ -154,10 +157,11 @@ class ContentTest extends \OxidTestCase
     {
         $oObj = $this->getProxyClass('oxcontent');
         $oObj->disableLazyLoading();
-        $oObj->setFieldData("oxid", "asd< as");
-        $oObj->setFieldData("oxcOntent", "asd< as");
-        $this->assertEquals('asd&lt; as', $oObj->oxcontents__oxid->value);
-        $this->assertEquals('asd< as', $oObj->oxcontents__oxcontent->value);
+        $string = "asd< as";
+        $oObj->setFieldData("oxid", $string);
+        $oObj->setFieldData("oxcOntent", $string);
+        $this->assertEquals($this->encode($string), $oObj->oxcontents__oxid->value);
+        $this->assertEquals($string, $oObj->oxcontents__oxcontent->value);
     }
 
     public function testGetStdLink()

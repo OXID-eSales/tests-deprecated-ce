@@ -14,12 +14,13 @@ use OxidEsales\EshopCommunity\Application\Model\Article;
 use oxDb;
 use oxField;
 use OxidEsales\Eshop\CoreCommunity\DatabaseProvider;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use oxRegistry;
 use oxTestModules;
 
 final class ArticlelistTest extends \OxidTestCase
 {
-
+    use FieldTestingTrait;
     /**
      * Tear down the fixture.
      *
@@ -1845,12 +1846,12 @@ EOT;
         $sView = $tableViewNameGenerator->getViewName('oxarticles', 1);
         $oTest->selectString("select * from $sView where oxid = '2080'");
 
-        $expectedArticleTitle = 'Champagne Pliers &amp; Bottle Opener';
-        if ($this->getTestConfig()->getShopEdition() == 'EE') {
+        $expectedArticleTitle = 'Champagne Pliers & Bottle Opener';
+        if ($this->getTestConfig()->getShopEdition() === 'EE') {
             $expectedArticleTitle .= ' PROFI';
         }
 
-        $this->assertEquals($expectedArticleTitle, $oTest[2080]->oxarticles__oxtitle->value);
+        $this->assertEquals($this->encode($expectedArticleTitle), $oTest[2080]->oxarticles__oxtitle->value);
     }
 
     /**

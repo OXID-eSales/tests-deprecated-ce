@@ -7,19 +7,22 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
-use \oxField;
-use \oxRegistry;
+use oxField;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 
 class FieldTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     public function test_construct()
     {
-        $oField = new oxField('ssss<');
-        $this->assertEquals('ssss<', $oField->rawValue);
-        $this->assertEquals('ssss&lt;', $oField->value);
-        $oField = new oxField('ssss<', oxField::T_RAW);
-        $this->assertEquals('ssss<', $oField->rawValue);
-        $this->assertEquals('ssss<', $oField->value);
+        $string = 'ssss<';
+        $oField = new oxField($string);
+        $this->assertEquals($string, $oField->rawValue);
+        $this->assertEquals($this->encode($string), $oField->value);
+        $oField = new oxField($string, oxField::T_RAW);
+        $this->assertEquals($string, $oField->rawValue);
+        $this->assertEquals($string, $oField->value);
     }
 
     public function test_isset()
@@ -35,12 +38,13 @@ class FieldTest extends \OxidTestCase
 
     public function test__getValue_setValue()
     {
-        $oField = new oxField('ssss<');
-        $this->assertEquals('ssss<', $oField->rawValue);
-        $this->assertEquals('ssss&lt;', $oField->value);
-        $oField->setValue('ssss<', oxField::T_RAW);
-        $this->assertEquals('ssss<', $oField->rawValue);
-        $this->assertEquals('ssss<', $oField->value);
+        $string = 'ssss<';
+        $oField = new oxField($string);
+        $this->assertEquals($string, $oField->rawValue);
+        $this->assertEquals($this->encode($string), $oField->value);
+        $oField->setValue($string, oxField::T_RAW);
+        $this->assertEquals($string, $oField->rawValue);
+        $this->assertEquals($string, $oField->value);
         $this->assertNull($oField->aaa);
     }
 
@@ -48,19 +52,22 @@ class FieldTest extends \OxidTestCase
     {
         $oField = new oxField();
 
-        $oField->setValue("ssss<\n>");
-        $this->assertEquals("ssss&lt;\n&gt;", $oField->value);
-        $oField->setValue("ssss<");
-        $this->assertEquals("ssss&lt;", $oField->value);
+        $string = "ssss<\n>";
+        $oField->setValue($string);
+        $this->assertEquals($this->encode($string), $oField->value);
+        $string = 'ssss<';
+        $oField->setValue($string);
+        $this->assertEquals($this->encode($string), $oField->value);
     }
 
     public function testGetRawValue()
     {
         $oField = new oxField();
 
-        $oField->setValue("ssss<\n>");
-        $this->assertEquals("ssss&lt;\n&gt;", $oField->value);
-        $this->assertEquals("ssss<\n>", $oField->getRawValue());
+        $string = "ssss<\n>";
+        $oField->setValue($string);
+        $this->assertEquals($this->encode($string), $oField->value);
+        $this->assertEquals($string, $oField->getRawValue());
     }
 
     public function testGetRawValueIfSetAsRaw()

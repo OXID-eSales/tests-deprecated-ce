@@ -15,16 +15,12 @@ use oxField;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use OxidEsales\Facts\Facts;
 use oxRegistry;
 use oxUtils;
 use stdClass;
 
-require_once TEST_LIBRARY_HELPERS_PATH . 'oxBaseHelper.php';
-
-/**
- * Test oxBase module
- */
 class _oxBase extends oxBase
 {
     /**
@@ -201,6 +197,8 @@ class oxUtilsNoCaching extends oxUtils
 
 class BaseTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     private static $count = 0;
 
     protected function setUp(): void
@@ -1039,11 +1037,12 @@ class BaseTest extends \OxidTestCase
 
     public function getFieldDataDataProvider(): array
     {
+        $stringWithSpecialChars = 'special<>chars';
         return [
             ['oxstart', null, "oxstart"],
             ['oxstart', Field::T_RAW, "oxstart"],
-            ['special<>chars', null, "special&lt;&gt;chars"],
-            ['special<>chars', Field::T_RAW, "special<>chars"],
+            [$stringWithSpecialChars, null, $this->encode($stringWithSpecialChars)],
+            [$stringWithSpecialChars, Field::T_RAW, $stringWithSpecialChars],
         ];
     }
 
@@ -1121,9 +1120,9 @@ class BaseTest extends \OxidTestCase
         $oObj->modifyCacheKey(null, true);
 
         if ((new Facts())->getEdition() === 'EE') {
-            $expectedTranslation = 'Champagne Pliers &amp; Bottle Opener PROFI';
+            $expectedTranslation = "Champagne Pliers {$this->encode('&')} Bottle Opener PROFI";
         } else {
-            $expectedTranslation = 'Champagne Pliers &amp; Bottle Opener';
+            $expectedTranslation = "Champagne Pliers {$this->encode('&')} Bottle Opener";
         }
 
         $oObj->load(2080);

@@ -27,6 +27,7 @@ use OxidEsales\EshopCommunity\Application\Model\PriceAlarm;
 use OxidEsales\EshopCommunity\Application\Model\UserPayment;
 use OxidEsales\EshopCommunity\Internal\Domain\Authentication\Bridge\PasswordServiceBridgeInterface;
 use OxidEsales\EshopCommunity\Tests\ContainerTrait;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use OxidEsales\Facts\Facts;
 use oxInputException;
 use oxnewssubscribed;
@@ -118,6 +119,7 @@ class UserTest_oxUtilsServerHelper2 extends oxUtilsServer
 final class UserTest extends \OxidTestCase
 {
     use ContainerTrait;
+    use FieldTestingTrait;
 
     protected $_aShops = array(1);
     protected $_aUsers = array();
@@ -1050,14 +1052,15 @@ final class UserTest extends \OxidTestCase
         $oDb = $this->getDb();
 
         $oUser = $this->createUser();
-        $aInvAddress ['oxuser__oxcompany'] = 'test&';
-        $aInvAddress ['oxuser__oxaddinfo'] = 'test&';
+        $string = 'test&';
+        $aInvAddress ['oxuser__oxcompany'] = $string;
+        $aInvAddress ['oxuser__oxaddinfo'] = $string;
         $oUser->assign($aInvAddress);
         $oUser->save();
-        $this->assertEquals('test&amp;', $oUser->oxuser__oxcompany->value);
-        $this->assertEquals('test&amp;', $oUser->oxuser__oxaddinfo->value);
+        $this->assertEquals($this->encode($string), $oUser->oxuser__oxcompany->value);
+        $this->assertEquals($this->encode($string), $oUser->oxuser__oxaddinfo->value);
         $sQ = 'select oxcompany from oxuser where oxid = "' . $oUser->oxuser__oxid->value . '" ';
-        $this->assertEquals('test&', $oDb->getOne($sQ));
+        $this->assertEquals($string, $oDb->getOne($sQ));
     }
 
     /**

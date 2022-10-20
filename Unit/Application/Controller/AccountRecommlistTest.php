@@ -7,19 +7,19 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller;
 
-use \oxField;
+use Exception;
+use oxDb;
+use oxField;
 use OxidEsales\Eshop\Core\Config;
-use \oxObjectException;
-use \Exception;
-use \oxDb;
-use \oxRegistry;
-use \oxTestModules;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
+use oxTestModules;
 
 /**
  * Tests for Recommendation List class
  */
 class AccountRecommlistTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
 
     /**
      * Initialize the fixture.
@@ -256,6 +256,7 @@ class AccountRecommlistTest extends \OxidTestCase
     // #1428: xss possible while saving recomm list
     public function testSaveRecommListXSS()
     {
+        $string = '"<script>alert(\'xss\');</script>';
         $oUser = oxNew('oxuser');
         $oUser->load("oxdefaultadmin");
 
@@ -266,7 +267,7 @@ class AccountRecommlistTest extends \OxidTestCase
         $oRecommList->oxrecommlists__oxtitle = new oxField('xxxx');
         $oRecommList->save();
 
-        $this->setRequestParameter('recomm_title', '"<script>alert(\'xss\');</script>');
+        $this->setRequestParameter('recomm_title', $string);
         $this->setRequestParameter('recomm_author', 'testauthor');
         $this->setRequestParameter('recomm_desc', 'testdesc');
 
@@ -282,7 +283,7 @@ class AccountRecommlistTest extends \OxidTestCase
         $oRecomm->saveRecommList();
 
         $this->assertTrue($oRecomm->isSavedList());
-        $this->assertEquals('&quot;&lt;script&gt;alert(&#039;xss&#039;);&lt;/script&gt;', $oRecommList->oxrecommlists__oxtitle->value);
+        $this->assertEquals($this->encode($string), $oRecommList->oxrecommlists__oxtitle->value);
     }
 
     /**

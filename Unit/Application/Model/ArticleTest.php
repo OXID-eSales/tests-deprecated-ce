@@ -17,6 +17,7 @@ use \oxArticle;
 use oxArticleHelper;
 use \oxField;
 use \Exception;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use OxidEsales\Facts\Facts;
 use \StdClass;
 use \oxbasket;
@@ -32,6 +33,8 @@ require_once TEST_LIBRARY_HELPERS_PATH . 'oxArticleHelper.php';
 
 class ArticleTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     /**
      * A object of a test article 1
      *
@@ -1620,7 +1623,7 @@ class ArticleTest extends \OxidTestCase
     public function testGetReviews()
     {
         $sArtID = '_testArt';
-        $sExpectedText = 'Review \n Text';
+        $sExpectedText = "Review \n Text";
 
         $oArticle = $this->createArticle('_testArt');
 
@@ -1630,7 +1633,7 @@ class ArticleTest extends \OxidTestCase
         $this->assertTrue($aReviews instanceof \OxidEsales\EshopCommunity\Core\Model\ListModel);
         $oReview = $aReviews->getArray();
         $this->assertEquals(1, $aReviews->count());
-        $this->assertEquals("Review <br />\n Text", $oReview['_test1']->oxreviews__oxtext->value);
+        $this->assertEquals($this->insertLineBreaks($sExpectedText), $oReview['_test1']->oxreviews__oxtext->value);
 
         $sCreate = '04.04.2008 00:00:00';
         if ($oArticle->getLanguage() == 1) {

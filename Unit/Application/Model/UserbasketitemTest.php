@@ -10,6 +10,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 use oxArticle;
 use oxField;
 use OxidEsales\EshopCommunity\Application\Model\Article;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use stdclass;
 
 class modOxArticle_oxUserBasketItem extends oxArticle
@@ -27,6 +28,8 @@ class modOxArticle_oxUserBasketItem extends oxArticle
 
 class UserbasketitemTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -89,7 +92,7 @@ class UserbasketitemTest extends \OxidTestCase
         $oUserBasketItem->setFieldData('oxsellist', $sValue);
         $this->assertEquals($sValue, $oUserBasketItem->oxuserbasketitems__oxsellist->value);
         $oUserBasketItem->setFieldData('oxuserbasketitems__oxtestfield', $sValue);
-        $this->assertEquals(htmlentities($sValue, ENT_QUOTES, 'UTF-8'), $oUserBasketItem->oxuserbasketitems__oxtestfield->value);
+        $this->assertEquals($this->encode($sValue), $oUserBasketItem->oxuserbasketitems__oxtestfield->value);
         $oUserBasketItem->setFieldData('oxuserbasketitems__oxtestfield', $sValue, oxField::T_RAW);
         $this->assertEquals($sValue, $oUserBasketItem->oxuserbasketitems__oxtestfield->value);
     }
