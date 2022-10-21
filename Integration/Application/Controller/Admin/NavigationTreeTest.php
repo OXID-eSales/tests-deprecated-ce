@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OxidEsales\EshopCommunity\Tests\Integration\Application\Controller\Admin;
 
 use OxidEsales\EshopCommunity\Application\Controller\Admin\NavigationTree;
+use OxidEsales\EshopCommunity\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
@@ -30,19 +31,15 @@ final class NavigationTreeTest extends TestCase
     private const EXISTING_XML_ELEMENTS_ATTRIBUTE_VALUE_CHANGED = 'MODULE1_SOME_OVERWRITTEN_VALUE';
     private const NEW_XML_ELEMENT_ID_MODULE_1 = 'TEST-MODULE-1-SOME-SUBMENU-NODE';
     private const NEW_XML_ELEMENT_ID_MODULE_2 = 'TEST-MODULE-2-SOME-SUBMENU-NODE';
-    /** @var BasicContext */
-    private $context;
-    /** @var ContainerInterface */
-    private $container;
-    /** @var array */
-    private $testPackageNames = [];
+    private BasicContext $context;
+    private ?ContainerInterface $container = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        Registry::getConfig()->setAdminMode(true);
         $this->context = new BasicContext();
-        $this->generateUniquePackageNames();
     }
 
     protected function tearDown(): void
@@ -159,13 +156,6 @@ final class NavigationTreeTest extends TestCase
         return new OxidEshopPackage($packageFixturePath);
     }
 
-    private function generateUniquePackageNames(): void
-    {
-        foreach (self::FIXTURE_MODULE_NAMES as $moduleName) {
-            $this->testPackageNames[$moduleName] = uniqid('package_', true);
-        }
-    }
-
     private function cleanUpTestData(): void
     {
         foreach (self::FIXTURE_MODULE_NAMES as $moduleName) {
@@ -189,7 +179,8 @@ final class NavigationTreeTest extends TestCase
     {
         $xPath = new \DOMXPath($dom);
         $existingElementXPath = sprintf('//*[@id="%s"]', self::EXISTING_XML_ELEMENT_ID);
-        $element = $xPath->query($existingElementXPath)->item(0);
-        return $element->getAttribute(self::EXISTING_XML_ELEMENTS_ATTRIBUTE_NAME);
+        return $xPath->query($existingElementXPath)
+            ->item(0)
+            ->getAttribute(self::EXISTING_XML_ELEMENTS_ATTRIBUTE_NAME);
     }
 }
