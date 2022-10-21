@@ -20,13 +20,15 @@ use oxGroups;
 use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\Eshop\Application\Model\Category;
 use OxidEsales\Eshop\Application\Model\Order;
-use OxidEsales\Eshop\Core\Field;
+use OxidEsales\Eshop\Application\Model\SelectList;
 use OxidEsales\Eshop\Core\Config;
+use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
-use OxidEsales\EshopCommunity\Application\Controller\FrontendController;
+use OxidEsales\EshopCommunity\Application\Model\Attribute;
 use OxidEsales\EshopCommunity\Application\Model\RssFeed;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use oxLinks;
 use oxList;
 use oxObject2Category;
@@ -34,7 +36,6 @@ use oxOrderArticle;
 use oxRegistry;
 use oxRssFeed;
 use oxSearch;
-use oxSelectlist;
 use oxSeoEncoder;
 use oxTestModules;
 use oxUBase;
@@ -44,10 +45,11 @@ use oxUserPayment;
 use oxUtils;
 use oxUtilsString;
 use stdClass;
-use OxidEsales\EshopCommunity\Application\Model\Attribute;
 
 class UtfTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     /** @var string Original theme */
     private $_sOrigTheme;
 
@@ -1161,37 +1163,38 @@ class UtfTest extends \OxidTestCase
         $this->assertEquals($sQ, $sFix);
     }
 
-    public function testOxSelectListSaveAndLoad()
+    public function testOxSelectListSaveAndLoad(): void
     {
-        $sValue = 'agentūrų Литовские für';
+        $string = 'agentūrų Литовские für';
+        $separator = '__@@';
+        $item1 = "{$string}<br>1";
+        $item2 = "{$string}<a>2";
+        $item3 = "{$string}3";
 
         // assigning select list
-        $oSelList = new oxselectlist();
-        $oSelList->setId('_testSelList');
-        $oSelList->oxselectlist__oxtitle = new oxField($sValue);
-        $oSelList->oxselectlist__oxident = new oxField($sValue);
-        $oSelList->oxselectlist__oxvaldesc = new oxField("{$sValue}<br>1__@@{$sValue}<a>2__@@{$sValue}3__@@<table>", oxField::T_RAW);
-        $oSelList->save();
+        $list = new SelectList();
+        $list->setId('_testSelList');
+        $list->oxselectlist__oxtitle = new Field($string);
+        $list->oxselectlist__oxident = new Field($string);
+        $description = "$item1$separator$item2$separator$item3$separator<table>";
+        $list->oxselectlist__oxvaldesc = new Field($description, Field::T_RAW);
+        $list->save();
 
-        $oSelList = new oxselectlist();
-        $oSelList->load('_testSelList');
+        $list = new SelectList();
+        $list->load('_testSelList');
 
-        $this->assertTrue(strcmp($oSelList->oxselectlist__oxtitle->value, $sValue) === 0);
-        $this->assertTrue(strcmp($oSelList->oxselectlist__oxident->value, $sValue) === 0);
-        $this->assertTrue(strcmp($oSelList->oxselectlist__oxvaldesc->getRawValue(), "{$sValue}<br>1__@@{$sValue}<a>2__@@{$sValue}3__@@<table>") === 0);
+        $this->assertEquals($string, $list->oxselectlist__oxtitle->value);
+        $this->assertEquals($string, $list->oxselectlist__oxident->value);
+        $this->assertEquals($description, $list->oxselectlist__oxvaldesc->getRawValue());
 
-        $oVal1 = new stdClass();
-        $oVal1->name = "{$sValue}&lt;br&gt;1";
-        $oVal1->value = "";
-
-        $oVal2 = clone $oVal1;
-        $oVal2->name = "{$sValue}&lt;a&gt;2";
-
-        $oVal3 = clone $oVal1;
-        $oVal3->name = "{$sValue}3";
-
-        $aList = array($oVal1, $oVal2, $oVal3);
-        $this->assertEquals($aList, $oSelList->getFieldList());
+        $this->assertEquals(
+            [
+                (object)['name' => strip_tags($this->encode($item1)), 'value' => ''],
+                (object)['name' => strip_tags($this->encode($item2)), 'value' => ''],
+                (object)['name' => strip_tags($this->encode($item3)), 'value' => ''],
+            ],
+            $list->getFieldList()
+        );
     }
 
     public function testOxSeoEncoderEncodeString()

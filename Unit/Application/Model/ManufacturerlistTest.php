@@ -7,21 +7,17 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Model;
 
-use \oxutils;
-use \oxDb;
-use \oxRegistry;
-use \oxTestModules;
-
-class modUtils_oxManufacturerlist extends oxutils
-{
-    public function seoIsActive($blReset = false, $sShopId = null, $iActLang = null)
-    {
-        return true;
-    }
-}
+use oxDb;
+use OxidEsales\Eshop\Application\Model\ManufacturerList;
+use OxidEsales\EshopCommunity\Core\Registry;
+use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
+use oxRegistry;
+use oxTestModules;
 
 class ManufacturerlistTest extends \OxidTestCase
 {
+    use FieldTestingTrait;
+
     protected function tearDown(): void
     {
         oxTestModules::addFunction('oxManufacturer', 'cleanRootManufacturer', '{oxManufacturer::$_aRootManufacturer = array();}');
@@ -33,34 +29,29 @@ class ManufacturerlistTest extends \OxidTestCase
     /**
      * Test loading simple Manufacturer list by selected language
      */
-    public function testLoadManufacturerListByLanguage()
+    public function testLoadManufacturerListByLanguage(): void
     {
-        $myUtils = oxRegistry::getUtils();
-        $myConfig = $this->getConfig();
-        $myDB = oxDb::getDB();
-
-        //modConfig::addClassVar("_iLanguageId","1"); //$oManufacturerlist->sLanguage = '1';
-        //$myConfig->addClassFunction("getShopLanguage",create_function("","return 1;"));
-        oxRegistry::getLang()->setBaseLanguage(1);
-
-        $oManufacturerlist = oxNew('oxManufacturerlist');
-
-        $oManufacturerlist->loadManufacturerList();
-
-        $this->assertTrue((count($oManufacturerlist) > 0), "Manufacturers list not loaded");
-
-        // checking if vendros are the same
-        $sQ = 'select oxid, oxtitle_1, oxshortdesc_1 from oxmanufacturers where oxmanufacturers.oxshopid = "' . $myConfig->getShopID() . '"';
-        $rs = $myDB->select($sQ);
-
-        if ($rs != false && $rs->count() > 0) {
-            while (!$rs->EOF) {
-                $this->assertEquals($rs->fields[1], $oManufacturerlist[$rs->fields[0]]->oxmanufacturers__oxtitle->value);
-                $this->assertEquals(str_replace("'", "&#039;", $rs->fields[2]), $oManufacturerlist[$rs->fields[0]]->oxmanufacturers__oxshortdesc->value);
-                $rs->fetchRow();
-            }
-        } else {
+        Registry::getLang()->setBaseLanguage(1);
+        $list = oxNew(ManufacturerList::class);
+        $list->loadManufacturerList();
+        $this->assertTrue((count($list) > 0), 'Manufacturers list not loaded');
+        $resultSet = oxDb::getDB()
+            ->select(
+                'select oxid, oxtitle_1, oxshortdesc_1 from oxmanufacturers where oxmanufacturers.oxshopid = "'
+                . Registry::getConfig()->getShopID()
+                . '"'
+            );
+        if (!$resultSet || !$resultSet->count()) {
             $this->fail('No records found in Manufacturers table with lang id = 1');
+        }
+
+        while (!$resultSet->EOF) {
+            $this->assertEquals($resultSet->fields[1], $list[$resultSet->fields[0]]->oxmanufacturers__oxtitle->value);
+            $this->assertEquals(
+                $this->encode($resultSet->fields[2]),
+                $list[$resultSet->fields[0]]->oxmanufacturers__oxshortdesc->value
+            );
+            $resultSet->fetchRow();
         }
     }
 

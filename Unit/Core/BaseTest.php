@@ -21,13 +21,10 @@ use oxRegistry;
 use oxUtils;
 use stdClass;
 
+require_once TEST_LIBRARY_HELPERS_PATH . 'oxBaseHelper.php';
+
 class _oxBase extends oxBase
 {
-    /**
-     * Constructor, with clean cache key.
-     *
-     * @return null
-     */
     public function __construct()
     {
         parent::__construct();
@@ -583,8 +580,8 @@ class BaseTest extends \OxidTestCase
         $this->assertFalse($oBase->isPropertyLoaded('oxarticles__oxshortdesc'));
 
         //making sure 2 fields are used
-        $sVal = $oBase->oxarticles__oxtitle->value;
-        $sVal = $oBase->oxarticles__oxshortdesc->value;
+        $oBase->oxarticles__oxtitle->value;
+        $oBase->oxarticles__oxshortdesc->value;
 
         $this->assertTrue($oBase->isPropertyLoaded('oxarticles__oxtitle'));
         $this->assertTrue($oBase->isPropertyLoaded('oxarticles__oxshortdesc'));
