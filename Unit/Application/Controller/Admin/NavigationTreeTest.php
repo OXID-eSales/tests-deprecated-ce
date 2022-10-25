@@ -7,16 +7,17 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller\Admin;
 
-use \DOMDocument;
-use \oxField;
-use \DOMXPath;
+use DOMDocument;
+use DOMElement;
+use DOMXPath;
+use oxField;
+use OxidEsales\Eshop\Core\Base;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Framework\Theme\Bridge\AdminThemeBridgeInterface;
 use OxidEsales\EshopCommunity\Tests\ContainerTrait;
-use \stdClass;
-use \DOMElement;
-use \oxTestModules;
+use oxTestModules;
+use stdClass;
 
 class NavigationTreeTest extends \OxidTestCase
 {
@@ -706,11 +707,10 @@ class NavigationTreeTest extends \OxidTestCase
 
     /**
      * test if the right class id will read out from a node
-     *
-     * @return null
      */
-    public function testGetClassIdTakesFromOriginalXml()
+    public function testGetClassIdTakesFromOriginalXml(): void
     {
+        (new Base())->setAdminMode(true);
         $this->getConfig()->setConfigParam("blUseRightsRoles", true);
 
         $oNavTree = $this->getMock(\OxidEsales\Eshop\Application\Controller\Admin\NavigationTree::class, array("isAdmin"));
