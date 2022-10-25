@@ -28,17 +28,11 @@ use OxidEsales\Eshop\Application\Model\Category;
 use OxidEsales\Eshop\Application\Model\Object2Category;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Field;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\TestingLibrary\UnitTestCase;
 
-/**
- * Class PaginationSeoTest
- *
- * @package OxidEsales\EshopCommunity\Tests\Integration\Seo
- */
-class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
+class PaginationSeoTest extends UnitTestCase
 {
-    /** @var string Original theme */
-    private $origTheme;
-
     /**
      * @var string
      */
@@ -49,6 +43,13 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
      */
     private $categoryOxid = '';
 
+    public function setUpBeforeTestSuite()
+    {
+        parent::setUpBeforeTestSuite();
+
+        ContainerFactory::resetContainer();
+    }
+
     /**
      * Sets up test
      *
@@ -58,7 +59,6 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
     {
         parent::setUp();
 
-        $this->origTheme = $this->getConfig()->getConfigParam('sTheme');
         $this->activateTheme(ACTIVE_THEME);
 
         $this->getConfig()->saveShopConfVar('bool', 'blEnableSeoCache', false);
@@ -78,10 +78,6 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
      */
     protected function tearDown(): void
     {
-        //restore theme, do it directly in database as it might be dummy 'basic' theme
-        $query = "UPDATE `oxconfig` SET `OXVARVALUE` = '" . $this->origTheme . "' WHERE `OXVARNAME` = 'sTheme'";
-        \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute($query);
-
         $this->cleanRegistry();
         $this->cleanSeoTable();
         $_GET = [];
@@ -294,7 +290,7 @@ class PaginationSeoTest extends \OxidEsales\TestingLibrary\UnitTestCase
         $redirectUrl = \OxidEsales\Eshop\Core\Registry::getSeoEncoder()->fetchSeoUrl($requestUrl);
         $this->assertEquals($this->seoUrl . '?pgNr=20', $redirectUrl);
     }
-    
+
     public function providerTestDecodeNewSeoUrl()
     {
         $facts = new \OxidEsales\Facts\Facts();
