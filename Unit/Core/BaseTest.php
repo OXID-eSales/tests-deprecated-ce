@@ -1116,6 +1116,7 @@ class BaseTest extends \OxidTestCase
         $oObj->init("oxarticles");
         $oObj->modifyCacheKey(null, true);
 
+        $title = ($this->isFieldValueHtmlEcaped()) ? 'Champagne Pliers &amp; Bottle Opener' : 'Champagne Pliers & Bottle Opener' ;
         if ((new Facts())->getEdition() === 'EE') {
             $expectedTranslation = "Champagne Pliers {$this->encode('&')} Bottle Opener PROFI";
         } else {
@@ -2198,5 +2199,10 @@ class BaseTest extends \OxidTestCase
         $model->propertyName = 'someValue';
 
         $this->assertTrue(isset($model->propertyName));
+    }
+
+    private function isFieldValueHtmlEcaped(): bool
+    {
+        return !$this->getParameter('oxid_esales.templating.engine_autoescapes_html');
     }
 }
