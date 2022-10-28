@@ -15,6 +15,7 @@ use oxField;
 use OxidEsales\Eshop\Core\Field;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\TableViewNameGenerator;
+use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use OxidEsales\EshopCommunity\Tests\FieldTestingTrait;
 use OxidEsales\Facts\Facts;
 use oxRegistry;
@@ -195,6 +196,7 @@ class oxUtilsNoCaching extends oxUtils
 class BaseTest extends \OxidTestCase
 {
     use FieldTestingTrait;
+    use ContainerTrait;
 
     private static $count = 0;
 
