@@ -10,13 +10,8 @@ declare(strict_types=1);
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
 use OxidEsales\Eshop\Core\SystemRequirements;
-use OxidEsales\EshopCommunity\Internal\Framework\DIContainer\ContainerBuilder;
-use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridge;
-use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridgeInterface;
-use OxidEsales\EshopCommunity\Tests\Unit\Internal\BasicContextStub;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
-use Psr\Container\ContainerInterface;
 
 final class SystemRequirementsTest extends UnitTestCase
 {
@@ -487,22 +482,10 @@ final class SystemRequirementsTest extends UnitTestCase
         $this->assertSame($expectedOutput, $actualOutput);
     }
 
-    public function testCheckCryptographicallySufficientConfigurationWithUnsecureConfig(): void
+    public function testCheckCryptographicallySufficientConfigurationWithSecureConfig(): void
     {
-        $systemSecurityCheckerBridge = $this->createMock(SystemSecurityCheckerBridge::class);
-        $systemSecurityCheckerBridge->method('isCryptographicallySecure')->willReturn(false);
+        $result = (new SystemRequirements())->checkCryptographicallySufficientConfiguration();
 
-        $container = (new ContainerBuilder(new BasicContextStub()))->getContainer();
-        $container->set(SystemSecurityCheckerBridgeInterface::class, $systemSecurityCheckerBridge);
-        $container->compile();
-
-        $systemRequirements = $this->createPartialMock(SystemRequirements::class, ['getContainer']);
-        $systemRequirements
-            ->method('getContainer')
-            ->willReturn($container);
-
-        $result = $systemRequirements->checkCryptographicallySufficientConfiguration();
-
-        $this->assertEquals(SystemRequirements::MODULE_STATUS_BLOCKS_SETUP, $result);
+        $this->assertEquals(SystemRequirements::MODULE_STATUS_OK, $result);
     }
 }

@@ -10,14 +10,8 @@ declare(strict_types=1);
 namespace OxidEsales\EshopCommunity\Tests\Integration\Setup;
 
 use OxidEsales\EshopCommunity\Core\SystemRequirements;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridge;
-use OxidEsales\EshopCommunity\Internal\Framework\SystemRequirements\Bridge\SystemSecurityCheckerBridgeInterface;
 use OxidEsales\EshopCommunity\Setup\{Controller, Database, Exception\SetupControllerExitException, Language, Session};
-use OxidEsales\EshopCommunity\Tests\ContainerTrait;
-use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
 use OxidEsales\TestingLibrary\UnitTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 
 require_once OX_BASE_PATH . 'Setup' . DIRECTORY_SEPARATOR . 'functions.php';
 
