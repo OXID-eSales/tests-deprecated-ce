@@ -21,6 +21,10 @@ final class SeoEncoderCategoryTest extends UnitTestCase
 {
     use ContainerTrait;
 
+    private int $subcategoryPerCategory = 2;
+    private int $productPerCategory = 3;
+    private array $categoryLanguages = ['de' => 0, 'en' => 1];
+
     public function testOnDeleteCategoryWillSetDependantRecordsToExpired(): void
     {
         $seoEncoderCategory = oxNew(SeoEncoderCategory::class);
@@ -35,10 +39,13 @@ final class SeoEncoderCategoryTest extends UnitTestCase
     {
         $connection = $this->get(QueryBuilderFactoryInterface::class)->create()->getConnection();
         $expiredRowsCount = (int) $connection->fetchOne(
-            'SELECT COUNT(*) FROM `oxseo` WHERE `OXSEOURL` like "www-some-shop/category-%" AND `OXEXPIRED` = "1";'
+            'SELECT COUNT(*) FROM `oxseo` WHERE `OXSEOURL` like "%www-some-shop/category-%" AND `OXEXPIRED` = "1";'
         );
 
-        $this->assertEquals($this->getCountOfProductsPerCategory(), $expiredRowsCount);
+        $this->assertEquals(
+            ($this->productPerCategory + $this->subcategoryPerCategory) * count($this->categoryLanguages),
+            $expiredRowsCount
+        );
     }
 
     private function createTestCategoryWithSeoLinks(): Category
@@ -46,40 +53,55 @@ final class SeoEncoderCategoryTest extends UnitTestCase
         $baseUrl = uniqid('www.some-shop/', true);
         $seoEncoder = oxNew(SeoEncoder::class);
 
-        $category = oxNew(Category::class);
-        $category->setId(
-            UtilsObject::getInstance()->generateUId()
-        );
-        $category->save();
+        $mainCategory = oxNew(Category::class);
+        $mainCategory->setId(UtilsObject::getInstance()->generateUId());
+        $mainCategory->save();
 
-        $categoryUrl = uniqid('www.some-shop/category-', true);
-        $seoEncoder->addSeoEntry(
-            $category->getId(),
-            1,
-            0,
-            $baseUrl,
-            $categoryUrl,
-            'oxcategory'
-        );
-
-        $productCount = $this->getCountOfProductsPerCategory();
-        while ($productCount > 0) {
+        foreach ($this->categoryLanguages as $languageCode) {
+            $mainCategoryUrl = uniqid('www.some-shop/category-', true);
+            /** Add entry for main category */
             $seoEncoder->addSeoEntry(
-                UtilsObject::getInstance()->generateUId(),
+                $mainCategory->getId(),
                 1,
-                0,
-                $categoryUrl,
-                $categoryUrl . uniqid('/product-', true),
-                'oxarticle'
+                $languageCode,
+                $baseUrl,
+                $mainCategoryUrl,
+                'oxcategory'
             );
-            $productCount--;
+            /** Add entries for main sub-categories */
+            for ($i = 0; $i < $this->subcategoryPerCategory; $i++) {
+                $subCategoryId = UtilsObject::getInstance()->generateUId();
+                $this->createSubCategory($mainCategory, $subCategoryId);
+                $seoEncoder->addSeoEntry(
+                    $subCategoryId,
+                    1,
+                    $languageCode,
+                    $mainCategoryUrl,
+                    $mainCategoryUrl . uniqid('/subcategory-', true),
+                    'oxcategory'
+                );
+            }
+            /** Add entries for main category products */
+            for ($i = 1; $i <= $this->productPerCategory; $i++) {
+                $seoEncoder->addSeoEntry(
+                    UtilsObject::getInstance()->generateUId(),
+                    1,
+                    $languageCode,
+                    $mainCategoryUrl,
+                    $mainCategoryUrl . uniqid('/product-', true),
+                    'oxarticle'
+                );
+            }
         }
 
-        return $category;
+        return $mainCategory;
     }
 
-    private function getCountOfProductsPerCategory(): int
+    private function createSubCategory(Category $mainCategory, string $subCategoryId): void
     {
-        return 2;
+        $subCategory = oxNew(Category::class);
+        $subCategory->setId($subCategoryId);
+        $subCategory->setParentCategory($mainCategory);
+        $subCategory->save();
     }
 }
