@@ -87,7 +87,7 @@ class ShopSetUpTest extends FrontendTestCase
             $this->markTestSkipped('test needs demo_data package to work');
         }
 
-        $this->clearDatabase();
+        $this->dropDatabase();
 
         $this->goToSetup();
 
@@ -870,6 +870,13 @@ class ShopSetUpTest extends FrontendTestCase
 
         $this->executeDatabaseSqlQuery("DROP DATABASE IF EXISTS `$name`", false);
         $this->executeDatabaseSqlQuery("CREATE DATABASE `$name`", false);
+    }
+
+    private function dropDatabase(): void
+    {
+        list($host, $port, $name, $user, $password) = $this->getDatabaseParameters();
+
+        $this->executeDatabaseSqlQuery("DROP DATABASE IF EXISTS `$name`", false);
     }
 
     private function executeDatabaseSqlQuery($query, $useDatabase = true)
