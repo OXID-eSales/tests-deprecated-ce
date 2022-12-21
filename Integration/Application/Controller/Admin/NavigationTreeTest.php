@@ -14,7 +14,7 @@ use OxidEsales\EshopCommunity\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Service\ModuleActivationServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -140,13 +140,13 @@ final class NavigationTreeTest extends TestCase
 
     private function activateModule(string $moduleId): void
     {
-        $this->get(ModuleActivationServiceInterface::class)
+        $this->get(ModuleActivationBridgeInterface::class)
             ->activate($moduleId, $this->context->getDefaultShopId());
     }
 
     private function deactivateModule(string $moduleId): void
     {
-        $this->get(ModuleActivationServiceInterface::class)
+        $this->get(ModuleActivationBridgeInterface::class)
             ->deactivate($moduleId, $this->context->getDefaultShopId());
     }
 
