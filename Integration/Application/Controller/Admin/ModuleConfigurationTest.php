@@ -9,24 +9,25 @@ declare(strict_types=1);
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Application\Controller\Admin;
 
-use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Application\Controller\Admin\ModuleConfiguration as ModuleConfigurationController;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Facade\ModuleSettingServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
-use OxidEsales\TestingLibrary\UnitTestCase;
+use OxidEsales\EshopCommunity\Tests\Integration\IntegrationTestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  */
-final class ModuleConfigurationTest extends UnitTestCase
+final class ModuleConfigurationTest extends IntegrationTestCase
 {
     private string $testModuleId = 'testModuleId';
 
-    protected function tearDown(): void
+    public function tearDown(): void
     {
         $this->uninstallTestModule();
         parent::tearDown();
@@ -90,6 +91,31 @@ final class ModuleConfigurationTest extends UnitTestCase
         );
     }
 
+    public function testModuleSettingCacheInvalidatedAfterSave(): void
+    {
+        $this->installTestModule();
+        $this->activateTestModule();
+
+        $oldValueToBeCached = $this->getContainer()->get(ModuleSettingServiceInterface::class)
+            ->getString('stringSetting', $this->testModuleId);
+
+        $this->assertEquals('row', $oldValueToBeCached);
+
+        $_POST['oxid'] = $this->testModuleId;
+        $_POST['confstrs'] = ['stringSetting' => 'newValue'];
+
+        $moduleConfigurationController = oxNew(ModuleConfigurationController::class);
+        $moduleConfigurationController->saveConfVars();
+
+        ContainerFactory::resetContainer();
+
+        $this->assertSame(
+            'newValue',
+            $this->getContainer()->get(ModuleSettingServiceInterface::class)
+                ->getString('stringSetting', $this->testModuleId)->toString()
+        );
+    }
+
     public function testSaveConfVarsSavesNumAsInteger(): void
     {
         $this->installTestModule();
@@ -115,29 +141,30 @@ final class ModuleConfigurationTest extends UnitTestCase
 
     private function installTestModule(): void
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $container->get(ModuleInstallerInterface::class)->install(
+        $this->getContainer()->get(ModuleInstallerInterface::class)->install(
             new OxidEshopPackage(__DIR__ . '/Fixtures/testModule/')
         );
     }
 
     private function activateTestModule(): void
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $container->get(ModuleActivationBridgeInterface::class)->activate($this->testModuleId, 1);
+        $this->getContainer()->get(ModuleActivationBridgeInterface::class)->activate($this->testModuleId, 1);
     }
 
     private function getModuleConfiguration(): ModuleConfiguration
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        return $container->get(ModuleConfigurationDaoBridgeInterface::class)->get($this->testModuleId);
+        return $this->getContainer()->get(ModuleConfigurationDaoBridgeInterface::class)->get($this->testModuleId);
     }
 
     private function uninstallTestModule(): void
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $container->get(ModuleInstallerInterface::class)->uninstall(
+        $this->getContainer()->get(ModuleInstallerInterface::class)->uninstall(
             new OxidEshopPackage(__DIR__ . '/Fixtures/testModule/')
         );
+    }
+
+    private function getContainer(): ContainerInterface
+    {
+        return ContainerFactory::getInstance()->getContainer();
     }
 }
