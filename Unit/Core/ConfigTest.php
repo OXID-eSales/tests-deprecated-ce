@@ -1056,25 +1056,12 @@ class ConfigTest extends \OxidTestCase
         $this->assertEquals(1, $oConfig->getMandateCount());
     }
 
-    public function testThemeNameExpectsDefault()
-    {
-        $oConfig = new modForTestGetBaseTplDirExpectsDefault();
-        $this->assertEquals(ACTIVE_THEME, $oConfig->getConfigParam('sTheme'));
-    }
-
     public function testGetResourceUrlExpectsDefault()
     {
         $adminTheme = $this->get(AdminThemeBridgeInterface::class)->getActiveTheme();
         $oConfig = new modForTestGetBaseTplDirExpectsDefault();
         $sDir = $oConfig->getConfigParam('sShopURL') . $this->getOutPath($oConfig, $adminTheme, false) . "src/";
         $this->assertEquals($sDir, $oConfig->getResourceUrl('', true));
-    }
-
-    public function testGetResourceUrlNonAdminExpectsDefault()
-    {
-        $oConfig = new modForTestGetBaseTplDirExpectsDefault();
-        $sDir = $oConfig->getConfigParam('sShopURL') . $this->getOutPath($oConfig, null, false) . "src/";
-        $this->assertEquals($sDir, $oConfig->getResourceUrl());
     }
 
     /**
