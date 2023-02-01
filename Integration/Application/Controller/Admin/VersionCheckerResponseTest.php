@@ -13,63 +13,83 @@ use OxidEsales\Eshop\Application\Controller\Admin\ShopLicense;
 use OxidEsales\Eshop\Core\Curl;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\UtilsObject;
+use OxidEsales\EshopCommunity\Core\ShopVersion;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
 class VersionCheckerResponseTest extends UnitTestCase
 {
-    public function testDocumentationLinkShouldBeInserted(): void
+    public function testRenderWillWorkWithEmptyResponse(): void
     {
-        $curlMock = $this->createMock(Curl::class);
-        $curlMock->method('execute')->willReturn('<font face="Arial,Verdana,Geneva,Arial,Helvetica,sans-serif">
-	OXID eShop Update Status:<br/><br/>
-    Your OXID eShop Version is: <b>7.0.0</b><br/>
-    Latest OXID eShop Version is: <b>16.5.1</b><br/><br/>
+        $versionCheckerResponse = '';
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
 
-	<b>Your OXID eShop Version is unknown to us. This may mean that you are using a pre-release version that is not yet officially released.</b><br/>
-</font>');
-
-        UtilsObject::setClassInstance(Curl::class, $curlMock);
-        $controller = oxNew(ShopLicense::class);
-        $controller->render();
-        $versionInfo = $controller->getViewData()['aCurVersionInfo'];
-
-        $this->assertStringContainsString(Registry::getLang()->translateString('VERSION_UPDATE_LINK'), $versionInfo);
-
-        $expectedNormalizedVersionInfo =
-            "
-	OXID eShop Update Status:<br><br>
-    Your OXID eShop Version is: <b>7.0.0</b><br>
-    Latest OXID eShop Version is: <b>16.5.1</b><br><br><a id='linkToUpdate' href='http://www.oxid-esales.com/de/support-services/dokumentation-und-hilfe/oxid-eshop/installation/oxid-eshop-aktualisieren/update-vorbereiten.html' target='_blank'>
-
-	<b>Your OXID eShop Version is unknown to us. This may mean that you are using a pre-release version that is not yet officially released.</b></a><br>
-";
-        $this->assertSame($expectedNormalizedVersionInfo, $versionInfo);
+        $this->assertEmpty($versionInfo);
     }
 
-    public function testResponseWithoutDocumentationLink(): void
+    public function testRenderWillStripTags(): void
+    {
+        $versionCheckerResponse = '<b>abc <br><script>xyz</script></b>';
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $this->assertSame('<b>abc <br>xyz</b>', $versionInfo);
+    }
+
+    public function testRenderWillUnifyBreakTags(): void
+    {
+        $versionCheckerResponse = '<br />abc<br><br /><br/>';
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $this->assertSame('<br>abc<br><br><br>', $versionInfo);
+    }
+
+    public function testRenderWillWorkWithOnlySingleVersionStringPresentInResponse(): void
+    {
+        $versionCheckerResponse = 'v1.2.3';
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $this->assertSame($versionCheckerResponse, $versionInfo);
+    }
+
+    public function testRenderWithCurrentVersionSameAsNewest(): void
+    {
+        $currentVersion = ShopVersion::getVersion();
+        $versionCheckerResponse = "$currentVersion and $currentVersion";
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $this->assertSame($versionCheckerResponse, $versionInfo);
+    }
+
+    public function testRenderWithCurrentVersionSmallerThanNewestWillWrapUpdateTextWithLink(): void
+    {
+        $currentVersion = ShopVersion::getVersion();
+        $versionCheckerResponse = "v$currentVersion and v999.999.999<br>some update it! text<br>some last text row";
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $documentationLink = Registry::getLang()->translateString('VERSION_UPDATE_LINK');
+
+        $this->assertStringStartsWith("v$currentVersion and v999.999.999<br><a", $versionInfo);
+        $this->assertStringContainsString($documentationLink, $versionInfo);
+        $this->assertStringEndsWith('some update it! text</a><br>some last text row', $versionInfo);
+    }
+
+    public function testRenderWithCurrentVersionGreaterThanNewest(): void
+    {
+        $currentVersion = ShopVersion::getVersion();
+        $versionCheckerResponse = "v$currentVersion and v0.0.1<br>some update-it! text<br>some text";
+        $versionInfo = $this->getRenderedVersionInfo($versionCheckerResponse);
+
+        $this->assertEquals($versionCheckerResponse, $versionInfo);
+    }
+
+    private function getRenderedVersionInfo(string $mockedResponse): string
     {
         $curlMock = $this->createMock(Curl::class);
-        $curlMock->method('execute')->willReturn('<font face="Arial,Verdana,Geneva,Arial,Helvetica,sans-serif">
-	OXID eShop Update Status:<br/><br/>
-    Your OXID eShop Version is: <b>7.0.0</b><br/>
-    Latest OXID eShop Version is: <b>6.5.1</b><br/><br/>
-
-	<b>Your OXID eShop Version is unknown to us. This may mean that you are using a pre-release version that is not yet officially released.</b><br/>
-</font>');
-
+        $curlMock->method('execute')->willReturn($mockedResponse);
         UtilsObject::setClassInstance(Curl::class, $curlMock);
+
         $controller = oxNew(ShopLicense::class);
         $controller->render();
-        $versionInfo = $controller->getViewData()['aCurVersionInfo'];
 
-        $expectedNormalizedVersionInfo =
-            "
-	OXID eShop Update Status:<br><br>
-    Your OXID eShop Version is: <b>7.0.0</b><br>
-    Latest OXID eShop Version is: <b>6.5.1</b><br><br>
-
-	<b>Your OXID eShop Version is unknown to us. This may mean that you are using a pre-release version that is not yet officially released.</b><br>
-";
-        $this->assertSame($expectedNormalizedVersionInfo, $versionInfo);
+        return $controller->getViewData()['aCurVersionInfo'];
     }
 }
