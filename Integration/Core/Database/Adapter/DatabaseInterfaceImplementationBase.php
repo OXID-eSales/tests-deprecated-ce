@@ -18,7 +18,7 @@ use OxidEsales\TestingLibrary\UnitTestCase;
  *
  * @group database-adapter
  */
-abstract class DatabaseInterfaceImplementationBaseTest extends UnitTestCase
+abstract class DatabaseInterfaceImplementationBase extends UnitTestCase
 {
     /**
      * @var string The name of the table, we use to test the database.

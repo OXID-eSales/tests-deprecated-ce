@@ -10,7 +10,7 @@ namespace OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\Doct
 use oxDb;
 use OxidEsales\EshopCommunity\Core\Database\Adapter\DatabaseInterface;
 use OxidEsales\EshopCommunity\Core\Database\Adapter\Doctrine\ResultSet;
-use OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\DatabaseInterfaceImplementationBaseTest;
+use OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\DatabaseInterfaceImplementationBase;
 
 /**
  * Class ResultSetTest
@@ -19,7 +19,7 @@ use OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\DatabaseIn
  *
  * @group database-adapter
  */
-class ResultSetTest extends DatabaseInterfaceImplementationBaseTest
+class ResultSetTest extends DatabaseInterfaceImplementationBase
 {
     /**
      * @var string The name of the class, including the complete namespace.

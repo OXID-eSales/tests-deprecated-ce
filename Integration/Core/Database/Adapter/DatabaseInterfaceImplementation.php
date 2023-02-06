@@ -29,7 +29,7 @@ use ReflectionClass;
  *
  * @group   database-adapter
  */
-abstract class DatabaseInterfaceImplementationTest extends DatabaseInterfaceImplementationBaseTest
+abstract class DatabaseInterfaceImplementation extends DatabaseInterfaceImplementationBase
 {
     use ContainerTrait;
 

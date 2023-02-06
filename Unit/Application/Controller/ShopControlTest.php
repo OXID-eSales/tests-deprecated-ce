@@ -525,7 +525,8 @@ class ShopControlTest extends \OxidTestCase
             throw new \Exception('404 Page will show');
         }));
 
-        $this->expectErrorMessage('404 Page will show');
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('404 Page will show');
 
         $oControl = $this->getMock(\OxidEsales\Eshop\Core\ShopControl::class, array('initializeViewObject'));
         $oControl->expects($this->once())->method('initializeViewObject')->with($sCL, $sFNC, null, null)->will($this->returnValue($oView));

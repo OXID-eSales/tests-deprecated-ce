@@ -15,13 +15,11 @@ class AttributeTest extends \OxidTestCase
 
     /**
      * Attribute::Render() test case
-     *
-     * @return null
      */
-    public function testRender()
+    public function testRender(): void
     {
         // testing..
-        $oView = oxNew('Attribute');
+        $oView = oxNew('OxidEsales\\Eshop\\Application\\Controller\\Admin\\AttributeController');
         $this->assertEquals('attribute', $oView->render());
     }
 }

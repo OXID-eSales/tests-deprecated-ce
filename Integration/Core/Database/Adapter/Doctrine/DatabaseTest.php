@@ -14,14 +14,14 @@ use OxidEsales\EshopCommunity\Core\Exception\DatabaseErrorException;
 use OxidEsales\EshopCommunity\Core\Database\Adapter\Doctrine\ResultSet;
 use OxidEsales\EshopCommunity\Core\Database\Adapter\DatabaseInterface;
 use OxidEsales\EshopCommunity\Core\Database\Adapter\Doctrine\Database;
-use OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\DatabaseInterfaceImplementationTest;
+use OxidEsales\EshopCommunity\Tests\Integration\Core\Database\Adapter\DatabaseInterfaceImplementation;
 
 /**
  * Tests for our database object.
  *
  * @group database-adapter
  */
-class DatabaseTest extends DatabaseInterfaceImplementationTest
+class DatabaseTest extends DatabaseInterfaceImplementation
 {
     /**
      * @var string The database exception class to be thrown
