@@ -11,6 +11,7 @@ use \oxExceptionToDisplay;
 use \oxbasket;
 use \oxBasketHelper;
 use \oxBasketReservation;
+use OxidEsales\Eshop\Core\Registry;
 use \oxUtilsServer;
 use \oxUtilsObject;
 use \oxSession;
@@ -1457,5 +1458,15 @@ class SessionTest extends \OxidTestCase
     {
         $oSession = oxNew('oxsession');
         $this->assertTrue($oSession->needToSetHeaders());
+    }
+
+    public function testInitNewSessionUnsetsSessionVariables(): void
+    {
+        $session = Registry::getSession();
+
+        $session->setVariable('testVariable', 'value');
+        Registry::getSession()->initNewSession();
+
+        $this->assertNull($session->getVariable('testVariable'));
     }
 }
