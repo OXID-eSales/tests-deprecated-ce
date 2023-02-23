@@ -609,15 +609,4 @@ class ModuleNamespaceTest extends BaseModuleTestCase
 
         $this->assertEquals($factor * self::TEST_PRICE, $price->getPrice(), 'Price not as expected.');
     }
-
-    /**
-     * Get a file cache object
-     */
-    private function getFileCache()
-    {
-        $shopIdCalculatorMock = $this->getMock(ShopIdCalculator::class, array('getShopId'), array(), '', false);
-        $shopIdCalculatorMock->method('getShopId')->willReturn(1);
-
-        return oxNew(SubShopSpecificFileCache::class, $shopIdCalculatorMock);
-    }
 }

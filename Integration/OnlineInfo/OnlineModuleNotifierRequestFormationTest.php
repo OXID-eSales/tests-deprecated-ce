@@ -19,11 +19,11 @@ use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
-use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
+use OxidEsales\EshopCommunity\Tests\Integration\Modules\BaseModuleTestCase;
 use OxidEsales\Facts\Facts;
 use Psr\Container\ContainerInterface;
 
-final class OnlineModuleNotifierRequestFormationTest extends \OxidTestCase
+final class OnlineModuleNotifierRequestFormationTest extends BaseModuleTestCase
 {
     private ContainerInterface $container;
     private string $clusterId;

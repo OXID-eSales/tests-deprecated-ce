@@ -9,23 +9,25 @@ namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
 use OxidEsales\Eshop\Application\Controller\ContentController as EshopContentController;
 use OxidEsales\Eshop\Application\Model\Article;
-use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapter;
-use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapterInterface;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Exception\InvalidClassExtensionNamespaceException;
-use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapter;
+use OxidEsales\EshopCommunity\Internal\Transition\Adapter\ShopAdapterInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\module_native_extension\ContentController as ModuleContentController;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\module_native_extension\NativeExtendingArticle;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\module_native_extension\NativeExtendingContentController;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\Vendor1\namespaced_from_ns\MyClass as namespaced_from_ns;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\Vendor1\own_namespace_extending_unified_namespace\MyClass as own_namespace_extending_unified_namespace;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestDataInheritance\modules\Vendor2\ModuleInheritance24\MyClass as ModuleInheritance24MyClass;
+use OxidEsales\EshopCommunity\Tests\TestContainerFactory;
+use OxidEsales\TestingLibrary\Helper\ModuleCacheHelper;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 use function Symfony\Component\String\u;
 
 /**
@@ -201,8 +203,7 @@ class ModuleInheritanceTest extends UnitTestCase
         array $moduleToActivate,
         string $extensionClass,
         string $classToExtend
-    ): void
-    {
+    ): void {
         $this->installModules($moduleToActivate);
         $this->activateModules($moduleToActivate);
 
@@ -382,9 +383,6 @@ class ModuleInheritanceTest extends UnitTestCase
         $this->activateModules($activatedModules);
 
         $this->callAdminSaveModuleOrder($storedModuleChain);
-
-        // We need to call ModulevariablesLocator::resetModuleVariables() to ensure that no stale cache interferes.
-        \OxidEsales\Eshop\Core\Module\ModulevariablesLocator::resetModuleVariables();
 
         // check, if the inheritance chain is built as expected
         $moduleChainsGenerator = $this->getModuleChainsGenerator();

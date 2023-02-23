@@ -9,6 +9,7 @@ namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Cache\ModuleCacheServiceBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Setup\Bridge\ModuleActivationBridgeInterface;
@@ -27,10 +28,18 @@ abstract class BaseModuleTestCase extends \OxidEsales\TestingLibrary\UnitTestCas
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->getContainer()->get('oxid_esales.module.install.service.launched_shop_project_configuration_generator')->generate();
 
         $environment = new Environment();
         $environment->clean();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->getContainer()->get('oxid_esales.module.install.service.launched_shop_project_configuration_generator')->generate();
+        $this->getContainer()->get(ModuleCacheServiceBridgeInterface::class)->invalidateAll();
+        parent::tearDown();
     }
 
     protected function getContainer(): ContainerInterface
