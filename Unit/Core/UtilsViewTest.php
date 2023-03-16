@@ -40,7 +40,7 @@ class UtilsViewTest extends \OxidTestCase
 
         $oUtilsView = oxNew('oxutilsview');
 
-        $this->assertEquals('<p class="alert alert-danger">xxx</p>', $oUtilsView->getTemplateOutput($sTpl, $oView));
+        $this->assertEquals('<div class="alert alert-danger">xxx</div>', $oUtilsView->getTemplateOutput($sTpl, $oView));
     }
 
     public function testPassAllErrorsToView()
