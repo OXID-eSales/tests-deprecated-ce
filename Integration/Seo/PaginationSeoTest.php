@@ -62,7 +62,10 @@ class PaginationSeoTest extends UnitTestCase
         $this->activateTheme(ACTIVE_THEME);
 
         $this->getConfig()->saveShopConfVar('bool', 'blEnableSeoCache', false);
+        $this->getConfig()->saveShopConfVar('arr', 'aNrofCatArticles', serialize([10, 20]), null, 'theme:'. ACTIVE_THEME);
+        $this->getConfig()->saveShopConfVar('arr', 'aNrofCatArticlesInGrid', serialize([10, 20]), null, 'theme:'. ACTIVE_THEME);
 
+        $this->cleanTmpDir();
         $this->cleanRegistry();
         $this->cleanSeoTable();
 

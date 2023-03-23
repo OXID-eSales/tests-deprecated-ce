@@ -391,22 +391,22 @@ final class EmailTest extends \OxidTestCase
     public function testIncludeImages()
     {
         $myConfig = $this->getConfig();
-        $sImageDir = $myConfig->getImageDir();
+        $sImageDir = __DIR__ . "/../testData/misc" . DIRECTORY_SEPARATOR;
 
         $email = oxNew('oxEmail');
-        $email->setBody("<img src='{$sImageDir}/logo_oxid.png'> --- <img src='{$sImageDir}/stars.jpg'>");
+        $email->setBody("<img src='{$sImageDir}/test.png'> --- <img src='{$sImageDir}/test.jpg'>");
 
         $email->includeImages(
-            $myConfig->getImageDir(),
-            $myConfig->getImageUrl(isAdmin()),
+            $sImageDir,
+            $sImageDir,
             $myConfig->getPictureUrl(null),
-            $myConfig->getImageDir(),
+            $sImageDir,
             $myConfig->getPictureDir(false)
         );
 
         $aAttachments = $email->getAttachments();
-        $this->assertEquals('logo_oxid.png', $aAttachments[0][1]);
-        $this->assertEquals('stars.jpg', $aAttachments[1][1]);
+        $this->assertEquals('test.png', $aAttachments[0][1]);
+        $this->assertEquals('test.jpg', $aAttachments[1][1]);
     }
 
     public function testSetGetSubject()
