@@ -240,8 +240,8 @@ class CreatingItemsAdminTest extends AdminTestCase
         $this->frame("list");
         $this->type("where[oxmanufacturers][oxtitle]", "create_delete");
         $this->clickAndWait("submitit");
-        $this->assertEquals("create_delete manufacturer1 [EN]", $this->getText("//tr[@id='row.1']/td[2]"));
-        $this->assertElementNotPresent("//tr[@id='row.2']/td[2]");
+        $this->assertEquals("create_delete manufacturer1 [EN]", $this->getText("//tr[@id='row.1']/td[3]"));
+        $this->assertElementNotPresent("//tr[@id='row.2']/td[3]");
     }
 
     /**
