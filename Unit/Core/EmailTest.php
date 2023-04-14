@@ -14,6 +14,7 @@ use oxField;
 use OxidEsales\Eshop\Application\Model\BasketItem;
 use OxidEsales\Eshop\Application\Model\Shop;
 use OxidEsales\Eshop\Core\Price;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface;
 use OxidEsales\EshopCommunity\Core\UtilsObject;
 use oxPrice;
@@ -837,6 +838,7 @@ final class EmailTest extends \OxidTestCase
         $body = $emailStub->getBody();
 
         $this->assertTrue($this->isReviewLinkIncluded($body), 'Links to product reviews are included in the email body by default');
+        ContainerFactory::resetContainer();
     }
 
     /**
@@ -860,6 +862,7 @@ final class EmailTest extends \OxidTestCase
         $body = $emailStub->getBody();
 
         $this->assertSame($isReviewLinkExpectedToBeIncluded, $this->isReviewLinkIncluded($body), $message);
+        ContainerFactory::resetContainer();
     }
 
     public function dataProviderTestProductReviewLinksAreIncludedInSendedNowMailAccordingConfiguration()
