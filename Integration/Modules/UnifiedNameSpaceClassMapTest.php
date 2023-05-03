@@ -7,6 +7,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestData\modules\unifiednamespace_module1\Controller\Test1ContentController;
 use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestData\modules\unifiednamespace_module2\Controller\Test2ContentController;
 
@@ -18,27 +19,9 @@ use OxidEsales\EshopCommunity\Tests\Integration\Modules\TestData\modules\unified
  */
 class UnifiedNameSpaceClassMapTest extends BaseModuleTestCase
 {
-    /**
-     * @var Environment The helper object for the environment.
-     */
-    protected $environment = null;
-
-    /**
-     * Standard set up method. Calls parent first.
-     */
-    public function setup(): void
-    {
-        parent::setUp();
-
-        $this->environment = new Environment();
-    }
-
-    /**
-     * Standard tear down method. Calls parent last.
-     */
     public function tearDown(): void
     {
-        $this->environment->clean();
+        $this->clean();
 
         parent::tearDown();
     }
@@ -190,5 +173,13 @@ class UnifiedNameSpaceClassMapTest extends BaseModuleTestCase
         $resultInheritanceChain = array_merge(array(get_class($objectUnderTest)), $classParents);
 
         $this->assertSame($expectedInheritanceChain, $resultInheritanceChain, 'The given object does not have the expected inheritance chain!');
+    }
+
+    private function clean(): void
+    {
+        $database = DatabaseProvider::getDb();
+        $database->execute("DELETE FROM `oxconfig` WHERE `oxmodule` LIKE 'module:%' OR `oxvarname` LIKE '%Module%'");
+        $database->execute('TRUNCATE `oxconfigdisplay`');
+        $database->execute('TRUNCATE `oxtplblocks`');
     }
 }

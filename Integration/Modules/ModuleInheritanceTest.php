@@ -9,6 +9,7 @@ namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
 use OxidEsales\Eshop\Application\Controller\ContentController as EshopContentController;
 use OxidEsales\Eshop\Application\Model\Article;
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Install\Service\ModuleInstallerInterface;
@@ -105,17 +106,13 @@ class ModuleInheritanceTest extends UnitTestCase
      */
     protected $container;
 
-    /**
-     * Ensure a clean environment before each test
-     */
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->container = $this->getContainer();
 
-        $environment = new Environment();
-        $environment->clean();
+        $this->clean();
     }
 
     /**
@@ -504,5 +501,13 @@ class ModuleInheritanceTest extends UnitTestCase
         $container->get('oxid_esales.module.install.service.launched_shop_project_configuration_generator')->generate();
 
         return $container;
+    }
+
+    private function clean(): void
+    {
+        $database = DatabaseProvider::getDb();
+        $database->execute("DELETE FROM `oxconfig` WHERE `oxmodule` LIKE 'module:%' OR `oxvarname` LIKE '%Module%'");
+        $database->execute('TRUNCATE `oxconfigdisplay`');
+        $database->execute('TRUNCATE `oxtplblocks`');
     }
 }

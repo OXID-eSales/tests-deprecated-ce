@@ -7,6 +7,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ProjectConfigurationDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
 
@@ -72,8 +73,7 @@ class ModuleDeactivationTest extends BaseModuleTestCase
 
         $oModule = oxNew('oxModule');
 
-        $oEnvironment = new Environment();
-        $oEnvironment->setShopId(2);
+        Registry::getConfig()->setShopId(2);
         foreach ($aInstallModules as $moduleId) {
             $this->installAndActivateModule($moduleId, 2);
         }

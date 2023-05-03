@@ -7,6 +7,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\ProjectConfigurationDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
 use oxModuleList;
@@ -65,8 +66,7 @@ final class ModuleRemoveTest extends BaseModuleTestCase
 
         \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\UtilsObject::class, null);
 
-        $oEnvironment = new Environment();
-        $oEnvironment->setShopId(2);
+        Registry::getConfig()->setShopId(2);
         $_POST['shp'] = 2;
 
         foreach ($aInstallModules as $id) {
@@ -85,7 +85,7 @@ final class ModuleRemoveTest extends BaseModuleTestCase
         $this->markTestIncomplete('Skipped till cleanup for subshops will be fixed');
 
         //Assert on main shop
-        $oEnvironment->setShopId(1);
+        Registry::getConfig()->setShopId(1);
         $this->runAsserts($aResultToAssert);
     }
 

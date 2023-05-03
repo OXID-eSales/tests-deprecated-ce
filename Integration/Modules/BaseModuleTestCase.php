@@ -7,6 +7,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Integration\Modules;
 
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Cache\ModuleCacheServiceBridgeInterface;
@@ -22,17 +23,13 @@ use Psr\Container\ContainerInterface;
  */
 abstract class BaseModuleTestCase extends \OxidEsales\TestingLibrary\UnitTestCase
 {
-    /**
-     * Ensure a clean environment before each test
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->getContainer()->get('oxid_esales.module.install.service.launched_shop_project_configuration_generator')->generate();
 
-        $environment = new Environment();
-        $environment->clean();
+        $this->clean();
     }
 
     protected function tearDown(): void
@@ -98,5 +95,13 @@ abstract class BaseModuleTestCase extends \OxidEsales\TestingLibrary\UnitTestCas
                 'Config values does not match expectations'
             );
         }
+    }
+
+    private function clean(): void
+    {
+        $database = DatabaseProvider::getDb();
+        $database->execute("DELETE FROM `oxconfig` WHERE `oxmodule` LIKE 'module:%' OR `oxvarname` LIKE '%Module%'");
+        $database->execute('TRUNCATE `oxconfigdisplay`');
+        $database->execute('TRUNCATE `oxtplblocks`');
     }
 }

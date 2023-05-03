@@ -30,8 +30,6 @@ class ClassNameProviderTest extends UnitTestCase
     {
         $map = [
             'oxdbmetadatahandler' => 'OxidEsales\EshopEnterprise\Core\DbMetaDataHandler',
-            'oxmodulecache' => 'OxidEsales\EshopEnterprise\Core\Module\ModuleCache',
-            'oxmoduleinstaller' => 'OxidEsales\EshopEnterprise\Core\Module\ModuleInstaller',
         ];
 
         $utilsObject = new BackwardsCompatibleClassNameProvider($map);
@@ -59,8 +57,6 @@ class ClassNameProviderTest extends UnitTestCase
     {
         $map = array(
             'oxdbmetadatahandler' => 'OxidEsales\EshopEnterprise\Core\DbMetaDataHandler',
-            'oxmodulecache' => 'OxidEsales\EshopEnterprise\Core\Module\ModuleCache',
-            'oxmoduleinstaller' => 'OxidEsales\EshopEnterprise\Core\Module\ModuleInstaller'
         );
 
         $utilsObject = new BackwardsCompatibleClassNameProvider($map);
