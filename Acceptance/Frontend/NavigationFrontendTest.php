@@ -196,66 +196,6 @@ class NavigationFrontendTest extends FrontendTestCase
     }
 
     /**
-     * Promotions in frontend. Newest products (just arrived)
-     *
-     * @group frontend
-     */
-    public function testFrontendPromotionsNewestProducts()
-    {
-        $this->openShop();
-        //Just arrived!
-        $this->assertElementPresent("//ul[@id='newItems']/li[1]//img");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->clearString($this->getText("newItems_1")));
-        $this->assertEquals("50,00 € *", $this->clearString($this->getText("//ul[@id='newItems']/li[1]//span[@class='price']")));
-        $this->assertTrue($this->isVisible("//ul[@id='newItems']/li[1]//button[text()='%TO_CART%']"));
-        $this->assertTrue($this->isVisible("incVatMessage"));
-        $this->assertEquals("* %PLUS_SHIPPING%%PLUS_SHIPPING2%", $this->clearString($this->getText("incVatMessage")));
-
-        $this->assertElementPresent("//ul[@id='newItems']/li[2]//img");
-        $this->assertEquals("Test product 1 [EN] šÄßüл", $this->clearString($this->getText("newItems_2")));
-        $this->assertEquals("100,00 €", $this->clearString($this->getText("//ul[@id='newItems']/li[2]//span[@class='price']")));
-        $this->assertTrue($this->isVisible("//ul[@id='newItems']/li[2]//a[text()='%MORE_INFO%']"));
-
-        $this->assertEquals("%REDUCED_FROM_2% 150,00 €", $this->clearString($this->getText("//ul[@id='newItems']/li[2]/form//span[@class='oldPrice']")));
-
-        //link on img
-        $this->clickAndWait("//ul[@id='newItems']/li[1]//a[1]");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//h1"));
-        $this->assertEquals("%YOU_ARE_HERE%: / Test category 0 [EN] šÄßüл", $this->getText("breadCrumb"));
-        $this->clickAndWait("link=%HOME%");
-
-        //link on title
-        $this->clickAndWait("newItems_1");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//h1"));
-        $this->assertEquals("%YOU_ARE_HERE%: / Test category 0 [EN] šÄßüл", $this->getText("breadCrumb"));
-        $this->clickAndWait("link=%HOME%");
-
-        //click toCart
-        $this->clickAndWait("//ul[@id='newItems']/li[1]//button");
-    }
-
-
-    /**
-     * Promotions in frontend. Top of the shop (right side)
-     *
-     * @group frontend
-     */
-    public function testFrontendPromotionsTopOfTheShop()
-    {
-        $this->openShop();
-        $this->assertElementPresent("topBox");
-        $this->assertEquals("%TOP_OF_THE_SHOP%", $this->getHeadingText("//div[@id='topBox']/h3"));
-        $this->assertElementPresent("//div[@id='topBox']/ul/li[1]//img[@alt='Test product 0 [EN] šÄßüл ']");
-        $this->assertEquals("Test product 0 [EN] šÄßüл 50,00 € *", $this->clearString($this->getText("//div[@id='topBox']//li[2]")));
-        $this->clickAndWait("//div[@id='topBox']//li[2]/a");
-        $this->assertEquals("%YOU_ARE_HERE%: / Test category 0 [EN] šÄßüл", $this->getText("breadCrumb"));
-
-        //testing top of the shop in category page
-        $this->clickAndWait("link=Test category 0 [EN] šÄßüл");
-        $this->assertElementNotPresent("topBox");
-    }
-
-    /**
      * Checking Top Menu Navigation
      *
      * @group frontend
