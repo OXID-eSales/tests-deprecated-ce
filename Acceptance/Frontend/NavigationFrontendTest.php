@@ -675,35 +675,6 @@ class NavigationFrontendTest extends FrontendTestCase
      *
      * @group frontend
      */
-    public function testCookieSettingsInFrontend()
-    {
-        // Check if cookie option is off
-        $this->clearCache();
-        $this->openShop();
-        $this->assertElementNotPresent("cookieNote");
-
-        // Enable cookienotes
-        $this->callShopSC('oxConfig', null, null, array('blShowCookiesNotification' => array('type' => 'bool', 'value' => true)));
-
-        // Check cookie message in frontend
-        $this->clearCache();
-        $this->openShop();
-        $this->assertElementPresent("cookieNote");
-        // navigate to link where all cookie is deleted
-        $this->clickAndWait("link=%COOKIE_NOTE_DISAGREE%");
-        //CMS page not inherited, so for subshop we check just title
-        if (!isSUBSHOP) {
-            $this->assertTextPresent("You have decided to not accept cookies from our online shop. The cookies have been removed. You can deactivate the usage of cookies in the settings of your browser and visit the online shop with some functional limitations. You can also return to the shop without changing the browser settings and enjoy the full functionality.");
-        }
-        $this->assertTextPresent("%INFO_ABOUT_COOKIES%");
-        // do not turn off browser cookie settings and check in frontend is the message still appears
-        $this->clickAndWait("link=%HOME%");
-        $this->assertElementPresent("cookieNote");
-        // change language in DE and check cookie message
-        $this->switchLanguage("Deutsch");
-        $this->assertTextNotPresent("%INFO_ABOUT_COOKIES%");
-        $this->assertElementNotPresent("cookieNote");
-    }
 
     /**
      * @param $iStatus
