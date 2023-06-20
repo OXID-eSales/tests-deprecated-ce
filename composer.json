@@ -11,7 +11,7 @@
     "homepage": "https://www.oxid-esales.com/en/home.html",
     "require": {
         "oxid-esales/azure-theme": "dev-master",
-        "oxid-esales/testing-library": "dev-b-7.0.x"
+        "oxid-esales/testing-library": "dev-b-8.0.x"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
