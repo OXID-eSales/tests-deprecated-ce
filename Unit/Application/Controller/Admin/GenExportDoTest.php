@@ -5,120 +5,119 @@
  * See LICENSE file for license details.
  */
 
+declare(strict_types=1);
+
 namespace OxidEsales\EshopCommunity\Tests\Unit\Application\Controller\Admin;
 
+use OxidEsales\Eshop\Application\Controller\Admin\GenericExportDo;
+use OxidEsales\Eshop\Application\Model\Article;
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererInterface;
-use Psr\Container\ContainerInterface;
+use OxidEsales\TestingLibrary\VfsStreamWrapper;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Tests for GenExport_Do class
- */
-class GenExportDoTest extends \OxidTestCase
+final class GenExportDoTest extends TestCase
 {
-    /**
-     * GenExport_Do::NextTick() test case
-     *
-     * @return null
-     */
-    public function testNextTickNoMoreArticleFound()
+    public function testNextTickNoMoreArticleFound(): void
     {
-        $oView = $this->getMock(\OxidEsales\Eshop\Application\Controller\Admin\GenericExportDo::class, array("getOneArticle", "write"));
-        $oView->expects($this->once())->method('getOneArticle')->will($this->returnValue(false));
-        $oView->expects($this->never())->method('write');
-        $this->assertFalse($oView->nextTick(1));
+        $controller = $this
+            ->createPartialMock(
+                GenericExportDo::class,
+                ['getOneArticle', 'write']
+            );
+        $controller
+            ->expects($this->once())
+            ->method('getOneArticle')
+            ->willReturn(false);
+        $controller
+            ->expects($this->never())
+            ->method('write');
+
+        $this->assertFalse($controller->nextTick(1));
     }
 
-    /**
-     * GenExport_Do::NextTick() test case
-     *
-     * @return null
-     */
-    public function testNextTick()
+    public function testNextTick(): void
     {
-        $article = oxNew('oxArticle');
+        $product = oxNew(Article::class);
         $parameters = [
-            "sCustomHeader" => '',
-            "linenr" => 1,
-            "article" => $article,
-            "spr" => $this->getConfigParam('sCSVSign'),
-            "encl" => $this->getConfigParam('sGiCsvFieldEncloser'),
+            'sCustomHeader' => '',
+            'linenr' => 1,
+            'article' => $product,
+            'spr' => Registry::getConfig()->getConfigParam('sCSVSign'),
+            'encl' => Registry::getConfig()->getConfigParam('sGiCsvFieldEncloser'),
             'oxEngineTemplateId' => 'dyn_interface'
         ];
-        $renderer = $this->getMockBuilder(TemplateRendererInterface::class)
-            ->setMethods(['renderTemplate', 'renderFragment', 'getTemplateEngine', 'exists'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $renderer->expects($this->any())->method('renderTemplate')->with(
-            $this->equalTo('genexport'),
-            $this->equalTo($parameters)
+        $templateRenderer = $this
+            ->createPartialMock(
+                TemplateRendererInterface::class,
+                ['renderTemplate', 'renderFragment', 'getTemplateEngine', 'exists']
+            );
+        $templateRenderer
+            ->method('renderTemplate')
+            ->with(
+                $this->equalTo('genexport'),
+                $this->equalTo($parameters)
+            );
+
+        $templateRendererBridge = $this
+            ->createPartialMock(
+                TemplateRendererBridgeInterface::class,
+                ['setEngine', 'getEngine', 'getTemplateRenderer']
+            );
+        $templateRendererBridge
+            ->method('getTemplateRenderer')
+            ->willReturn($templateRenderer);
+
+        $controller = $this
+            ->createPartialMock(
+                GenericExportDo::class,
+                ['getOneArticle', 'write', 'getViewId', 'getService']
+            );
+        $controller
+            ->expects($this->once())
+            ->method('getOneArticle')
+            ->willReturn($product);
+        $controller
+            ->expects($this->once())
+            ->method('write');
+        $controller
+            ->expects($this->once())
+            ->method('getViewId')
+            ->willReturn('dyn_interface');
+        $controller
+            ->method('getService')
+            ->willReturn($templateRendererBridge);
+
+        $this->assertEquals(
+            2,
+            $controller->nextTick(1)
         );
-
-        $bridge = $this->getMockBuilder(TemplateRendererBridgeInterface::class)
-            ->setMethods(['setEngine', 'getEngine', 'getTemplateRenderer'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $bridge->expects($this->any())->method('getTemplateRenderer')->will($this->returnValue($renderer));
-
-        $container = $this->getContainerMock('OxidEsales\EshopCommunity\Internal\Framework\Templating\TemplateRendererBridgeInterface', $bridge);
-
-        $oView = $this->getMock(\OxidEsales\Eshop\Application\Controller\Admin\GenericExportDo::class, array("getOneArticle", "write", "getViewId", "getContainer"));
-        $oView->expects($this->once())->method('getOneArticle')->will($this->returnValue($article));
-        $oView->expects($this->once())->method('write');
-        $oView->expects($this->once())->method('getViewId')->will($this->returnValue('dyn_interface'));
-        $oView->expects($this->any())->method('getContainer')->will($this->returnValue($container));
-
-        $this->assertEquals(2, $oView->nextTick(1));
     }
 
-    /**
-     * GenExport_Do::Write() test case
-     *
-     * @return null
-     */
-    public function testWrite()
+    public function testWrite(): void
     {
-        $sLine = 'TestExport';
-        $testFile = $this->createFile('test.txt', '');
+        $controller = oxNew(GenericExportDo::class);
+        $someContents = uniqid('TestExport-', true);
+        $testFile = (new VfsStreamWrapper())
+            ->createFile('test.txt');
 
-        $oView = oxNew('GenExport_Do');
-        $oView->fpFile = @fopen($testFile, "w");
-        $oView->write($sLine);
-        fclose($oView->fpFile);
-        $sFileCont = file_get_contents($testFile, true);
-        $this->assertEquals($sLine . "\n", $sFileCont);
+        $controller->fpFile = fopen($testFile, 'wb');
+        $controller->write($someContents);
+        fclose($controller->fpFile);
+
+        $this->assertEquals(
+            "{$someContents}\n",
+            file_get_contents($testFile, true)
+        );
     }
 
-    /**
-     * GenExport_Do::Render() test case
-     *
-     * @return null
-     */
-    public function testRender()
+    public function testRender(): void
     {
-        // testing..
-        $oView = oxNew('GenExport_Do');
-        $this->assertEquals('dynbase_do', $oView->render());
-    }
-
-    /**
-     * Check that render method returns expected template name.
-     * Could be useful as an integrational test to test that template from controller is set to template engine
-     *
-     * @param $expectedTemplate
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getContainerMock($serviceName, $serviceMock)
-    {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->setMethods(['get', 'has'])
-            ->getMock();
-        $container->expects($this->any())
-            ->method('get')
-            ->with($this->equalTo($serviceName))
-            ->will($this->returnValue($serviceMock));
-
-        return $container;
+        $this->assertEquals(
+            'dynbase_do',
+            oxNew(GenericExportDo::class)
+                ->render()
+        );
     }
 }
