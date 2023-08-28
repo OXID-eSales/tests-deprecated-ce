@@ -9,7 +9,7 @@ namespace OxidEsales\EshopCommunity\Tests\Acceptance\Admin;
 
 use OxidEsales\EshopCommunity\Tests\Acceptance\AdminTestCase;
 use OxidEsales\TestingLibrary\helpers\ExceptionLogFileHelper;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 use OxidEsales\Facts\Config\ConfigFile as FactsConfigFile;
 
 /**
