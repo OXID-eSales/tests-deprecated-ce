@@ -17,7 +17,7 @@ use OxidEsales\Facts\Facts;
 use oxTestModules;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class ViewConfigTest extends \OxidTestCase
 {

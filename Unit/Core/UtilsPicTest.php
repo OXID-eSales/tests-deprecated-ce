@@ -14,7 +14,7 @@ use OxidEsales\EshopCommunity\Core\Registry;
 use oxTestModules;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 final class UtilsPicTest extends \OxidTestCase
 {

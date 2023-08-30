@@ -18,7 +18,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\FileSystem\ImageHandlerInterfac
 use OxidEsales\EshopCommunity\Tests\ContainerTrait;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class UtilsFileLocalImagesHandlingTest extends UnitTestCase
 {
