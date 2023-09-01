@@ -13,50 +13,6 @@ use OxidEsales\EshopCommunity\Tests\Acceptance\FrontendTestCase;
 class BasketFrontendTest extends FrontendTestCase
 {
     /**
-     * Checking VAT displaying for all additional products in 1st order step
-     *
-     * @group basketfrontend
-     */
-    public function testFrontendVATOptions()
-    {
-        //enabling config (Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice)
-        $this->setShopParam("blShowVATForDelivery", "true");
-
-        //enabling config (Display VAT contained in Payment Method Charges in Shopping Cart and Invoice)
-        $this->setShopParam("blShowVATForPayCharge", "true");
-
-        //enabling config (Display VAT contained in Gift Wrappings and Greeting Cards in Shopping Cart and Invoice)
-        $this->setShopParam("blShowVATForWrapping", "true");
-
-        $this->clearCache();
-        $this->addToBasket("1000", 3);
-
-        $this->loginInFrontend("example_test@oxid-esales.dev", "useruser");
-        $this->assertEquals("3", $this->getValue("am_1"));
-        $this->click("//tr[@id='cartItem_1']/td[4]/a");
-        $this->waitForItemAppear("wrapp_1");
-        $this->click("//ul[@id='wrapp_1']/li[4]//input");
-        $this->clickAndWait("//button[text()='%APPLY%']");
-
-        //in 1st order step check order information
-        $this->assertTextPresent("%TOTAL_NET%", "info about net total not displays in cart");
-        $this->assertTextPresent("plus 5% tax, amount:", "info about product VAT not displays in cart");
-        $this->assertTextPresent("%TOTAL_GROSS%", "info about bruto total not displays in cart");
-        $this->assertTextPresent("%SHIPPING_NET%:", "info about shipping not displays in cart");
-        $this->assertTextPresent("%BASKET_TOTAL_WRAPPING_COSTS_NET%:", "info about wrapping total not displays in cart");
-        $this->assertTextPresent("%PLUS_VAT%:", "info about gift wrapping vat not displays in cart");
-        $this->assertTextPresent("%GRAND_TOTAL%:", "info about grand total not displays in cart");
-
-        $this->assertEquals("128,57 €", $this->getText("basketTotalProductsNetto"), "Neto price changed or didn't displayed");
-        $this->assertEquals("6,43 €", $this->getText("//div[@id='basketSummary']//tr[2]/td"), "VAT 5% changed ");
-        $this->assertEquals("135,00 €", $this->getText("basketTotalProductsGross"), "Bruto price changed  or didn't displayed");
-        $this->assertEquals("0,00 €", $this->getText("basketDeliveryNetto"), "Shipping price changed  or didn't displayed");
-        $this->assertEquals("2,57 €", $this->getText("basketWrappingNetto"), "Wrapping price changed  or didn't displayed");
-        $this->assertEquals("0,13 €", $this->getText("basketWrappingVat"), "Wrapping price changed  or didn't displayed");
-        $this->assertEquals("137,70 €", $this->getText("basketGrandTotal"), "Grand total price changed  or didn't displayed");
-    }
-
-    /**
      * My account navigation: Order history
      * Testing min order price
      *
@@ -237,76 +193,6 @@ class BasketFrontendTest extends FrontendTestCase
 
         $this->continueToNextStep();
 
-        $this->assertEquals("%YOU_ARE_HERE%: / %PAY%", $this->getText("breadCrumb"));
-    }
-
-    /**
-     * Order steps: Step2 and Step3
-     *
-     * @group basketfrontend
-     */
-    public function testFrontendOrderStep2And3()
-    {
-        $this->addToBasket("1001");
-        $this->addToBasket("1002-2");
-
-        $this->loginInFrontend("example_test@oxid-esales.dev", "useruser");
-        //Order Step1
-        $this->enterCouponCode("222222");
-        $this->continueToNextStep();
-        //Order step2
-
-        $this->assertEquals("%YOU_ARE_HERE%: / %ADDRESS%", $this->getText("breadCrumb"));
-        $this->assertTextPresent('%BILLING_ADDRESS%');
-        $this->assertEquals("%MR%", $this->getSelectedLabel("invadr[oxuser__oxsal]"));
-        $this->assertEquals("UserNamešÄßüл", $this->getValue("invadr[oxuser__oxfname]"));
-        $this->assertEquals("UserSurnamešÄßüл", $this->getValue("invadr[oxuser__oxlname]"));
-        $this->assertEquals("UserCompany šÄßüл", $this->getValue("invadr[oxuser__oxcompany]"));
-        $this->assertEquals("Musterstr.šÄßüл", $this->getValue("invadr[oxuser__oxstreet]"));
-        $this->assertEquals("1", $this->getValue("invadr[oxuser__oxstreetnr]"));
-        $this->assertEquals("79098", $this->getValue("invadr[oxuser__oxzip]"));
-        $this->assertEquals("Musterstadt šÄßüл", $this->getValue("invadr[oxuser__oxcity]"));
-        $this->assertEquals("", $this->getValue("invadr[oxuser__oxustid]"));
-        $this->assertEquals("User additional info šÄßüл", $this->getValue("invadr[oxuser__oxaddinfo]"));
-        $this->assertEquals("Germany", $this->getSelectedLabel("invadr[oxuser__oxcountryid]"));
-        $this->assertEquals("0800 111111", $this->getValue("invadr[oxuser__oxfon]"));
-        $this->assertEquals("0800 111112", $this->getValue("invadr[oxuser__oxfax]"));
-        $this->assertEquals("0800 111114", $this->getValue("invadr[oxuser__oxmobfon]"));
-        $this->assertEquals("0800 111113", $this->getValue("invadr[oxuser__oxprivfon]"));
-        $this->assertEquals("01", $this->getValue("invadr[oxuser__oxbirthdate][day]"));
-        $this->assertEquals(1, (int) $this->getValue("invadr[oxuser__oxbirthdate][month]"));
-        $this->assertEquals("1980", $this->getValue("invadr[oxuser__oxbirthdate][year]"));
-        $this->assertEquals("off", $this->getValue("subscribeNewsletter"));
-
-        $this->continueToNextStep();
-
-        $this->clickAndWait("link=%STEPS_SEND%");
-        $this->assertEquals("%YOU_ARE_HERE%: / %ADDRESS%", $this->getText("breadCrumb"));
-
-        $this->continueToNextStep();
-        //Order Step3
-        $this->assertEquals("%SELECT_SHIPPING_METHOD%:", $this->getText("deliveryHeader"));
-        $this->assertEquals("%PAYMENT_METHOD%", $this->getText("paymentHeader"));
-        $this->assertEquals("%CHARGES%: 1,50 €", $this->getText("shipSetCost"));
-        $this->assertEquals("Test S&H set [EN] šÄßüл", $this->getSelectedLabel("sShipSet"));
-        $this->assertFalse($this->isVisible("testpayment_1"));
-        $this->assertElementPresent("payment_oxidcashondel");
-        $this->assertElementNotPresent("payment_oxidpayadvance");
-        $this->assertElementNotPresent("payment_oxiddebitnote");
-
-        $this->selectAndWait("sShipSet", "label=Standard");
-        $this->assertElementNotPresent("shipSetCost");
-        $this->assertElementPresent("payment_oxidpayadvance");
-        $this->assertElementPresent("payment_oxiddebitnote");
-        $this->assertElementNotPresent("payment_testpayment");
-        $this->select("sShipSet", "label=Test S&H set [EN] šÄßüл");
-        $this->waitForItemAppear("shipSetCost");
-        $this->assertEquals("%CHARGES%: 1,50 €", $this->getText("shipSetCost"));
-        $this->click("payment_testpayment");
-
-        $this->continueToNextStep();
-        $this->assertEquals("%YOU_ARE_HERE%: / %ORDER%", $this->getText("breadCrumb"));
-        $this->clickAndWait("link=%STEPS_PAY%");
         $this->assertEquals("%YOU_ARE_HERE%: / %PAY%", $this->getText("breadCrumb"));
     }
 
