@@ -4006,30 +4006,6 @@ class ArticleTest extends \OxidTestCase
     }
 
     /**
-     * Test is visible for inactive.
-     *
-     * @return null
-     */
-    public function testIsVisibleNotActive()
-    {
-        $oArticle = $this->createArticle('_testArt');
-        $oArticle->oxarticles__oxactive = new oxField(0, oxField::T_RAW);
-        $this->assertFalse($oArticle->isVisible());
-    }
-
-    /**
-     * Test is visible.
-     *
-     * @return null
-     */
-    public function testIsVisible()
-    {
-        $oArticle = $this->createArticle('_testArt');
-        $oArticle->oxarticles__oxactive = new oxField(1, oxField::T_RAW);
-        $this->assertTrue($oArticle->isVisible());
-    }
-
-    /**
      * Test is visible when out of stock.
      *
      * @return null
@@ -4066,6 +4042,36 @@ class ArticleTest extends \OxidTestCase
         $oA->oxarticles__oxstock = new oxField(-1, oxField::T_RAW);
         $oA->oxarticles__oxstockflag = new oxField(2, oxField::T_RAW);
         $this->assertTrue($oA->isVisible());
+    }
+
+    /**
+     * @dataProvider isVisibleByTimeCheckAndActivityDataProvider
+     */
+    public function testIsVisibleByTimeCheckAndActivity($articleActive, $timeCheckActive, $from, $to, $expectedResult)
+    {
+        $oArticle = $this->createArticle('_testArt');
+        $this->getConfig()->setConfigParam('blUseTimeCheck', $timeCheckActive);
+        $this->getConfig()->setConfigParam('blUseStock', false);
+
+        $oArticle->setFieldData('oxactive', $articleActive);
+        $oArticle->setFieldData('oxactivefrom', $from);
+        $oArticle->setFieldData('oxactiveto', $to);
+
+        $this->assertSame($expectedResult, $oArticle->isVisible());
+    }
+
+    public function isVisibleByTimeCheckAndActivityDataProvider()
+    {
+        return [
+            [true, true, '0000-00-00 00:00:00', '0000-00-00 00:00:00', true],
+            [false, true, '0000-00-00 00:00:00', '0000-00-00 00:00:00', false],
+            [false, true, '0000-00-00 00:00:00', '0000-00-00 00:00:00', false],
+            [false, true, '0000-00-00 00:00:00', '2040-01-01 00:00:00', true],
+            [false, true, '0000-00-00 00:00:00', '2020-01-01 00:00:00', false],
+            [false, false, '0000-00-00 00:00:00', '2020-01-01 00:00:00', false],
+            [true, false, '0000-00-00 00:00:00', '2020-01-01 00:00:00', true],
+            [false, false, '0000-00-00 00:00:00', '2040-01-01 00:00:00', false],
+        ];
     }
 
     /**
