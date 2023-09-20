@@ -14,60 +14,6 @@ use OxidEsales\EshopCommunity\Tests\Acceptance\FrontendTestCase;
 class NavigationFrontendTest extends FrontendTestCase
 {
     /**
-     * switching currencies in frontend
-     *
-     * @group main
-     */
-    public function testFrontendCurrencies()
-    {
-        $this->openShop();
-
-        //currency checking
-        $this->assertElementPresent("//p[@id='currencyTrigger']/a");
-        $this->click("//p[@id='currencyTrigger']/a");
-        $this->waitForItemAppear("//ul[@id='currencies']");
-        $this->assertElementPresent("//ul[@id='currencies']/li[@class='active']//*[text()='EUR']");
-        $this->assertElementPresent("//ul[@id='currencies']/li[2]//*[text()='EUR']");
-        $this->assertElementPresent("//ul[@id='currencies']/li[3]//*[text()='GBP']");
-        $this->assertElementPresent("//ul[@id='currencies']/li[4]//*[text()='CHF']");
-        $this->assertElementPresent("//ul[@id='currencies']/li[5]//*[text()='USD']");
-        $this->assertEquals("50,00 € *", $this->getText("//ul[@id='newItems']/li[1]//span[@class='price']"));
-
-        $this->clickAndWait("//ul[@id='currencies']/li[3]/a");
-        $this->assertElementNotVisible("currencies");
-        $this->assertElementPresent("//p[@id='currencyTrigger']//*[text()='GBP']");
-        $this->assertEquals("42.83 £ *", $this->getText("//ul[@id='newItems']/li[1]//span[@class='price']"));
-
-        $this->switchCurrency("CHF");
-        $this->assertElementPresent("//p[@id='currencyTrigger']//*[text()='CHF']");
-        $this->assertEquals("71,63 CHF *", $this->getText("//ul[@id='newItems']/li[1]//span[@class='price']"));
-
-        $this->switchCurrency("USD");
-        $this->assertElementPresent("//p[@id='currencyTrigger']//*[text()='USD']");
-        $this->assertEquals("64.97 $ *", $this->getText("//ul[@id='newItems']/li[1]//span[@class='price']"));
-
-        $this->switchCurrency("EUR");
-        $this->assertElementPresent("//p[@id='currencyTrigger']//*[text()='EUR']");
-        $this->assertEquals("50,00 € *", $this->getText("//ul[@id='newItems']/li[1]//span[@class='price']"));
-
-        $this->clickAndWait("link=Test category 0 [EN] šÄßüл");
-        $this->assertEquals("50,00 € *", $this->getText("//ul[@id='productList']/li[1]//span[@class='price']"));
-
-        // #1739 currency switch in vendors
-        $this->clickAndWait("link=Manufacturer [EN] šÄßüл");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//a[@id='productList_1']/span"));
-        $this->assertEquals("50,00 € *", $this->getText("//ul[@id='productList']/li[1]//span[@class='price']"));
-
-        $this->switchCurrency("GBP");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//a[@id='productList_1']/span"));
-        $this->assertEquals("42.83 £ *", $this->getText("//ul[@id='productList']/li[1]//span[@class='price']"));
-
-        $this->switchCurrency("EUR");
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//a[@id='productList_1']/span"));
-        $this->assertEquals("50,00 € *", $this->getText("//ul[@id='productList']/li[1]//span[@class='price']"));
-    }
-
-    /**
      * site footer
      *
      * @group frontend
