@@ -175,7 +175,7 @@ class UtilitiesTest extends \OxidTestCase
     {
         $oUtils = new Utilities();
         $this->assertFalse($oUtils->isValidEmail("admin"));
-        $this->assertTrue($oUtils->isValidEmail("shop@admin.com"));
+        $this->assertTrue($oUtils->isValidEmail("noreply@oxid-esales.com"));
     }
 
     /**
