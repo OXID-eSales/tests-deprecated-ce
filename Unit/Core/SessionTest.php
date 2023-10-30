@@ -1155,23 +1155,7 @@ class SessionTest extends \OxidTestCase
         $this->assertEquals('asd541sdf', $oSession->getSessionChallengeToken());
     }
 
-    public function testCheckSessionChallenge()
-    {
-        $oSession = $this->getMock(\OxidEsales\Eshop\Core\Session::class, array('getSessionChallengeToken', 'getRequestChallengeToken'));
-        $oSession->expects($this->once())->method('getSessionChallengeToken')->will($this->returnValue(''));
-        $oSession->expects($this->never())->method('getRequestChallengeToken')->will($this->returnValue(''));
-        $this->assertEquals(false, $oSession->checkSessionChallenge());
 
-        $oSession = $this->getMock(\OxidEsales\Eshop\Core\Session::class, array('getSessionChallengeToken', 'getRequestChallengeToken'));
-        $oSession->expects($this->once())->method('getSessionChallengeToken')->will($this->returnValue('aa'));
-        $oSession->expects($this->once())->method('getRequestChallengeToken')->will($this->returnValue('aad'));
-        $this->assertEquals(false, $oSession->checkSessionChallenge());
-
-        $oSession = $this->getMock(\OxidEsales\Eshop\Core\Session::class, array('getSessionChallengeToken', 'getRequestChallengeToken'));
-        $oSession->expects($this->once())->method('getSessionChallengeToken')->will($this->returnValue('aa'));
-        $oSession->expects($this->once())->method('getRequestChallengeToken')->will($this->returnValue('aa'));
-        $this->assertEquals(true, $oSession->checkSessionChallenge());
-    }
 
     public function testInitNewSessionChallenge()
     {

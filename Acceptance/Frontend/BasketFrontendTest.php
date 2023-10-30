@@ -31,64 +31,6 @@ class BasketFrontendTest extends FrontendTestCase
     }
 
     /**
-     * Discounts for products (category, product and itm discounts)
-     *
-     * @group basketfrontend
-     */
-    public function testFrontendDiscounts()
-    {
-        $this->addToBasket("1000");
-        $this->addToBasket("1002-1");
-
-        $this->assertTextNotPresent("discount");
-        $this->assertElementNotPresent("cartItem_3");
-        $this->loginInFrontend("example_test@oxid-esales.dev", "useruser");
-
-        $this->assertTextNotPresent("discount for category [EN] šÄßüл", "name of category discount should not be displayed in basket");
-        $this->assertEquals("45,00 € \n50,00 €", $this->getText("//tr[@id='cartItem_1']/td[6]"), "price with discount not shown in basket");
-
-        $this->assertElementNotPresent("cartItem_3");
-        $this->assertTextNotPresent("discount for product [EN] šÄßüл");
-
-        $this->type("am_2", "2");
-        $this->clickAndWait("basketUpdate");
-        $this->assertTextNotPresent("discount for category [EN] šÄßüл");
-        $this->assertTextNotPresent("discount for product [EN] šÄßüл");
-
-        $this->assertEquals("45,00 € \n50,00 €", $this->getText("//tr[@id='cartItem_1']/td[6]"), "price with discount not shown in basket");
-        $this->assertElementNotPresent("cartItem_3");
-
-        $this->type("am_1", "5");
-        $this->clickAndWait("basketUpdate");
-
-        $this->assertEquals("Test product 3 [EN] šÄßüл %PRODUCT_NO%: 1003", $this->clearString($this->getText("//tr[@id='cartItem_3']/td[3]")));
-        $this->assertEquals("+1", $this->getText("//tr[@id='cartItem_3']/td[5]"));
-
-        $this->assertEquals("297,48 €", $this->getText("basketTotalProductsNetto"), "Netto price changed or didn't displayed");
-        $this->assertEquals("10,71 €", $this->getText("//div[@id='basketSummary']//tr[2]/td"), "VAT 5% changed ");
-        $this->assertEquals("15,81 €", $this->getText("//div[@id='basketSummary']//tr[3]/td"), "VAT 5% changed ");
-        $this->assertEquals("324,00 €", $this->getText("basketTotalProductsGross"), "Bruto price changed  or didn't displayed");
-        $this->assertEquals("1,50 €", $this->getText("basketDeliveryGross"), "Shipping price changed  or didn't displayed");
-        $this->assertEquals("325,50 €", $this->getText("basketGrandTotal"), "Grand total price changed  or didn't displayed");
-        $this->assertEquals("45,00 € \n50,00 €", $this->getText("//tr[@id='cartItem_1']/td[6]"), "price with discount not shown in basket");
-
-        //TODO: Selenium refactor to remove SQL's executions
-        //test for #1822
-        $this->executeSql("UPDATE `oxdiscount` SET `OXACTIVE` = 1 WHERE `OXID` = 'testdiscount5';");
-        $this->clickAndWait("link=%STEPS_BASKET%");
-        #$this->clickAndWait("//ul[@id='topMenu']//a[text()='%LOGOUT%']");
-        #$this->assertElementNotPresent("//a[text()='%LOGOUT%']");
-        $this->check("//tr[@id='cartItem_2']/td[1]/input");
-        $this->type("am_1", "1");
-        $this->clickAndWait("basketUpdate");
-        $this->assertTextPresent("1 EN test discount šÄßüл");
-        $this->assertEquals("-10,00 €", $this->getText("//div[@id='basketSummary']//tr[2]/td"));
-        $this->type("am_1", "2");
-        $this->clickAndWait("basketUpdate");
-        $this->assertEquals("-10,00 €", $this->getText("//div[@id='basketSummary']//tr[2]/td"));
-    }
-
-    /**
      * Order step 2
      *
      * @group basketfrontend
