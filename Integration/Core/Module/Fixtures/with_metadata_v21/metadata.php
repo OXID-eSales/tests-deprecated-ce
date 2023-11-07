@@ -20,10 +20,6 @@ $aModule = array(
     'thumbnail'    => 'picture.png',
     'version'      => '1.0',
     'author'       => 'OXID eSales AG',
-    'smartyPluginDirectories'  => [
-        'Smarty/PluginDirectory1WithMetadataVersion21',
-        'Smarty/PluginDirectory2WithMetadataVersion21'
-    ],
     'templates' => [
         'test_template.tpl' => 'test_template.tpl',
     ],
