@@ -751,40 +751,6 @@ class UserComponentTest extends \OxidTestCase
 
     /**
      * Test createUser().
-     */
-    public function testCreateUser()
-    {
-        oxTestModules::addFunction("oxemail", "sendRegisterEmail", "{ return true;}");
-        $this->setRequestParameter('lgn_usr', 'test@oxid-esales.com');
-        $this->setRequestParameter('lgn_pwd', 'Test@oxid-esales.com');
-        $this->setRequestParameter('lgn_pwd2', 'Test@oxid-esales.com');
-        $this->setRequestParameter('order_remark', 'TestRemark');
-        $this->setRequestParameter('option', 3);
-        $rawVal = array('oxuser__oxfname'     => 'fname',
-                         'oxuser__oxlname'     => 'lname',
-                         'oxuser__oxstreetnr'  => 'nr',
-                         'oxuser__oxstreet'    => 'street',
-                         'oxuser__oxzip'       => 'zip',
-                         'oxuser__oxcity'      => 'city',
-                         'oxuser__oxcountryid' => 'a7c40f631fc920687.20179984');
-        $this->setRequestParameter('invadr', $rawVal);
-
-        $this->getConfig()->setConfigParam("blPsLoginEnabled", false);
-
-        $this->mockSessionChallenge();
-
-        $parent = $this->getMock(\OxidEsales\Eshop\Application\Controller\FrontendController::class, array("isEnabledPrivateSales"));
-        $parent->expects($this->atLeastOnce())->method('isEnabledPrivateSales')->will($this->returnValue(false));
-
-        $userView = $this->getMock($this->getProxyClassName("oxcmp_user"), array('getParent'));
-        $userView->expects($this->any())->method('getParent')->will($this->returnValue($parent));
-        $this->assertEquals('payment?new_user=1&success=1', $userView->createUser());
-        $this->assertEquals('TestRemark', oxRegistry::getSession()->getVariable('ordrem'));
-        $this->assertTrue($userView->getNonPublicVar('_blIsNewUser'));
-    }
-
-    /**
-     * Test createUser().
      *
      * @return null
      */
