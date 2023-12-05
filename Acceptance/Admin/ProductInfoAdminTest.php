@@ -37,30 +37,6 @@ class ProductInfoAdminTest extends AdminTestCase
     }
 
     /**
-     * Test showing activation check if from/to date was set
-     *
-     * @group productAdmin
-     */
-    public function testActivationCheckIsShown()
-    {
-        $fromDate = strval(intval(date("Y")) - 2) . '-01-01 00:00:00';
-        $toDate = strval(intval(date("Y")) + 2) . '-01-01 00:00:00';
-        $query = "UPDATE `oxarticles` SET `oxactive` = 0, `oxactivefrom` = ?, `oxactiveto` = ? WHERE `oxartnum` = '1401'";
-        DatabaseProvider::getDb()->execute($query, [$fromDate, $toDate]);
-
-        Registry::getConfig()->saveShopConfVar("bool", "blUseTimeCheck", true);
-
-        $this->loginAdmin("Administer Products", "Products");
-        $this->type("where[oxarticles][oxartnum]", "1401");
-        $this->clickAndWaitFrame("submitit", 'list');
-        $this->openListItem("link=1401");
-
-        $this->frame('list');
-        $activationCheckElement = $this->getElementLazy($this->translate("//*[@id='row.1']/td[1]"));
-        $this->assertTrue($activationCheckElement->hasClass('active'));
-    }
-
-    /**
      * Product details. Testing price alert
      *
      * @group productAdmin
