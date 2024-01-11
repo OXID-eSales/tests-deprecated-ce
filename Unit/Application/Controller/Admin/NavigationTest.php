@@ -70,7 +70,9 @@ class NavigationTest extends \OxidTestCase
     {
         oxTestModules::addFunction('oxUtilsServer', 'setOxCookie', '{}');
         oxTestModules::addFunction('oxUtilsServer', 'getOxCookie', '{return "a|b";}');
-        $this->setRequestParameter("item", "home");
+
+        $templateName = 'home.html.twig';
+        $this->setRequestParameter("item", $templateName);
         $this->setRequestParameter("favorites", array(0, 1, 2));
         $this->setRequestParameter("navReload", false);
         $this->setRequestParameter("openHistory", true);
@@ -87,7 +89,7 @@ class NavigationTest extends \OxidTestCase
         $oView = $this->getMock(NavigationController::class, array("getNavigation", "doStartUpChecks"));
         $oView->expects($this->once())->method('getNavigation')->will($this->returnValue($oNavigation));
         $oView->expects($this->once())->method('doStartUpChecks')->will($this->returnValue("check"));
-        $this->assertEquals('home', $oView->render());
+        $this->assertEquals($templateName, $oView->render());
 
         // checking vew data
         $aViewData = $oView->getViewData();
