@@ -1453,6 +1453,8 @@ class UserComponentTest extends \OxidTestCase
         Registry::set(Session::class, $session);
 
         $user = $this->createPartialMock(\OxidEsales\Eshop\Application\Model\User::class, ['changeUserData']);
+        $user->init('oxuser');
+
         $user->oxuser__oxusername = new oxField('test_username', oxField::T_RAW);
         $user->oxuser__oxpassword = new oxField($pass, oxField::T_RAW);
         $user->expects($this->once())
