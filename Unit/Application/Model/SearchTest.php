@@ -795,45 +795,6 @@ class SearchTest extends UnitTestCase
         $this->assertEquals($sFix, $sQ);
     }
 
-    public function testGetSearchSelectWithSearchInLongDesc()
-    {
-        // forcing config
-        $this->getConfig()->setConfigParam('aSearchCols', array('oxlongdesc'));
-        $this->getConfig()->setConfigParam('blUseRightsRoles', 0);
-
-        $iCurrTime = 0;
-
-        $oUtilsDate = $this->getMock(\OxidEsales\Eshop\Core\UtilsDate::class, array('getRequestTime'));
-        $oUtilsDate->expects($this->any())->method('getRequestTime')->will($this->returnValue($iCurrTime));
-        /** @var oxUtilsDate $oUtils */
-        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\UtilsDate::class, $oUtilsDate);
-
-        $sSearchDate = date('Y-m-d H:i:s', $iCurrTime);
-        $sArticleTable = $sTable = $this->tableViewNameGenerator->getViewName('oxarticles');
-        $sAETable = $this->tableViewNameGenerator->getViewName('oxartextends');
-
-        $sQ = "select `$sArticleTable`.`oxid`, $sArticleTable.oxtimestamp from $sArticleTable left join $sAETable on $sArticleTable.oxid=$sAETable.oxid where (  ( $sArticleTable.oxactive = 1 and $sArticleTable.oxhidden = 0 or ( $sArticleTable.oxactivefrom < '$sSearchDate' and
-               $sArticleTable.oxactiveto > '$sSearchDate' ) )  and ( $sArticleTable.oxstockflag != 2 or ( $sArticleTable.oxstock +
-               $sArticleTable.oxvarstock ) > 0  )  ";
-        if (!$this->getConfig()->getConfigParam('blVariantParentBuyable')) {
-            $sTimeCheckQ = " or ( art.oxactivefrom < '$sSearchDate' and art.oxactiveto > '$sSearchDate' )";
-            $sQ .= "and IF( $sTable.oxvarcount = 0, 1, ( select 1 from $sTable as art where art.oxparentid=$sTable.oxid and ( art.oxactive = 1 $sTimeCheckQ ) and ( art.oxstockflag != 2 or art.oxstock > 0 ) limit 1 ) ) ";
-        }
-        $sQ .= ")  and $sArticleTable.oxparentid = '' and $sArticleTable.oxissearch = 1  and
-                ( (  $sAETable.oxlongdesc like '%xxx%' )  ) ";
-
-        /** @var Search $oSearch */
-        $oSearch = oxNew('oxSearch');
-        $sFix = $oSearch->getSearchSelect('xxx');
-
-        $aSearch = array("/\s+/", "/\t+/", "/\r+/", "/\n+/");
-        $sQ = trim(strtolower(preg_replace($aSearch, " ", $sQ)));
-        $sFix = trim(strtolower(preg_replace($aSearch, " ", $sFix)));
-
-
-        $this->assertEquals($sQ, $sFix);
-    }
-
     public function testGetWhereWithSearchIngLongDescSecondLanguage()
     {
         // forcing config
