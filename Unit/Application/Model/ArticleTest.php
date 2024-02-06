@@ -334,6 +334,34 @@ class ArticleTest extends \OxidTestCase
     /**
      * Test get stock check query.
      *
+     * @return null
+     */
+    public function testGetStockCheckQuery()
+    {
+        $this->getConfig()->setConfigParam('blUseStock', true);
+        $this->getConfig()->setConfigParam('blVariantParentBuyable', false);
+        $this->getConfig()->setConfigParam('blUseTimeCheck', true);
+
+        $oUtilsDate = $this->getMock(\OxidEsales\Eshop\Core\UtilsDate::class, array('getRequestTime'));
+        $oUtilsDate->expects($this->any())->method('getRequestTime')->will($this->returnValue(0));
+        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\UtilsDate::class, $oUtilsDate);
+
+        $sDate = date('Y-m-d H:i:s', \OxidEsales\Eshop\Core\Registry::getUtilsDate()->getRequestTime());
+
+        $oArticle = oxNew('oxArticle');
+        $sTable = $oArticle->getViewName();
+
+        $defaultDate = '0000-00-00 00:00:00';
+        $sTimeCheckQ = " or ((art.oxactivefrom <= '$sDate' AND art.oxactivefrom != '$defaultDate' AND art.oxactiveto = '$defaultDate') OR (art.oxactivefrom <= '$sDate' AND art.oxactiveto >= '$sDate'))";
+        $sQ = " and ( $sTable.oxstockflag != 2 or ( $sTable.oxstock + $sTable.oxvarstock ) > 0  ) ";
+        $sQ = " $sQ and IF( $sTable.oxvarcount = 0, 1, ( select 1 from $sTable as art where art.oxparentid=$sTable.oxid and ( art.oxactive = 1 $sTimeCheckQ ) and ( art.oxstockflag != 2 or art.oxstock > 0 ) limit 1 ) ) ";
+
+        $this->assertEquals(str_replace(array(" ", "\n", "\t", "\r"), "", $sQ), str_replace(array(" ", "\n", "\t", "\r"), "", $oArticle->getStockCheckQuery()));
+    }
+
+    /**
+     * Test get stock check query.
+     *
      * @ticket #4822
      *
      */
@@ -2041,6 +2069,33 @@ class ArticleTest extends \OxidTestCase
         $sSelect = $oArticle->getSqlActiveSnippet();
         $this->assertEquals(str_replace(array(" ", "\n", "\t", "\r"), "", $sExpSelect), str_replace(array(" ", "\n", "\t", "\r"), "", $sSelect));
     }
+
+    /**
+     * Test get sql active snippet dont use stock.
+     *
+     * @return null
+     */
+    public function testGetSqlActiveSnippetDontUseStock()
+    {
+        $iCurrTime = 0;
+
+        $oUtilsDate = $this->getMock(\OxidEsales\Eshop\Core\UtilsDate::class, array('getRequestTime'));
+        $oUtilsDate->expects($this->any())->method('getRequestTime')->will($this->returnValue($iCurrTime));
+        /** @var oxUtilsDate $oUtils */
+        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\UtilsDate::class, $oUtilsDate);
+
+        $this->getConfig()->setConfigParam('blUseStock', false);
+        $oArticle = $this->createArticle('_testArt');
+        $oArticle->setAdminMode(true);
+        $sTable = $oArticle->getViewName();
+        $sDate = date('Y-m-d H:i:s', $iCurrTime);
+        $defaultDate = '0000-00-00 00:00:00';
+        $sExpSelect = "(  (   $sTable.oxactive = 1  and $sTable.oxhidden = 0  or  (($sTable.oxactivefrom <= '$sDate' AND $sTable.oxactivefrom != '$defaultDate' AND $sTable.oxactiveto = '$defaultDate') OR ($sTable.oxactivefrom <= '$sDate' AND $sTable.oxactiveto >= '$sDate')) ) ) ";
+        $sSelect = $oArticle->getSqlActiveSnippet();
+        $this->assertEquals($sExpSelect, $sSelect);
+    }
+
+
 
     /**
      * Test get variants.
