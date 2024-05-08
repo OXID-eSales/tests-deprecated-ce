@@ -1,4 +1,0 @@
-table_storage:
-  table_name: oxmigrations_ee
-migrations_paths:
-  'OxidEsales\EshopEnterprise\Migrations': data
