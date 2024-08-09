@@ -968,7 +968,7 @@ class ConfigTest extends \OxidTestCase
         $oChf->rate = '1.4326';
         $oChf->dec = ',';
         $oChf->thousand = '.';
-        $oChf->sign = '<small>CHF</small>';
+        $oChf->sign = 'CHF';
         $oChf->decimal = '2';
         $oChf->selected = 0;
 
