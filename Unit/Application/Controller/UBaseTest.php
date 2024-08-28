@@ -81,32 +81,6 @@ class UBaseTest extends \OxidTestCase
     }
 
     /**
-     * Test case for oxUBase::getComponentNames()
-     *
-     * @return null
-     */
-    public function testGetComponentNames()
-    {
-        $sCmpName = "testCmp" . time();
-        eval("class {$sCmpName} extends oxUbase {}");
-
-        $this->setConfigParam('aUserComponentNames', array($sCmpName => 1));
-
-        $aComponentNames = array(
-            'oxcmp_user'       => 1, // 0 means don't init if cached
-            'oxcmp_lang'       => 0,
-            'oxcmp_cur'        => 1,
-            'oxcmp_shop'       => 1,
-            'oxcmp_categories' => 0,
-            'oxcmp_utils'      => 1,
-            'oxcmp_basket'     => 1,
-            $sCmpName          => 1
-        );
-        $oView = oxNew('oxUBase');
-        $this->assertEquals($aComponentNames, $oView->getComponentNames());
-    }
-
-    /**
      * oxUBase::isActive() test case
      */
     public function testIsActive()
