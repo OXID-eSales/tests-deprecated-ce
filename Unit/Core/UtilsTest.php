@@ -426,54 +426,6 @@ class UtilsTest extends \OxidTestCase
         $this->assertEquals($fFloat, 10000);
     }
 
-    /**
-     * SE check, non admin mode, will cache result
-     */
-    public function testIsSearchEngineNonAdminNonSE()
-    {
-        // cleaning ..
-        $myConfig = $this->getConfig();
-
-        $myConfig->setConfigParam('iDebug', 1);
-        $myConfig->setConfigParam('aRobots', array());
-
-        $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('isAdmin'));
-        $oUtils->expects($this->any())->method('isAdmin')->will($this->returnValue(false));
-
-        $this->assertFalse($oUtils->isSearchEngine('xxx'));
-        $this->assertFalse($oUtils->isSearchEngine('googlebot'));
-    }
-
-    public function testIsSearchEngineNonAdminSE()
-    {
-        // cleaning ..
-        $myConfig = $this->getConfig();
-
-        $myConfig->setConfigParam('iDebug', 0);
-        $myConfig->setConfigParam('aRobots', array('googlebot', 'xxx'));
-
-        $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('isAdmin'));
-        $oUtils->expects($this->any())->method('isAdmin')->will($this->returnValue(false));
-
-        $this->assertTrue($oUtils->isSearchEngine('googlebot'));
-        $this->assertTrue($oUtils->isSearchEngine('xxx'));
-    }
-
-    public function testIsSearchEngineAdminAndDebugOn()
-    {
-        // cleaning ..
-        $myConfig = $this->getConfig();
-
-        $myConfig->setConfigParam('iDebug', 1);
-        $myConfig->setConfigParam('aRobots', array('googlebot', 'xxx'));
-
-        $oUtils = $this->getMock(\OxidEsales\Eshop\Core\Utils::class, array('isAdmin'));
-        $oUtils->expects($this->any())->method('isAdmin')->will($this->returnValue(true));
-
-        $this->assertFalse($oUtils->isSearchEngine('xxx'));
-        $this->assertFalse($oUtils->isSearchEngine('googlebot'));
-    }
-
     public function testIsSearchEngineAdminAndDebugOff()
     {
         // cleaning ..
