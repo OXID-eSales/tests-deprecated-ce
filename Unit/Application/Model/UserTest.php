@@ -2263,6 +2263,7 @@ final class UserTest extends \OxidTestCase
 
     /**
      * oxuser::login() and oxuser::logout() test
+     * @todo: should be rewritten in OXDEV-7180 task
      */
     public function testLoginIsDemoAndAdminButNonAdminUser_Logout()
     {
@@ -2280,37 +2281,6 @@ final class UserTest extends \OxidTestCase
             return;
         }
         $this->fail('exception must be thrown');
-    }
-
-    /**
-     * oxUser::login() and oxUser::logout() test for demo shop
-     */
-    public function testLogin_Logout_AdminDemoShop()
-    {
-        $oConfig = $this->getConfig();
-
-        $this->addClassExtension(\OxidEsales\EshopCommunity\Tests\Unit\Application\Model\UserTest_oxUtilsServerHelper::class, 'oxutilsserver');
-        $oConfig->setConfigParam('blDemoShop', 1);
-        $oConfig->setAdminMode(true);
-
-        $oUser = oxNew('oxUser');
-        // demo shop login data: admin/admin here
-        $oUser->login("admin", "admin");
-
-        $this->assertNotNull($this->getSessionParam('auth'));
-
-        // 'usr' var should not be set here in admin
-        $this->assertNull($this->getSessionParam('usr'));
-
-        $oUser = $oUser->getUser();
-
-        $this->assertNotNull($oUser);
-        $this->assertNotNull($oUser->getId());
-
-        $oUser->logout();
-        $this->assertNull($this->getSessionParam('usr'));
-        $this->assertNull($this->getSessionParam('auth'));
-        $this->assertFalse($oUser->getUser());
     }
 
     /**

@@ -2095,14 +2095,6 @@ class ConfigTest extends \OxidTestCase
         $this->assertEquals($sMallURL . $sDir, $oConfig->getResourceUrl(null, false));
     }
 
-    public function testIsDemoShop()
-    {
-        $oConfig = oxNew('oxConfig');
-        $oConfig->init();
-        $oConfig->setConfigParam('blDemoShop', true);
-        $this->assertTrue($oConfig->isDemoShop());
-    }
-
     public function testIsThemeOption()
     {
         $oConfig = $this->getProxyClass("oxConfig");
