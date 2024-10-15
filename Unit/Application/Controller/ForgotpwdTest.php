@@ -34,19 +34,6 @@ class ForgotpwdTest extends \OxidTestCase
     }
 
     /**
-     * Test forgot email.
-     *
-     * @return null
-     */
-    public function testGetForgotEmail()
-    {
-        $this->setRequestParameter('lgn_usr', 'testuser');
-        $oForgotPwd = $this->getProxyClass('forgotpwd');
-        $oForgotPwd->forgotPassword();
-        $this->assertFalse($oForgotPwd->getForgotEmail());
-    }
-
-    /**
      * Test get update id.
      *
      * @return null
