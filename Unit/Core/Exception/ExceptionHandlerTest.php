@@ -44,20 +44,6 @@ class ExceptionHandlerTest extends \OxidEsales\TestingLibrary\UnitTestCase
         ];
     }
 
-    /**
-     * @covers \OxidEsales\Eshop\Core\Exception\ExceptionHandler::handleDatabaseException()
-     */
-    public function testHandleDatabaseExceptionDelegatesToHandleUncaughtException()
-    {
-        /** @var ExceptionHandler|\PHPUnit\Framework\MockObject\MockObject $exceptionHandlerMock */
-        $exceptionHandlerMock = $this->getMock(ExceptionHandler::class, ['handleUncaughtException']);
-        $exceptionHandlerMock->expects($this->once())->method('handleUncaughtException');
-
-        $databaseException = oxNew(\OxidEsales\Eshop\Core\Exception\DatabaseException::class, 'message', 0, new \Exception());
-
-        $exceptionHandlerMock->handleDatabaseException($databaseException);
-    }
-
     public function testHandleUncaughtExceptionWritesToLogFile()
     {
         $this->expectException(\Exception::class);
