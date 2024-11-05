@@ -13,7 +13,6 @@ use OxidEsales\Eshop\Core\Database\Adapter\Doctrine\Database;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\TestingLibrary\UnitTestCase;
-use Psr\Log\NullLogger;
 use Psr\Log\Test\TestLogger;
 use ReflectionClass;
 
@@ -31,9 +30,6 @@ class DatabaseTest extends UnitTestCase
      */
     protected function tearDown(): void
     {
-        $configFile = new \OxidEsales\Eshop\Core\ConfigFile(OX_BASE_PATH . 'config.inc.php');
-        Registry::set(\OxidEsales\Eshop\Core\ConfigFile::class, $configFile);
-
         $this->cleanUpTable('oxarticles');
 
         Registry::set('logger', getLogger());
@@ -60,28 +56,6 @@ class DatabaseTest extends UnitTestCase
         $reflectionMethod->setAccessible(true);
 
         return $reflectionMethod->invokeArgs($classInstance, $params);
-    }
-
-    public function testSetConfig()
-    {
-        $debug = 7;
-
-        $configFile = $this->getBlankConfigFile();
-        $configFile->iDebug = $debug;
-
-        $database = oxDb::getInstance();
-        $database->setConfigFile($configFile);
-
-        $actualResult = $this->callProtectedClassMethod($database, 'getConfigParam', array('iDebug'));
-
-        $this->assertEquals($debug, $actualResult, 'Result of getConfigParam(iDebug) should match value in config.inc.php');
-
-        $debug = 8;
-        $configFile->iDebug = $debug;
-        $database->setConfigFile($configFile);
-        $actualResult = $this->callProtectedClassMethod($database, 'getConfigParam', array('iDebug'));
-
-        $this->assertEquals($debug, $actualResult, 'Result of getConfigParam(iDebug) should match value in config.inc.php');
     }
 
     public function testGetTableDescription()
@@ -264,17 +238,5 @@ class DatabaseTest extends UnitTestCase
         );
 
         $this->assertTrue($logger->hasErrorRecords());
-    }
-
-    /**
-     * Helper methods
-     */
-
-    /**
-     * @return \OxidEsales\Eshop\Core\ConfigFile
-     */
-    protected function getBlankConfigFile()
-    {
-        return new \OxidEsales\Eshop\Core\ConfigFile($this->createFile('config.inc.php', '<?php '));
     }
 }

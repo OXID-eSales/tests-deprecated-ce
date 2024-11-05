@@ -33,7 +33,6 @@ class modForTestGetBaseTplDirExpectsDefault extends oxConfig
             return;
         }
         $this->_blInit = true;
-        $this->loadVarsFromFile();
         $this->setDefaults();
     }
 
@@ -2164,23 +2163,6 @@ class ConfigTest extends \OxidTestCase
         $oConfig->init();
         $this->assertNotEquals(33, $oConfig->iDebug);
         $this->assertNotEquals(33, $oConfig->getConfigParam("iDebug"));
-    }
-
-    /**
-     * Tests that custom config is being set and variables from it are reachable
-     *
-     */
-    public function testLoadCustomConfig()
-    {
-        $this->createFile('config.inc.php', '<?php $this->testVar = "testValue";');
-        $file = $this->createFile('cust_config.inc.php', '<?php $this->customVar = "customValue";');
-        $this->setConfigParam('sShopDir', dirname($file));
-
-        /** @var oxConfig $config */
-        $config = $this->getMock(Config::class, array('init'));
-        $config->loadVarsFromFile();
-
-        $this->assertSame("customValue", $config->getConfigParam("customVar"));
     }
 
     /**
